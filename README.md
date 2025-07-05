@@ -50,7 +50,7 @@ End Class
 
 ## Current Progress
 
-I'm currently working on this porting project all by myself. *__However, I'm now busy retaking the Postgrauate Entrance Exam in my home city, probably about Biology or TCM-related stuff, and I will have to set the project aside until the end of this year.__* I will definitely try my best to finish the project after that, but not these five or six months.
+I'm currently working on this porting project all by myself. *__However, I'm now busy retaking the Postgrauate Entrance Exam in my home city, probably about Biochemistry, General Biology, or TCM-related subjects, and I will have to set the project aside until the end of this year.__* I will definitely try my best to finish the project after that, but not these five or six months.
 
 The porting task is quite challenging, and it's not a good start for my part. Despite the fact that the engine supports OpenGL rendering, the original code has a strong dependency on Windows API, giving me a painful experience when I'm trying to port the code. I'm just a hobbyist in game development, so my time to work on this project is very limited.
 
