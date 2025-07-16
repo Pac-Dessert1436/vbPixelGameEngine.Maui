@@ -6,9 +6,18 @@ Public Class SpriteSheet
 
   Public ReadOnly Property Rows As Integer
   Public ReadOnly Property Columns As Integer
-  Public Property CurrFrame As Sprite
 
-  Private ReadOnly Property AnimFrames As New Dictionary(Of String, List(Of Sprite))
+  Private Class AnimationHelper
+    Public Property CurrFrame As Sprite
+    Public Property AnimFrames As New Dictionary(Of String, List(Of Sprite))
+    Public Property FramePointer As IEnumerator(Of Sprite)
+
+    Protected Overrides Sub Finalize()
+      FramePointer.Dispose()  ' Dispose the frame pointer for memory safety.
+    End Sub
+  End Class
+
+  Private ReadOnly animations As Dictionary(Of String, AnimationHelper)
   Private ReadOnly Property AllFrameIndices As (rowIdx As Integer, colIdx As Integer)()
 
   Private Shared _pauseAllAnim As Boolean
@@ -21,7 +30,7 @@ Public Class SpriteSheet
     End Set
   End Property
 
-  Public Sub New(sprite As Sprite, frameScale As Vi2d)
+  Public Sub New(sprite As Sprite, frameScale As Vi2d, Optional noDefault As Boolean = False)
     sheet = sprite
     frameW = frameScale.x
     frameH = frameScale.y
@@ -37,17 +46,23 @@ Public Class SpriteSheet
         i += 1
       Next col
     Next row
+    ' Add the default character without specifying the `noDefault` parameter.
+    If Not noDefault Then AddCharacter("default")
   End Sub
 
-  Public Sub New(imgPath As String, frameScale As Vi2d)
-    Me.New(New Sprite(imgPath), frameScale)
+  Public Sub New(imgPath As String, frameScale As Vi2d, Optional noDefault As Boolean = False)
+    Me.New(New Sprite(imgPath), frameScale, noDefault)
   End Sub
 
   Default Public ReadOnly Property Frame(rowIdx As Integer, colIdx As Integer) As Sprite
     Get
       ArgumentNullException.ThrowIfNull(Me)
-      If rowIdx >= Rows OrElse colIdx >= Columns Then
-        Throw New ArgumentException("Row index or column index is out of range.")
+      If rowIdx < 0 OrElse rowIdx >= Rows Then
+        Throw New ArgumentException(
+          $"Row index is out of range; the current sprite sheet has {Rows} rows.")
+      ElseIf colIdx < 0 OrElse colIdx >= Columns Then
+        Throw New ArgumentException(
+          $"Column index is out of range; the current sprite sheet has {Columns} columns.")
       End If
       Dim output As New Sprite(frameW, frameH)
       For i As Integer = 0 To frameW - 1
@@ -76,35 +91,62 @@ Public Class SpriteSheet
     Return outputTileMap
   End Function
 
-  Public Sub DefineAnimation(name As String, start As (row As Integer, col As Integer),
-                             [end] As (row As Integer, col As Integer))
-    AnimFrames(name) = CreateTileMap(start, [end])
+  Public Sub AddCharacter(charaName As String)
+    animations.Add(charaName, New AnimationHelper)
   End Sub
 
-  Public Sub PlayAnimation(name As String, frameDuration As Single,
-                           Optional isLooping As Boolean = True,
-                           Optional isAnimPaused As Boolean = False)
-    Static framePointer As IEnumerator(Of Sprite), prevName As String
-    If name <> prevName Then
-      If framePointer IsNot Nothing Then framePointer.Reset()
-      framePointer = AnimFrames(name).GetEnumerator()
-      prevName = name
-    End If
+  Public Sub DefineAnimation(charaName As String, animName As String,
+     start As (row As Integer, col As Integer), [end] As (row As Integer, col As Integer),
+     Optional update As Boolean = False)
 
-    Static frameTimer As Single = 0F
-    If AnimFrames(name).Count = 0 Then
-      Throw New InvalidOperationException("Animation frames cannot be empty.")
-    End If
-    CurrFrame = framePointer.Current
-    If isAnimPaused OrElse PauseAllAnimations Then Exit Sub
-    frameTimer += Pge.GetElapsedTime()
-    If frameTimer < frameDuration Then Exit Sub
+    Dim animHelper As AnimationHelper = Nothing
 
-    If framePointer.MoveNext() Then
-      frameTimer = 0
-    ElseIf isLooping Then
-      framePointer.Reset()
-      framePointer.MoveNext()  ' Move to the first frame.
+    If Not animations.TryGetValue(charaName, animHelper) Then
+      Throw New InvalidOperationException(
+        $"Character '{charaName}' does not exist. Please add it first.")
+    ElseIf animHelper.AnimFrames.ContainsKey(animName) AndAlso Not update Then
+      Throw New InvalidOperationException(
+        $"Animation '{animName}' for the character '{charaName}' already exists. " &
+        "Set the parameter 'update' to True if you want to update it.")
     End If
+    animations(charaName).AnimFrames(animName) = CreateTileMap(start, [end])
+  End Sub
+
+  Public Sub PlayAnimation(charaName As String, animName As String, frameDuration As Single,
+      Optional isLooping As Boolean = True, Optional isAnimPaused As Boolean = False)
+    ' Note: The parameter "dt" is now replaced with Pge.GetElapsedTime(). This might be
+    '       changed again because the engine core will be migrated to MAUI.
+    Static prevAnimName As String
+
+    With animations(charaName)
+      ArgumentNullException.ThrowIfNull(.AnimFrames)
+      If animName <> prevAnimName Then
+        If .FramePointer IsNot Nothing Then .FramePointer.Reset()
+        .FramePointer = .AnimFrames(animName).GetEnumerator()
+        prevAnimName = animName
+      End If
+
+      Static frameTimer As Single = 0F
+      If .AnimFrames(animName).Count = 0 Then
+        Throw New InvalidOperationException("Current animation has no frames and cannot be played.")
+      End If
+      animations(charaName).CurrFrame = .FramePointer.Current
+      If isAnimPaused OrElse PauseAllAnimations Then Exit Sub
+      frameTimer += Pge.GetElapsedTime()
+      If frameTimer < frameDuration Then Exit Sub
+
+      If .FramePointer.MoveNext() Then
+        frameTimer = 0
+      ElseIf isLooping Then
+        .FramePointer.Reset()
+        .FramePointer.MoveNext()  ' Move to the first frame.
+      End If
+    End With
+  End Sub
+
+  Public Sub DrawFrame(charaName As String, pos As Vf2d, Optional scale As Integer = 1)
+    ' Note: The original singleton object `Pge` might be changed in the future,
+    '       because of the migration from Desktop to MAUI.
+    Pge.DrawSprite(pos, animations(charaName).CurrFrame, scale)
   End Sub
 End Class

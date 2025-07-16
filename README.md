@@ -30,8 +30,37 @@ End Function
 ```
 - Introduced two rectangle structures (`RectI` and `RectF`) for better collision detection. This essential feature is inspired by C# MonoGame API.
 - Introduced a `SpriteSheet` class to support **sprite animation** and **tilemap creation**.
-  - This class only supports animation for a single game character for the time being, but it can be extended to support multiple characters within the same `SpriteSheet`.
-  - It also enables tilemap creation in the form of `List(Of Sprite)`, which can be used to build 2D maps with multiple tiles.
+  - This class is now capable of supporting multiple characters within the same `SpriteSheet`, and the default character name is provided as "default", unless you specify the `noDefault` parameter as True in the constructor.
+  ``` vb
+  ' The major constructor of the `SpriteSheet` class.
+  Public Sub New(sprite As Sprite, frameScale As Vi2d, Optional noDefault As Boolean = False)
+    sheet = sprite
+    frameW = frameScale.x
+    frameH = frameScale.y
+
+    Columns = sheet.Width \ frameW
+    Rows = sheet.Height \ frameH
+
+    ReDim AllFrameIndices(Rows * Columns - 1)
+    Dim i As Integer = 0
+    For row As Integer = 0 To Rows - 1
+      For col As Integer = 0 To Columns - 1
+        AllFrameIndices(i) = (row, col)
+        i += 1
+      Next col
+    Next row
+    ' Add the default character without specifying the `noDefault` parameter.
+    If Not noDefault Then AddCharacter("default")
+  End Sub
+  ```
+  - The `SpriteSheet` class also enables tilemap creation in the form of `List(Of Sprite)`, which can be used to build 2D maps with multiple tiles, and more importantly, it supports the drawing method for animation frames based on the character name:
+  ``` vb
+  Public Sub DrawFrame(charaName As String, pos As Vf2d, Optional scale As Integer = 1)
+    ' Note: The original singleton object "Pge" might be changed in the future,
+    '       because of the migration from Desktop to MAUI.
+    Pge.DrawSprite(pos, animations(charaName).CurrFrame, scale)
+  End Sub
+  ```
 - Manually rewrote the "__Microsoft.Android.Resource.Designer.cs" file in the directory "./src/obj/Debug/net8.0-android" using VB.NET syntax, especially the moment the ".vbproj" file is updated, to suppress compilation errors. (Note: This ".cs" file isn't uploaded because of the ".gitignore" rule.)
 ```vb
 ' Source Path: ./src/obj/Debug/net8.0-android/__Microsoft.Android.Resource.Designer.cs
