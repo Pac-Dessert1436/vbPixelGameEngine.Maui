@@ -47,7 +47,7 @@ Public Class SpriteSheet
       Next col
     Next row
     ' Add the default character name without specifying the `noDefault` parameter.
-    If Not noDefault Then AddCharacter("default")
+    If Not noDefault Then AddCharacterName("default")
   End Sub
 
   Public Sub New(imgPath As String, frameScale As Vi2d, Optional noDefault As Boolean = False)
@@ -91,7 +91,7 @@ Public Class SpriteSheet
     Return outputTileMap
   End Function
 
-  Public Sub AddCharacter(charaName As String)
+  Public Sub AddCharacterName(charaName As String)
     gameCharacters.Add(charaName, New AnimationHelper)
   End Sub
 

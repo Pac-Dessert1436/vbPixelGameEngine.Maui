@@ -50,7 +50,7 @@ End Function
       Next col
     Next row
     ' Add the default character name without specifying the `noDefault` parameter.
-    If Not noDefault Then AddCharacter("default")
+    If Not noDefault Then AddCharacterName("default")
   End Sub
   ```
   - The `SpriteSheet` class also enables tilemap creation in the form of `List(Of Sprite)`, which can be used to build 2D maps with multiple tiles, and more importantly, it supports the drawing method for animation frames based on the character name:
@@ -58,7 +58,7 @@ End Function
   Public Sub DrawFrame(charaName As String, pos As Vf2d, Optional scale As Integer = 1)
     ' Note: The original singleton object "Pge" might be changed in the future,
     '       because of the migration from Desktop to MAUI.
-    Pge.DrawSprite(pos, animations(charaName).CurrFrame, scale)
+    Pge.DrawSprite(pos, gameCharacters(charaName).CurrFrame, scale)
   End Sub
   ```
 - Manually rewrote the "__Microsoft.Android.Resource.Designer.cs" file in the directory "./src/obj/Debug/net8.0-android" using VB.NET syntax, especially the moment the ".vbproj" file is updated, to suppress compilation errors. (Note: This ".cs" file isn't uploaded because of the ".gitignore" rule.)
