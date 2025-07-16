@@ -46,7 +46,7 @@ Public Class SpriteSheet
         i += 1
       Next col
     Next row
-    ' Add the default character without specifying the `noDefault` parameter.
+    ' Add the default character name without specifying the `noDefault` parameter.
     If Not noDefault Then AddCharacter("default")
   End Sub
 
@@ -114,7 +114,7 @@ Public Class SpriteSheet
 
   Public Sub PlayAnimation(charaName As String, animName As String, frameDuration As Single,
       Optional isLooping As Boolean = True, Optional isAnimPaused As Boolean = False)
-    ' Note: The parameter "dt" is now replaced with Pge.GetElapsedTime(). This might be
+    ' Note: The parameter `dt` is now replaced with Pge.GetElapsedTime(). This might be
     '       changed again because the engine core will be migrated to MAUI.
     Static prevAnimName As String
 

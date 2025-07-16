@@ -30,7 +30,7 @@ End Function
 ```
 - Introduced two rectangle structures (`RectI` and `RectF`) for better collision detection. This essential feature is inspired by C# MonoGame API.
 - Introduced a `SpriteSheet` class to support **sprite animation** and **tilemap creation**.
-  - This class is now capable of supporting multiple characters within the same `SpriteSheet`, and the default character name is provided as "default", unless you specify the `noDefault` parameter as True in the constructor.
+  - This class is now capable of supporting multiple in-game characters within the same `SpriteSheet`, and the default character name is provided as "default" (unless you specify the `noDefault` parameter as True in the constructor).
   ``` vb
   ' The major constructor of the `SpriteSheet` class.
   Public Sub New(sprite As Sprite, frameScale As Vi2d, Optional noDefault As Boolean = False)
@@ -49,7 +49,7 @@ End Function
         i += 1
       Next col
     Next row
-    ' Add the default character without specifying the `noDefault` parameter.
+    ' Add the default character name without specifying the `noDefault` parameter.
     If Not noDefault Then AddCharacter("default")
   End Sub
   ```
