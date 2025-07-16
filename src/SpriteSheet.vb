@@ -17,7 +17,7 @@ Public Class SpriteSheet
     End Sub
   End Class
 
-  Private ReadOnly animations As Dictionary(Of String, AnimationHelper)
+  Private ReadOnly gameCharacters As Dictionary(Of String, AnimationHelper)
   Private ReadOnly Property AllFrameIndices As (rowIdx As Integer, colIdx As Integer)()
 
   Private Shared _pauseAllAnim As Boolean
@@ -92,7 +92,7 @@ Public Class SpriteSheet
   End Function
 
   Public Sub AddCharacter(charaName As String)
-    animations.Add(charaName, New AnimationHelper)
+    gameCharacters.Add(charaName, New AnimationHelper)
   End Sub
 
   Public Sub DefineAnimation(charaName As String, animName As String,
@@ -101,7 +101,7 @@ Public Class SpriteSheet
 
     Dim animHelper As AnimationHelper = Nothing
 
-    If Not animations.TryGetValue(charaName, animHelper) Then
+    If Not gameCharacters.TryGetValue(charaName, animHelper) Then
       Throw New InvalidOperationException(
         $"Character '{charaName}' does not exist. Please add it first.")
     ElseIf animHelper.AnimFrames.ContainsKey(animName) AndAlso Not update Then
@@ -109,7 +109,7 @@ Public Class SpriteSheet
         $"Animation '{animName}' for the character '{charaName}' already exists. " &
         "Set the parameter 'update' to True if you want to update it.")
     End If
-    animations(charaName).AnimFrames(animName) = CreateTileMap(start, [end])
+    gameCharacters(charaName).AnimFrames(animName) = CreateTileMap(start, [end])
   End Sub
 
   Public Sub PlayAnimation(charaName As String, animName As String, frameDuration As Single,
@@ -118,7 +118,7 @@ Public Class SpriteSheet
     '       changed again because the engine core will be migrated to MAUI.
     Static prevAnimName As String
 
-    With animations(charaName)
+    With gameCharacters(charaName)
       ArgumentNullException.ThrowIfNull(.AnimFrames)
       If animName <> prevAnimName Then
         If .FramePointer IsNot Nothing Then .FramePointer.Reset()
@@ -130,7 +130,7 @@ Public Class SpriteSheet
       If .AnimFrames(animName).Count = 0 Then
         Throw New InvalidOperationException("Current animation has no frames and cannot be played.")
       End If
-      animations(charaName).CurrFrame = .FramePointer.Current
+      .CurrFrame = .FramePointer.Current
       If isAnimPaused OrElse PauseAllAnimations Then Exit Sub
       frameTimer += Pge.GetElapsedTime()
       If frameTimer < frameDuration Then Exit Sub
@@ -147,6 +147,6 @@ Public Class SpriteSheet
   Public Sub DrawFrame(charaName As String, pos As Vf2d, Optional scale As Integer = 1)
     ' Note: The original singleton object `Pge` might be changed in the future,
     '       because of the migration from Desktop to MAUI.
-    Pge.DrawSprite(pos, animations(charaName).CurrFrame, scale)
+    Pge.DrawSprite(pos, gameCharacters(charaName).CurrFrame, scale)
   End Sub
 End Class
