@@ -17,7 +17,7 @@ Public Class SpriteSheet
     End Sub
   End Class
 
-  Private ReadOnly gameCharacters As Dictionary(Of String, AnimationHelper)
+  Private ReadOnly gameCharacters As New Dictionary(Of String, AnimationHelper)
   Private ReadOnly Property AllFrameIndices As (rowIdx As Integer, colIdx As Integer)()
 
   Private Shared _pauseAllAnim As Boolean
