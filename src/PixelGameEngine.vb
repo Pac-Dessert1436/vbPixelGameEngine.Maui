@@ -2,12 +2,17 @@
 Imports System.Runtime.InteropServices.RuntimeInformation
 Imports System.Threading
 
+' Note: Mac Catalyst and Tizen are currently not the main focus of this project, although 
+'       support for these platforms may be considered in future versions. The code templates 
+'       for Mac Catalyst and Tizen will be retained only to prevent compilation failure.
+
 ' ToDo: Adapt the "PixelGameEngine" class to .NET MAUI for cross-platform support (Windows,
 '       Linux, Android, iOS). The core approach is "Inversion of Control (IoC)".
 '
-'       This part is the root-level code. Cross-platform interfaces like `IPixelRenderer`, 
-'       `IInputHandler` and so forth will be defined here. Common logic, such as the game loop 
-'       mechanism and pixel operation APIs, will also be implemented in the root-level code.
+'       This part is the root-level code of the game engine. Cross-platform interfaces like 
+'       `IPixelRenderer`, `IInputHandler` and so forth will be defined here. Common logic of
+'       the game engine, such as game loop and pixel operation APIs, will also be implemented
+'       in the root-level code.
 '
 '       Interfaces will be implemented for each platform within the Platforms folder. It might
 '       be a good idea to use `SkiaSharp` for Android rendering, and `Microsoft.Maui.Graphics`
