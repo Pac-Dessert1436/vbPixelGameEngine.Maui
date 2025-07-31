@@ -19,8 +19,9 @@ Imports System.Threading
 '       for iOS rendering.
 '  
 '       The original code heavily depends on Windows API (for example, Win32 window messages,
-'       OpenGL calls), which need to be completely stripped and replaced with cross-platform
-'       alternatives.
+'       OpenGL calls), which is supposed to be replaced with cross-platform alternatives. 
+'       Additional components such as `BitmapFont`, `AudioPlayer` are planned to be added to 
+'       this engine as well.
 '
 '       Even though all pixel-level drawing functions need to be replaced with implementations
 '       using `Microsoft.Maui.Graphics` and `SkiaSharp`, I'm not very familiar with using these

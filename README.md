@@ -77,6 +77,7 @@ End Class
 - Migrate the OpenGL rendering code to `SkiaSharp` and `Microsoft.Maui.Graphics`.
 - Adapt the input handling code to .NET MAUI event handlers.
 - Make good use of the Inversion of Control (IoC) design pattern.
+- Add more components to this engine (`BitmapFont`, `AudioPlayer` etc.).
 
 ## Current Progress
 
