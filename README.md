@@ -74,8 +74,9 @@ End Class
 ## Plans for This Project
 
 - Port the Windows API calls to .NET MAUI, using P/Invoke or some other approaches.
-- Migrate the OpenGL rendering code to SkiaSharp.
+- Migrate the OpenGL rendering code to `SkiaSharp` and `Microsoft.Maui.Graphics`.
 - Adapt the input handling code to .NET MAUI event handlers.
+- Make good use of the Inversion of Control (IoC) design pattern.
 
 ## Current Progress
 
