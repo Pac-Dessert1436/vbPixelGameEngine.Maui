@@ -30,13 +30,13 @@ Public Class SpriteSheet
     End Sub
 
     Public Function Clone() As Object Implements ICloneable.Clone
-      Dim copiedDict As New Dictionary(Of String, List(Of Sprite))
-      For Each kvp As KeyValuePair(Of String, List(Of Sprite)) In AnimFrames
-        copiedDict.Add(kvp.Key, New List(Of Sprite)(kvp.Value))
+      Dim AnimFrames As New Dictionary(Of String, List(Of Sprite))
+      For Each kvp In Me.AnimFrames
+        AnimFrames.Add(kvp.Key, New List(Of Sprite)(kvp.Value))
       Next kvp
       Return New AnimationHelper With {
         .CurrFrame = CurrFrame,
-        .AnimFrames = copiedDict,
+        .AnimFrames = AnimFrames,
         .FramePointer = FramePointer
       }
     End Function
@@ -149,6 +149,8 @@ Public Class SpriteSheet
         If .FramePointer IsNot Nothing Then .FramePointer.Reset()
         .FramePointer = .AnimFrames(animName).GetEnumerator()
         prevAnimName = animName
+        ' On switching animations, the following line is required to avoid flicker.
+        .FramePointer.MoveNext()
       End If
 
       Static frameTimer As Single = 0F
@@ -176,16 +178,16 @@ Public Class SpriteSheet
   End Sub
 
   Public Function Clone() As Object Implements ICloneable.Clone
-    Dim copiedDict As New Dictionary(Of String, AnimationHelper)
-    For Each kvp As KeyValuePair(Of String, AnimationHelper) In gameCharacters
-      copiedDict.Add(kvp.Key, CType(kvp.Value.Clone(), AnimationHelper))
+    Dim gameCharacters As New Dictionary(Of String, AnimationHelper)
+    For Each kvp In Me.gameCharacters
+      gameCharacters.Add(kvp.Key, CType(kvp.Value.Clone(), AnimationHelper))
     Next kvp
 
     Return New SpriteSheet(sheet, New Vi2d(frameW, frameH), True) With {
       ._rows = Rows,
       ._columns = Columns,
       .AllFrameIndices = AllFrameIndices,
-      .gameCharacters = copiedDict
+      .gameCharacters = gameCharacters
     }
   End Function
 
