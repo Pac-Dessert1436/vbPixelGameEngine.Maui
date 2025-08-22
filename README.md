@@ -8,27 +8,33 @@ Besides, the .NET MAUI class library is originally a C# template, but it can be 
 
 ## Modified Content
 
-- Added shared functions to the `Vi2d` and `Vf2d` structures for distance calculation (linear distance, squared distance, and Manhattan distance), together with angle calculation. The result for angle calculation will be measured in radians.
+- Added shared functions to the `Vi2d` and `Vf2d` structures for distance calculation (straight-line distance, squared Euclidean distance, Manhattan distance, and Chebyshev distance), together with angle calculation. The result for angle calculation will be measured in radians.
+  - Manhattan distance is also known as **taxicab distance**, so the original function signature `ManhDist` is now changed into `TaxiDist`.
+  - Besides, floating-point implementations of the dot product and cross product have been added to the `Vf2d` structure as `DotF` and `CrossF` methods.
 ```vb
 ' The following code lies in the `Vf2d` structure; implementation in `Vi2d` is similar.
 ' These shared functions are exactly placed before the overloaded operators.
 Public Shared Function Dist(vec1 As Vf2d, vec2 As Vf2d) As Single
-  Return (vec1 - vec2).Mag()
+  Return (vec1 - vec2).Mag()  ' Straight-line distance
 End Function
 
 Public Shared Function Dist2(vec1 As Vf2d, vec2 As Vf2d) As Single
-  Return (vec1 - vec2).Mag2()
+  Return (vec1 - vec2).Mag2()  ' Squared Euclidean distance
 End Function
 
-Public Shared Function ManhDist(vec1 As Vf2d, vec2 As Vf2d) As Single
+Public Shared Function TaxiDist(vec1 As Vf2d, vec2 As Vf2d) As Single
   Return MathF.Abs(vec1.x - vec2.x) + MathF.Abs(vec1.y - vec2.y)
+End Function
+
+Public Shared Function ChebDist(vec1 As Vf2d, vec2 As Vf2d) As Single
+  Return MathF.Max(MathF.Abs(vec1.x - vec2.x), MathF.Abs(vec1.y - vec2.y))
 End Function
 
 Public Shared Function Angle(vec1 As Vf2d, vec2 As Vf2d) As Single
   Return MathF.Atan2(vec1.y - vec2.y, vec1.x - vec2.x)
 End Function
 ```
-- Introduced two rectangle structures (`RectI` and `RectF`) for better collision detection. This essential feature is inspired by C# MonoGame API.
+- Introduced two rectangle structures (`RectI` for integer coordinates, `RectF` for floating-point coordinates) to enhance collision detection. These structures draw inspiration from the C# MonoGame API, with an additional `Center` property to simplify center-point calculations.
 - Introduced a `SpriteSheet` class to support **sprite animation** and **tilemap creation**.
   - This class is now capable of supporting multiple in-game characters within the same `SpriteSheet`, and the default character name is provided as "default" (unless you specify the `noDefault` parameter as True in the constructor).
   ``` vb
@@ -70,6 +76,30 @@ Partial Public Class Resource
   Inherits _Microsoft.Android.Resource.Designer.Resource
 End Class
 ```
+- Latest Update: Renamed the `Randoms.vb` module to `GameMath.vb`, and added new core functions including Minkowski distance, vector rotation, and vector reflection.
+  - The Minkowski distance serves as a generalization of common distance metrics: Manhattan distance, Euclidean distance (i.e., straight-line distance), and Chebyshev distance.
+  - Vector rotation and vector reflection are implemented as extension methods for seamless integration with existing vector operations.
+```vb
+' In `GameMath.vb`, the Minkowski distance is defined as follows (not an extension method).
+Public Function MinkoDist(vec1 As Vf2d, vec2 As Vf2d, p As Integer) As Single
+  If p <= 0 Then Throw New ArgumentException(
+    "Minkowski distance requires a positive order parameter (p > 0).", NameOf(p))
+
+  Dim absDiffX = MathF.Abs(vec1.x - vec2.x)
+  Dim absDiffY = MathF.Abs(vec1.y - vec2.y)
+  ' Handle special cases for p=1 (Manhattan), p=2 (Euclidean) and p->inf (Chebyshev).
+  Select Case p
+    Case 1
+      Return absDiffX + absDiffY
+    Case 2
+      Return MathF.Sqrt(absDiffX * absDiffX + absDiffY * absDiffY)
+    Case Integer.MaxValue
+      Return MathF.Max(absDiffX, absDiffY)
+    Case Else  ' General formula for Minkowski distance
+      Return CSng((absDiffX ^ p + absDiffY ^ p) ^ (1 / p))
+  End Select
+End Function
+```
 
 ## Plans for This Project
 
@@ -85,7 +115,9 @@ I'm currently working on this porting project all by myself. *__However, I'm now
 
 The porting task is quite challenging, and it's not a good start for my part. Despite the fact that the engine supports OpenGL rendering, the original code has a strong dependency on Windows API, giving me a painful experience when I'm trying to port the code. I'm just a hobbyist in game development, so my time to work on this project is very limited.
 
-For now I'm just adding the features which are easy to extend in this project. In order to achieve cross-platform compatibility, I'm thinking about using the "SkiaSharp" library or the built-in "Microsoft.Maui.Graphics" namespace, but I will have to take this plan with a grain of salt.
+For now, I'm focusing on adding features that can be easily extended within this project. The Minkowski distance algorithm, which I first encountered in an extracurricular bioinformatics textbook during my undergraduate studies, specifically while researching in the university library before graduation, seemed like an excellent fit for implementing advanced distance calculations in game development.
+
+In terms of cross-platform compatibility, I'm considering utilizing either the `SkiaSharp` library or the built-in `Microsoft.Maui.Graphics` namespace. I will have to take this plan with a grain of salt, and after all, I will have to set the project aside until the end of this year since the Postgraduate Entrance Exam is drawing near.
 
 If you have any suggestions or guidance, please feel free to let me know. I'll update the progress on GitHub.
 

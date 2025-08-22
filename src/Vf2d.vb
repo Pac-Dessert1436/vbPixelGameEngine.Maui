@@ -67,8 +67,16 @@
     Return CInt(Fix(x * other.x + y * other.y))
   End Function
 
+  Public Function DotF(other As Vf2d) As Single
+    Return x * other.x + y * other.y
+  End Function
+
   Public Function Cross(other As Vf2d) As Integer
     Return CInt(Fix(x * other.y - y * other.x))
+  End Function
+
+  Public Function CrossF(other As Vf2d) As Single
+    Return x * other.y - y * other.x
   End Function
 
   Public Shared Function Dist(vec1 As Vf2d, vec2 As Vf2d) As Single
@@ -79,8 +87,12 @@
     Return (vec1 - vec2).Mag2()
   End Function
 
-  Public Shared Function ManhDist(vec1 As Vf2d, vec2 As Vf2d) As Single
+  Public Shared Function TaxiDist(vec1 As Vf2d, vec2 As Vf2d) As Single
     Return MathF.Abs(vec1.x - vec2.x) + MathF.Abs(vec1.y - vec2.y)
+  End Function
+
+  Public Shared Function ChebDist(vec1 As Vf2d, vec2 As Vf2d) As Single
+    Return MathF.Max(MathF.Abs(vec1.x - vec2.x), MathF.Abs(vec1.y - vec2.y))
   End Function
 
   Public Shared Function Angle(vec1 As Vf2d, vec2 As Vf2d) As Single

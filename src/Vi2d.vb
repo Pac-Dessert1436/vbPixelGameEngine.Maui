@@ -82,8 +82,12 @@
     Return (vec1 - vec2).Mag2()
   End Function
 
-  Public Shared Function ManhDist(vec1 As Vi2d, vec2 As Vi2d) As Integer
+  Public Shared Function TaxiDist(vec1 As Vi2d, vec2 As Vi2d) As Integer
     Return Math.Abs(vec1.x - vec2.x) + Math.Abs(vec1.y - vec2.y)
+  End Function
+
+  Public Shared Function ChebDist(vec1 As Vi2d, vec2 As Vi2d) As Integer
+    Return Math.Max(Math.Abs(vec1.x - vec2.x), Math.Abs(vec1.y - vec2.y))
   End Function
 
   Public Shared Function Angle(vec1 As Vi2d, vec2 As Vi2d) As Single

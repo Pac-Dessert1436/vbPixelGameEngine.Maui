@@ -57,7 +57,6 @@ Public Structure RectF
     End Get
   End Property
 
-  ' MonoGame-style methods
   Public Function Contains(x As Single, y As Single) As Boolean
     Return x >= Left AndAlso x < Right AndAlso y >= Top AndAlso y < Bottom
   End Function
