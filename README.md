@@ -79,6 +79,7 @@ End Class
 - Latest Update: Renamed the `Randoms.vb` module to `GameMath.vb`, and added new core functions including Minkowski distance, vector rotation, and vector reflection.
   - The Minkowski distance serves as a generalization of common distance metrics: Manhattan distance, Euclidean distance (i.e., straight-line distance), and Chebyshev distance.
   - Vector rotation and vector reflection are implemented as extension methods for seamless integration with existing vector operations.
+  - The newly added Jaccard distance is useful for measuring the extent of overlap between rectangles.
 ```vb
 ' In `GameMath.vb`, the Minkowski distance is defined as follows (not an extension method).
 Public Function MinkoDist(vec1 As Vf2d, vec2 As Vf2d, p As Integer) As Single
@@ -99,6 +100,24 @@ Public Function MinkoDist(vec1 As Vf2d, vec2 As Vf2d, p As Integer) As Single
       Return CSng((absDiffX ^ p + absDiffY ^ p) ^ (1 / p))
   End Select
 End Function
+
+' New: Jaccard Distance to measure the extent of overlap between rectangles
+Public Function JacDist(rectA As RectF, rectB As RectF) As Single
+  If rectA.IsEmpty OrElse rectB.IsEmpty Then Return 1.0F
+  Dim overlapArea As Single
+
+  With RectF.Intersect(rectA, rectB)
+    overlapArea = If(.IsEmpty, 0.0F, .width * .height)
+  End With
+
+  Dim areaA As Single = rectA.width * rectA.height
+  Dim areaB As Single = rectB.width * rectB.height
+
+  Dim unionArea As Single = areaA + areaB - overlapArea
+  If unionArea <= 0.0F Then Return 1.0F
+
+  Return 1.0F - (overlapArea / unionArea)
+End Function
 ```
 
 ## Plans for This Project
@@ -111,7 +130,7 @@ End Function
 
 ## Current Progress
 
-I'm currently working on this porting project all by myself. *__However, I'm now busy retaking the Postgrauate Entrance Exam in my home city, probably about Biochemistry, General Biology, or TCM-related subjects, and I will have to set the project aside until the end of this year.__* I will definitely try my best to finish the project after that, but not these five or six months.
+I'm currently working on this porting project independently. However, I'm currently busy re-taking the Postgraduate Entrance Exam in my hometown, and I've now confirmed that I'm applying for Chinese Materia Medica. Both politics and TCM-related study materials have been quite challenging for me. *__As a result, I can only add new features in my spare time, and I've realized I won't be able to focus heavily on coding until I complete the exam.__* For these reasons, I do plan to continue with the project afterward, but this will likely be at the end of the year.
 
 The porting task is quite challenging, and it's not a good start for my part. Despite the fact that the engine supports OpenGL rendering, the original code has a strong dependency on Windows API, giving me a painful experience when I'm trying to port the code. I'm just a hobbyist in game development, so my time to work on this project is very limited.
 

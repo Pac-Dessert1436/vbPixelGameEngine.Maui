@@ -54,6 +54,23 @@ Public Module GameMath
     End Select
   End Function
 
+  Public Function JacDist(rectA As RectF, rectB As RectF) As Single
+    If rectA.IsEmpty OrElse rectB.IsEmpty Then Return 1.0F
+    Dim overlapArea As Single
+
+    With RectF.Intersect(rectA, rectB)
+      overlapArea = If(.IsEmpty, 0.0F, .width * .height)
+    End With
+
+    Dim areaA As Single = rectA.width * rectA.height
+    Dim areaB As Single = rectB.width * rectB.height
+
+    Dim unionArea As Single = areaA + areaB - overlapArea
+    If unionArea <= 0.0F Then Return 1.0F
+
+    Return 1.0F - (overlapArea / unionArea)
+  End Function
+
   <Runtime.CompilerServices.Extension>
   Public Function Rotate(vec As Vf2d, radians As Single) As Vf2d
     Dim x = vec.x * MathF.Cos(radians) - vec.y * MathF.Sin(radians)
@@ -70,10 +87,10 @@ Public Module GameMath
 
   <Runtime.CompilerServices.Extension>
   Public Function Reflect(vec As Vf2d, normal As Vf2d) As Vf2d
-      ' Reflected vector = Original vector - 2 * DotProduct * Normal
-      Dim x = vec.x - 2 * vec.DotF(normal) * normal.x
-      Dim y = vec.y - 2 * vec.DotF(normal) * normal.y
-      Return New Vf2d(x, y)
+    ' Reflected vector = Original vector - 2 * DotProduct * Normal
+    Dim x = vec.x - 2 * vec.DotF(normal) * normal.x
+    Dim y = vec.y - 2 * vec.DotF(normal) * normal.y
+    Return New Vf2d(x, y)
   End Function
 
   <Runtime.CompilerServices.Extension>
@@ -84,7 +101,7 @@ Public Module GameMath
     Else
       Dim x = vec.x - 2 * vec.Dot(normal) * normal.x
       Dim y = vec.y - 2 * vec.Dot(normal) * normal.y
-      Return New Vi2d(CInt(Fix(x)), CInt(Fix(y)))
+      Return New Vi2d(Fix(x), Fix(y))
     End If
   End Function
 End Module

@@ -57,6 +57,7 @@ Public Structure RectI
     End Get
   End Property
 
+#Region "MonoGame-style methods"
   Public Function Contains(x As Integer, y As Integer) As Boolean
     Return x >= Left AndAlso x < Right AndAlso y >= Top AndAlso y < Bottom
   End Function
@@ -90,7 +91,9 @@ Public Structure RectI
     width += dx * 2
     height += dy * 2
   End Sub
+#End Region
 
+#Region "Static methods"
   Public Shared Function Intersect(a As RectI, b As RectI) As RectI
     Dim left As Integer = Math.Max(a.Left, b.Left)
     Dim top As Integer = Math.Max(a.Top, b.Top)
@@ -109,6 +112,7 @@ Public Structure RectI
 
     Return New RectI(left, top, right - left, bottom - top)
   End Function
+#End Region
 
   Public Overrides Function ToString() As String
     Return $"{{ X:{x} Y:{y} Width:{width} Height:{height} }}"

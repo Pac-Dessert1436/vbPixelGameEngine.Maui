@@ -57,6 +57,7 @@ Public Structure RectF
     End Get
   End Property
 
+#Region "MonoGame-style methods"
   Public Function Contains(x As Single, y As Single) As Boolean
     Return x >= Left AndAlso x < Right AndAlso y >= Top AndAlso y < Bottom
   End Function
@@ -90,8 +91,9 @@ Public Structure RectF
     width += dx * 2
     height += dy * 2
   End Sub
+#End Region
 
-  ' Static methods
+#Region "Static methods"
   Public Shared Function Intersect(a As RectF, b As RectF) As RectF
     Dim left As Single = Math.Max(a.Left, b.Left)
     Dim top As Single = Math.Max(a.Top, b.Top)
@@ -114,6 +116,7 @@ Public Structure RectF
   Public Shared Widening Operator CType(rectF As RectF) As RectI
     Return New RectI(CInt(rectF.x), CInt(rectF.y), CInt(rectF.width), CInt(rectF.height))
   End Operator
+#End Region
 
   Public ReadOnly Property IsEmpty As Boolean
     Get
