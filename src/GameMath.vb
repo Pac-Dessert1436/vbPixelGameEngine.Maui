@@ -54,21 +54,19 @@ Public Module GameMath
     End Select
   End Function
 
-  Public Function JacDist(rectA As RectF, rectB As RectF) As Single
-    If rectA.IsEmpty OrElse rectB.IsEmpty Then Return 1.0F
+  Public Function Jaccard(rectA As RectF, rectB As RectF) As Single
+    If rectA.IsEmpty OrElse rectB.IsEmpty Then Return 0F
     Dim overlapArea As Single
 
     With RectF.Intersect(rectA, rectB)
-      overlapArea = If(.IsEmpty, 0.0F, .width * .height)
+      overlapArea = If(.IsEmpty, 0F, .width * .height)
     End With
 
     Dim areaA As Single = rectA.width * rectA.height
     Dim areaB As Single = rectB.width * rectB.height
 
     Dim unionArea As Single = areaA + areaB - overlapArea
-    If unionArea <= 0.0F Then Return 1.0F
-
-    Return 1.0F - (overlapArea / unionArea)
+    Return If(unionArea <= 0F, 0F, overlapArea / unionArea)
   End Function
 
   <Runtime.CompilerServices.Extension>
