@@ -17,6 +17,10 @@ Public Module GameMath
     m_seed = Environment.TickCount
   End Sub
 
+  Public Sub RefreshRandom()
+    m_rnd = New Random
+  End Sub
+
   Public Function RandomByte() As Byte
     Return RandomBytes(1)(0)
   End Function
@@ -35,7 +39,7 @@ Public Module GameMath
     Return m_rnd.NextSingle() * (max - min) + min
   End Function
 
-  Public Function MinkoDist(vec1 As Vf2d, vec2 As Vf2d, p As Integer) As Single
+  Public Function MinkoDist(vec1 As Vf2d, vec2 As Vf2d, p As Single) As Single
     If p <= 0 Then Throw New ArgumentException(
       "Minkowski distance requires a positive order parameter (p > 0).", NameOf(p))
 
@@ -54,6 +58,27 @@ Public Module GameMath
     End Select
   End Function
 
+  Public Function MinkoDist(vec1 As Vi2d, vec2 As Vi2d, p As Single) As Single
+    If p <= 0 Then Throw New ArgumentException(
+      "Minkowski distance requires a positive order parameter (p > 0).", NameOf(p))
+
+    Dim absDiffX = MathF.Abs(vec1.x - vec2.x)
+    Dim absDiffY = MathF.Abs(vec1.y - vec2.y)
+    Dim res As Single
+    ' Handle special cases for p=1 (Manhattan), p=2 (Euclidean) and p->inf (Chebyshev).
+    Select Case p
+      Case 1
+        res = absDiffX + absDiffY
+      Case 2
+        res = MathF.Sqrt(absDiffX * absDiffX + absDiffY * absDiffY)
+      Case Integer.MaxValue
+        res = MathF.Max(absDiffX, absDiffY)
+      Case Else  ' General formula for Minkowski distance
+        res = CSng((absDiffX ^ p + absDiffY ^ p) ^ (1 / p))
+    End Select
+    Return CInt(Fix(res))
+  End Function
+
   Public Function Jaccard(rectA As RectF, rectB As RectF) As Single
     If rectA.IsEmpty OrElse rectB.IsEmpty Then Return 0F
     Dim overlapArea As Single
@@ -69,37 +94,151 @@ Public Module GameMath
     Return If(unionArea <= 0F, 0F, overlapArea / unionArea)
   End Function
 
+  Public Function Jaccard(rectA As RectI, rectB As RectI) As Single
+    If rectA.IsEmpty OrElse rectB.IsEmpty Then Return 0F
+    Dim overlapArea As Integer
+
+    With RectI.Intersect(rectA, rectB)
+      overlapArea = If(.IsEmpty, 0, .width * .height)
+    End With
+
+    Dim areaA As Integer = rectA.width * rectA.height
+    Dim areaB As Integer = rectB.width * rectB.height
+
+    Dim unionArea As Integer = areaA + areaB - overlapArea
+    Return If(unionArea <= 0, 0F, CSng(overlapArea / unionArea))
+  End Function
+
+  Public Function JaccardDist(rectA As RectF, rectB As RectF) As Single
+    Return 1.0F - Jaccard(rectA, rectB)
+  End Function
+
+  Public Function JaccardDist(rectA As RectI, rectB As RectI) As Single
+    Return 1.0F - Jaccard(rectA, rectB)
+  End Function
+
+#Region "Basic scalar utilities"
+  Public Function ClampF(value As Single, min As Single, max As Single) As Single
+    Return MathF.Max(min, MathF.Min(max, value))
+  End Function
+
+  Public Function WrapF(value As Single, min As Single, max As Single) As Single
+    Dim range = max - min
+    If range = 0 Then Return min
+    Dim v As Single = (value - min) Mod range
+    If v < 0 Then v += range
+    Return v + min
+  End Function
+
+  Public Function LerpF(left As Single, right As Single, t As Single) As Single
+    Return left + (right - left) * t
+  End Function
+
+  Public Function CompareF(left As Single, right As Single, Optional orderOfMag As Integer = 6) As Boolean
+    Return MathF.Abs(left - right) <= MathF.Pow(10.0F, -orderOfMag)
+  End Function
+
+  Public Function RepeatF(num As Single, length As Single) As Single
+    Return ClampF(num - MathF.Floor(num / length) * length, 0, length)
+  End Function
+
+  Public Function PingPong(num As Single, length As Single) As Single
+    num = RepeatF(num, length * 2)
+    Return length - MathF.Abs(num - length)
+  End Function
+
+  Public Function SmoothStep(edge0 As Single, edge1 As Single, x As Single) As Single
+    Dim t = ClampF((x - edge0) / (edge1 - edge0), 0F, 1.0F)
+    Return t * t * (3.0F - 2.0F * t)
+  End Function
+#End Region
+
+#Region "Angle helpers measured in radians"
+  Public Function NormalizeAngle(rad As Single) As Single
+    Dim twoPI = MathF.PI * 2.0F
+    Dim r = rad Mod twoPI
+    If r <= -MathF.PI Then r += twoPI
+    If r > MathF.PI Then r -= twoPI
+    Return r
+  End Function
+
+  Public Function DeltaAngle(alpha As Single, beta As Single) As Single
+    Return NormalizeAngle(beta - alpha)
+  End Function
+#End Region
+
   <Runtime.CompilerServices.Extension>
-  Public Function Rotate(vec As Vf2d, radians As Single) As Vf2d
-    Dim x = vec.x * MathF.Cos(radians) - vec.y * MathF.Sin(radians)
-    Dim y = vec.x * MathF.Sin(radians) + vec.y * MathF.Cos(radians)
-    Return New Vf2d(x, y)
+  Public Function MoveTowards(current As Single, target As Single, maxDelta As Single) As Single
+    Dim diff = target - current
+    If MathF.Abs(diff) <= maxDelta Then Return target
+    Return current + MathF.Sign(diff) * maxDelta
   End Function
 
   <Runtime.CompilerServices.Extension>
-  Public Function Rotate(vec As Vi2d, radians As Single) As Vi2d
-    Dim x = CInt(Fix(vec.x * MathF.Cos(radians) - vec.y * MathF.Sin(radians)))
-    Dim y = CInt(Fix(vec.x * MathF.Sin(radians) + vec.y * MathF.Cos(radians)))
-    Return New Vi2d(x, y)
+  Public Function MoveTowards(current As Vf2d, target As Vf2d, maxDelta As Single) As Vf2d
+    Dim toTarget = target - current
+    Dim dist = toTarget.Mag()
+    If dist <= maxDelta OrElse dist = 0 Then Return target
+    Return current + toTarget * (maxDelta / dist)
   End Function
 
   <Runtime.CompilerServices.Extension>
-  Public Function Reflect(vec As Vf2d, normal As Vf2d) As Vf2d
-    ' Reflected vector = Original vector - 2 * DotProduct * Normal
-    Dim x = vec.x - 2 * vec.DotF(normal) * normal.x
-    Dim y = vec.y - 2 * vec.DotF(normal) * normal.y
-    Return New Vf2d(x, y)
+  Public Function MoveTowards(current As Vi2d, target As Vi2d, maxDelta As Integer) As Vi2d
+    Dim resF = MoveTowards(New Vf2d(current), New Vf2d(target), CSng(maxDelta))
+    Return New Vi2d(CInt(Fix(resF.x)), CInt(Fix(resF.y)))
   End Function
 
-  <Runtime.CompilerServices.Extension>
-  Public Function Reflect(vec As Vi2d, normal As Vi2d, Optional precise As Boolean = False) As Vi2d
-    If precise Then
-      Dim resF = New Vf2d(vec.x, vec.y).Reflect(normal)
-      Return New Vi2d(CInt(Fix(resF.x)), CInt(Fix(resF.y)))
-    Else
-      Dim x = vec.x - 2 * vec.Dot(normal) * normal.x
-      Dim y = vec.y - 2 * vec.Dot(normal) * normal.y
-      Return New Vi2d(Fix(x), Fix(y))
+  ' Line-segment intersection (returns True and intersection point if segments intersect)
+  Public Function LineIntersection(a1 As Vf2d, a2 As Vf2d, b1 As Vf2d, b2 As Vf2d,
+                                   <Runtime.InteropServices.Out> ByRef i As Vf2d) As Boolean
+    Dim r = a2 - a1
+    Dim s = b2 - b1
+    Dim rxs = r.CrossF(s)
+    Dim qp = b1 - a1
+    Dim qpxr = qp.CrossF(r)
+    If MathF.Abs(rxs) < 0.000001F Then
+      i = New Vf2d(0, 0)
+      Return False
     End If
+    Dim t = qp.CrossF(s) / rxs
+    Dim u = qpxr / rxs
+    If t >= 0F AndAlso t <= 1.0F AndAlso u >= 0F AndAlso u <= 1.0F Then
+      i = a1 + r * t
+      Return True
+    End If
+    i = New Vf2d(0, 0)
+    Return False
   End Function
+
+#Region "Bezier/spline helpers for curves"
+  Public Function QuadraticBezier(start As Vf2d, control As Vf2d, endPt As Vf2d, t As Single) As Vf2d
+    Dim u = 1.0F - t
+    Return start * (u * u) + control * (2.0F * u * t) + endPt * (t * t)
+  End Function
+
+  Public Function CubicBezier(start As Vf2d, control1 As Vf2d, control2 As Vf2d, endPt As Vf2d, t As Single) As Vf2d
+    Dim u = 1.0F - t
+    Dim u3 = u * u * u
+    Dim t3 = t * t * t
+    Return start * u3 + control1 * (3.0F * u * u * t) + control2 * (3.0F * u * t * t) + endPt * t3
+  End Function
+
+  Public Function CatmullRom(p0 As Vf2d, p1 As Vf2d, p2 As Vf2d, p3 As Vf2d, t As Single,
+                             Optional isNormalized As Boolean = False) As Vf2d
+    Dim t2 = t * t
+    Dim t3 = t2 * t
+    Dim res = (p1 * 2.0F) + (p2 - p0) * t + (p0 * 2.0F - p1 * 5.0F + p2 * 4.0F - p3) * t2 +
+      (-p0 + p1 * 3.0F - p2 * 3.0F + p3) * t3
+    Return If(isNormalized, res * 0.5, res)
+  End Function
+
+  Public Function Hermite(p0 As Vf2d, t0 As Vf2d, p1 As Vf2d, t1 As Vf2d, t As Single) As Vf2d
+    Dim t2 = t * t, t3 = t2 * t
+    Dim h00 = 2.0F * t3 - 3.0F * t2 + 1.0F
+    Dim h10 = t3 - 2.0F * t2 + t
+    Dim h01 = -2.0F * t3 + 3.0F * t2
+    Dim h11 = t3 - t2
+    Return p0 * h00 + t0 * h10 + p1 * h01 + t1 * h11
+  End Function
+#End Region
 End Module

@@ -114,6 +114,12 @@ Public Structure RectI
   End Function
 #End Region
 
+  Public ReadOnly Property IsEmpty As Boolean
+    Get
+      Return width <= 0 OrElse height <= 0
+    End Get
+  End Property
+
   Public Overrides Function ToString() As String
     Return $"{{ X:{x} Y:{y} Width:{width} Height:{height} }}"
   End Function

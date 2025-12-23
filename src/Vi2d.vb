@@ -94,6 +94,36 @@
     Return MathF.Atan2(vec1.y - vec2.y, vec1.x - vec2.x)
   End Function
 
+  Public Function Rotate(radians As Single) As Vi2d
+    Dim x = CInt(Fix(Me.x * MathF.Cos(radians) - Me.y * MathF.Sin(radians)))
+    Dim y = CInt(Fix(Me.x * MathF.Sin(radians) + Me.y * MathF.Cos(radians)))
+    Return New Vi2d(x, y)
+  End Function
+
+  Public Function Reflect(normal As Vi2d, Optional precise As Boolean = False) As Vi2d
+    If precise Then
+      Dim resF = New Vf2d(x, y).Reflect(normal)
+      Return New Vi2d(CInt(Fix(resF.x)), CInt(Fix(resF.y)))
+    Else
+      Dim x = Me.x - 2 * Dot(normal) * normal.x
+      Dim y = Me.y - 2 * Dot(normal) * normal.y
+      Return New Vi2d(Fix(x), Fix(y))
+    End If
+  End Function
+
+  Public Function LineSegProj(a As Vi2d, b As Vi2d) As Vi2d
+    Dim ab = b - a
+    Dim ab2 = ab.Mag2()
+    If ab2 = 0F Then Return a
+    Dim t = CSng((Me - a).Dot(ab) / ab2)
+    t = ClampF(t, 0F, 1.0F)
+    Return a + New Vi2d(CInt(Fix(ab.x * t)), CInt(Fix(ab.y * t)))
+  End Function
+
+  Public Function DistToLineSeg(a As Vi2d, b As Vi2d) As Integer
+    Return CInt(Fix(Dist(Me, LineSegProj(a, b))))
+  End Function
+
   Public Shared Operator +(left As Vi2d, right As Vi2d) As Vi2d
     Return New Vi2d(left.x + right.x, left.y + right.y)
   End Operator

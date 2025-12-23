@@ -99,6 +99,32 @@
     Return MathF.Atan2(vec1.y - vec2.y, vec1.x - vec2.x)
   End Function
 
+  Public Function Rotate(radians As Single) As Vf2d
+    Dim x = Me.x * MathF.Cos(radians) - Me.y * MathF.Sin(radians)
+    Dim y = Me.x * MathF.Sin(radians) + Me.y * MathF.Cos(radians)
+    Return New Vf2d(x, y)
+  End Function
+
+  Public Function Reflect(normal As Vf2d) As Vf2d
+    ' Reflected vector = Original vector - 2 * DotProduct * Normal
+    Dim x = Me.x - 2 * DotF(normal) * normal.x
+    Dim y = Me.y - 2 * DotF(normal) * normal.y
+    Return New Vf2d(x, y)
+  End Function
+
+  Public Function LineSegProj(a As Vf2d, b As Vf2d) As Vf2d
+    Dim ab = b - a
+    Dim ab2 = ab.Mag2()
+    If ab2 = 0F Then Return a
+    Dim t = (Me - a).DotF(ab) / ab2
+    t = ClampF(t, 0F, 1.0F)
+    Return a + ab * t
+  End Function
+
+  Public Function DistToLineSeg(a As Vf2d, b As Vf2d) As Single
+    Return Dist(Me, LineSegProj(a, b))
+  End Function
+
   Public Shared Operator +(left As Vf2d, right As Vf2d) As Vf2d
     Return New Vf2d(left.x + right.x, left.y + right.y)
   End Operator
