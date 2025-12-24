@@ -71,7 +71,7 @@ Public Module GameMath
         res = absDiffX + absDiffY
       Case 2
         res = MathF.Sqrt(absDiffX * absDiffX + absDiffY * absDiffY)
-      Case Integer.MaxValue
+      Case Single.MaxValue
         res = MathF.Max(absDiffX, absDiffY)
       Case Else  ' General formula for Minkowski distance
         res = CSng((absDiffX ^ p + absDiffY ^ p) ^ (1 / p))
@@ -189,7 +189,7 @@ Public Module GameMath
   End Function
 
   ' Line-segment intersection (returns True and intersection point if segments intersect)
-  Public Function LineIntersection(a1 As Vf2d, a2 As Vf2d, b1 As Vf2d, b2 As Vf2d,
+  Public Function LineSegIntersect(a1 As Vf2d, a2 As Vf2d, b1 As Vf2d, b2 As Vf2d,
                                    <Runtime.InteropServices.Out> ByRef i As Vf2d) As Boolean
     Dim r = a2 - a1
     Dim s = b2 - b1
@@ -211,16 +211,16 @@ Public Module GameMath
   End Function
 
 #Region "Bezier/spline helpers for curves"
-  Public Function QuadraticBezier(start As Vf2d, control As Vf2d, endPt As Vf2d, t As Single) As Vf2d
+  Public Function QuadraticBezier(p0 As Vf2d, p1 As Vf2d, p2 As Vf2d, t As Single) As Vf2d
     Dim u = 1.0F - t
-    Return start * (u * u) + control * (2.0F * u * t) + endPt * (t * t)
+    Return p0 * (u * u) + p1 * (2.0F * u * t) + p2 * (t * t)
   End Function
 
-  Public Function CubicBezier(start As Vf2d, control1 As Vf2d, control2 As Vf2d, endPt As Vf2d, t As Single) As Vf2d
+  Public Function CubicBezier(p0 As Vf2d, p1 As Vf2d, p2 As Vf2d, p3 As Vf2d, t As Single) As Vf2d
     Dim u = 1.0F - t
     Dim u3 = u * u * u
     Dim t3 = t * t * t
-    Return start * u3 + control1 * (3.0F * u * u * t) + control2 * (3.0F * u * t * t) + endPt * t3
+    Return p0 * u3 + p1 * (3.0F * u * u * t) + p2 * (3.0F * u * t * t) + p3 * t3
   End Function
 
   Public Function CatmullRom(p0 As Vf2d, p1 As Vf2d, p2 As Vf2d, p3 As Vf2d, t As Single,

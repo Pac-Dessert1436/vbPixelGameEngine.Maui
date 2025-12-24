@@ -87,7 +87,7 @@ End Class
 
 ## Latest Features in `GameMath.vb`
 
-1. **Minkowski Distance**: A generalized distance metric that unifies common distance calculations, which automatically handles Manhattan distance (p=1), Euclidean distance (straight-line distance, p=2), and Chebyshev distance (p=Integer.MaxValue) as special cases, while supporting custom positive order parameters (p>0) for flexible distance measurements between 2D vectors.
+1. **Minkowski Distance**: A generalized distance metric that unifies common distance calculations, which automatically handles Manhattan distance (p=1), Euclidean distance (straight-line distance, p=2), and Chebyshev distance (p=Single.MaxValue) as special cases, while supporting custom positive order parameters (p>0) for flexible distance measurements between 2D vectors.
 2. **Jaccard Similarity & Distance**: Tailored for rectangle overlap analysis, with overloaded support for both floating-point (RectF) and integer (RectI) rectangles. Jaccard similarity quantifies the ratio of overlapping area to union area, while Jaccard distance is conveniently calculated as `1F - Jaccard(rectA, rectB)` (with dedicated `JaccardDist` methods for direct use).
 3. **Basic Scalar Utilities**: Enhanced numerical control with functions like `ClampF` (clamp values to a range), `WrapF` (wrap values within a range), `LerpF` (linear interpolation), `CompareF` (precision-aware floating-point comparison), `RepeatF` (repeat values over a length), and `SmoothStep` (smooth interpolation for transitions/animations).
 4. **Angle Helpers**: Radians-focused tools including `NormalizeAngle` (normalize angles to the [-π, π] range) and `DeltaAngle` (calculate the shortest angular difference between two radians values).
