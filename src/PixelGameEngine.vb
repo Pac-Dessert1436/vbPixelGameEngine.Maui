@@ -2,35 +2,6 @@
 Imports System.Runtime.InteropServices.RuntimeInformation
 Imports System.Threading
 
-' Note: Mac Catalyst and Tizen are currently not the main focus of this project, although 
-'       support for these platforms may be considered in future versions. The code templates 
-'       for Mac Catalyst and Tizen will be retained only to prevent compilation failure.
-
-' ToDo: Adapt the "PixelGameEngine" class to .NET MAUI for cross-platform support (Windows,
-'       Linux, Android, iOS). The core approach is "Inversion of Control (IoC)".
-'
-'       This part is the root-level code of the game engine. Cross-platform interfaces like 
-'       `IPixelRenderer`, `IInputHandler` and so forth will be defined here. Common logic of
-'       the game engine, such as game loop and pixel operation APIs, will also be implemented
-'       in the root-level code.
-'
-'       Interfaces will be implemented for each platform within the Platforms folder. It might
-'       be a good idea to use `SkiaSharp` for Android rendering, and `Microsoft.Maui.Graphics`
-'       for iOS rendering.
-'  
-'       The original code heavily depends on Windows API (for example, Win32 window messages,
-'       OpenGL calls), which is supposed to be replaced with cross-platform alternatives. 
-'       Additional components such as `BitmapFont`, `AudioPlayer` are planned to be added to 
-'       this engine as well.
-'
-'       Even though all pixel-level drawing functions need to be replaced with implementations
-'       using `Microsoft.Maui.Graphics` and `SkiaSharp`, I'm not very familiar with using these
-'       two libraries for pixel-level drawing. After all, I plan to solve this problem by the
-'       end of this year, especially after the Postgraduate Entrance Exam.
-'
-'       If you have any suggestions or guidance, please feel free to let me know. I'll update
-'       the progress on GitHub.
-
 Public Module Singleton
 
   Public Property AtomActive As Boolean
@@ -2886,27 +2857,27 @@ next4:
     Return size * 8
   End Function
 
-  Protected Sub DrawString(pos As Vi2d, text As String)
+  Public Sub DrawString(pos As Vi2d, text As String)
     DrawString(pos.x, pos.y, text, Presets.White, 1)
   End Sub
 
-  Protected Sub DrawString(pos As Vi2d, text As String, col As Pixel, Optional scale As Integer = 1)
+  Public Sub DrawString(pos As Vi2d, text As String, col As Pixel, Optional scale As Integer = 1)
     DrawString(pos.x, pos.y, text, col, scale)
   End Sub
 
-  Protected Sub DrawString(x As Double, y As Double, text As String)
+  Public Sub DrawString(x As Double, y As Double, text As String)
     DrawString(x, y, text, Presets.White, 1)
   End Sub
 
-  Protected Sub DrawString(x As Integer, y As Integer, text As String)
+  Public Sub DrawString(x As Integer, y As Integer, text As String)
     DrawString(x, y, text, Presets.White, 1)
   End Sub
 
-  Protected Sub DrawString(x As Double, y As Double, text As String, col As Pixel, Optional scale As Integer = 1)
+  Public Sub DrawString(x As Double, y As Double, text As String, col As Pixel, Optional scale As Integer = 1)
     DrawString(CInt(x), CInt(y), text, col, scale)
   End Sub
 
-  Protected Sub DrawString(x As Integer, y As Integer, text As String, col As Pixel, Optional scale As Integer = 1)
+  Public Sub DrawString(x As Integer, y As Integer, text As String, col As Pixel, Optional scale As Integer = 1)
 
     Dim sx = 0
     Dim sy = 0
