@@ -144,14 +144,28 @@ Public Module GameMath
     Return ClampF(num - Floor(num / length) * length, 0, length)
   End Function
 
-  Public Function PingPong(num As Single, length As Single) As Single
+  Public Function PingPongF(num As Single, length As Single) As Single
     num = RepeatF(num, length * 2)
     Return length - Abs(num - length)
   End Function
 
-  Public Function SmoothStep(edge0 As Single, edge1 As Single, x As Single) As Single
+  Public Function SmoothStepF(edge0 As Single, edge1 As Single, x As Single) As Single
     Dim t = ClampF((x - edge0) / (edge1 - edge0), 0F, 1.0F)
     Return t * t * (3.0F - 2.0F * t)
+  End Function
+
+  Public Function Repeat(num As Integer, length As Integer) As Integer
+    Return Math.Clamp(num - num \ length * length, 0, length)
+  End Function
+
+  Public Function PingPong(num As Integer, length As Integer) As Integer
+    num = Repeat(num, length * 2)
+    Return length - Math.Abs(num - length)
+  End Function
+
+  Public Function SmoothStep(edge0 As Integer, edge1 As Integer, x As Integer) As Integer
+    Dim t = Math.Clamp((x - edge0) \ (edge1 - edge0), 0, 1)
+    Return t * t * (3 - 2 * t)
   End Function
 #End Region
 
@@ -211,7 +225,7 @@ Public Module GameMath
     Return False
   End Function
 
-#Region "Bezier/spline helpers for curves"
+#Region "Bezier/spline curve tools"
   Public Function QuadraticBezier(p0 As Vf2d, p1 As Vf2d, p2 As Vf2d, t As Single) As Vf2d
     Dim u = 1.0F - t
     Return p0 * (u * u) + p1 * (2.0F * u * t) + p2 * (t * t)
@@ -225,21 +239,24 @@ Public Module GameMath
   End Function
 
   Public Function CatmullRom(p0 As Vf2d, p1 As Vf2d, p2 As Vf2d, p3 As Vf2d, t As Single,
-                             Optional isNormalized As Boolean = False) As Vf2d
-    Dim t2 = t * t
-    Dim t3 = t2 * t
-    Dim res = (p1 * 2.0F) + (p2 - p0) * t + (p0 * 2.0F - p1 * 5.0F + p2 * 4.0F - p3) * t2 +
-      (-p0 + p1 * 3.0F - p2 * 3.0F + p3) * t3
-    Return If(isNormalized, res * 0.5, res)
+                             Optional normalized As Boolean = False) As Vf2d
+    Dim t2 As Single = t * t, t3 As Single = t2 * t
+    Dim scale = If(normalized, 0.5F, 1.0F)
+
+    Dim coeff0 = (-t + 2 * t2 - t3) * scale
+    Dim coeff1 = (2 - 5 * t2 + 3 * t3) * scale
+    Dim coeff2 = (t + 4 * t2 - 3 * t3) * scale
+    Dim coeff3 = (-t2 + t3) * scale
+    Return p0 * coeff0 + (p1 * coeff1) + (p2 * coeff2) + (p3 * coeff3)
   End Function
 
   Public Function Hermite(p0 As Vf2d, t0 As Vf2d, p1 As Vf2d, t1 As Vf2d, t As Single) As Vf2d
-    Dim t2 = t * t, t3 = t2 * t
+    Dim t2 As Single = t * t, t3 As Single = t2 * t
     Dim h00 = 2.0F * t3 - 3.0F * t2 + 1.0F
     Dim h10 = t3 - 2.0F * t2 + t
     Dim h01 = -2.0F * t3 + 3.0F * t2
     Dim h11 = t3 - t2
-    Return p0 * h00 + t0 * h10 + p1 * h01 + t1 * h11
+    Return p0 * h00 + (t0 * h10) + (p1 * h01) + (t1 * h11)
   End Function
 #End Region
 End Module
