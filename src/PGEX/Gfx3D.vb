@@ -326,7 +326,7 @@ Public Class Gfx3D
           If tex_w > m_DepthBuffer(i * Pge.ScreenWidth() + j) Then
             'Pge.Draw(j, i, spr.Sample(tex_u / tex_w, tex_v / tex_w))
             'm_DepthBuffer(i * Pge.ScreenWidth() + j) = tex_w
-            If (Pge.Draw(j, i, If(spr IsNot Nothing, spr.Sample(tex_u / tex_w, tex_v / tex_w), Presets.Gray))) Then
+            If Pge.Draw(j, i, If(spr IsNot Nothing, spr.Sample(tex_u / tex_w, tex_v / tex_w), Presets.Gray)) Then
               m_DepthBuffer(i * Pge.ScreenWidth() + j) = tex_w
             End If
           End If
@@ -391,7 +391,7 @@ Public Class Gfx3D
           If tex_w > m_DepthBuffer(i * Pge.ScreenWidth() + j) Then
             'Pge.Draw(j, i, spr.Sample(tex_u / tex_w, tex_v / tex_w))
             'm_DepthBuffer(i * Pge.ScreenWidth() + j) = tex_w
-            If (Pge.Draw(j, i, If(spr IsNot Nothing, spr.Sample(tex_u / tex_w, tex_v / tex_w), Presets.Gray))) Then
+            If Pge.Draw(j, i, If(spr IsNot Nothing, spr.Sample(tex_u / tex_w, tex_v / tex_w), Presets.Gray)) Then
               m_DepthBuffer(i * Pge.ScreenWidth() + j) = tex_w
             End If
           End If
@@ -847,7 +847,7 @@ Public Class Gfx3D
       matrix.M(0, 0) = aspectRatio * fFovRad
       matrix.M(1, 1) = fFovRad
       matrix.M(2, 2) = far / (far - near)
-      matrix.M(3, 2) = (-far * near) / (far - near)
+      matrix.M(3, 2) = -far * near / (far - near)
       matrix.M(2, 3) = 1.0F
       matrix.M(3, 3) = 0.0F
       Return matrix
@@ -975,7 +975,7 @@ Public Class Gfx3D
 
     Private Shared Function Distance(ByRef p As Vec3d, ByRef plane_n As Vec3d, ByRef plane_p As Vec3d) As Single
       Dim n = Vec_Normalise(p)
-      Return (plane_n.X * p.X + plane_n.Y * p.Y + plane_n.Z * p.Z - Vec_DotProduct(plane_n, plane_p))
+      Return plane_n.X * p.X + plane_n.Y * p.Y + plane_n.Z * p.Z - Vec_DotProduct(plane_n, plane_p)
     End Function
 
     Public Shared Function Triangle_ClipAgainstPlane(ByRef planeP As Vec3d, ByRef planeN As Vec3d, ByRef inTri As Triangle, ByRef outTri1 As Triangle, ByRef outTri2 As Triangle) As Integer
@@ -1488,7 +1488,7 @@ Public Class Gfx3D
 
       ' Process Triangles
       'For Each tri In triangles
-      For tx = nOffset To (nOffset + nCount) - 1
+      For tx = nOffset To nOffset + nCount - 1
 
         Dim tri = triangles(tx)
         Dim triTransformed As New Triangle
@@ -1818,26 +1818,26 @@ Public Class Gfx3D
       Dim dca1_step As Single = 0
       Dim dca2_step As Single = 0
 
-      If dy1 <> 0 Then dax_step = dx1 / CSng(MathF.Abs(dy1))
-      If dy2 <> 0 Then dbx_step = dx2 / CSng(MathF.Abs(dy2))
+      If dy1 <> 0 Then dax_step = dx1 / MathF.Abs(dy1)
+      If dy2 <> 0 Then dbx_step = dx2 / MathF.Abs(dy2)
 
-      If dy1 <> 0 Then du1_step = du1 / CSng(MathF.Abs(dy1))
-      If dy1 <> 0 Then dv1_step = dv1 / CSng(MathF.Abs(dy1))
-      If dy1 <> 0 Then dw1_step = dw1 / CSng(MathF.Abs(dy1))
+      If dy1 <> 0 Then du1_step = du1 / MathF.Abs(dy1)
+      If dy1 <> 0 Then dv1_step = dv1 / MathF.Abs(dy1)
+      If dy1 <> 0 Then dw1_step = dw1 / MathF.Abs(dy1)
 
-      If dy2 <> 0 Then du2_step = du2 / CSng(MathF.Abs(dy2))
-      If dy2 <> 0 Then dv2_step = dv2 / CSng(MathF.Abs(dy2))
-      If dy2 <> 0 Then dw2_step = dw2 / CSng(MathF.Abs(dy2))
+      If dy2 <> 0 Then du2_step = du2 / MathF.Abs(dy2)
+      If dy2 <> 0 Then dv2_step = dv2 / MathF.Abs(dy2)
+      If dy2 <> 0 Then dw2_step = dw2 / MathF.Abs(dy2)
 
-      If dy1 <> 0 Then dcr1_step = dcr1 / CSng(MathF.Abs(dy1))
-      If dy1 <> 0 Then dcg1_step = dcg1 / CSng(MathF.Abs(dy1))
-      If dy1 <> 0 Then dcb1_step = dcb1 / CSng(MathF.Abs(dy1))
-      If dy1 <> 0 Then dca1_step = dca1 / CSng(MathF.Abs(dy1))
+      If dy1 <> 0 Then dcr1_step = dcr1 / MathF.Abs(dy1)
+      If dy1 <> 0 Then dcg1_step = dcg1 / MathF.Abs(dy1)
+      If dy1 <> 0 Then dcb1_step = dcb1 / MathF.Abs(dy1)
+      If dy1 <> 0 Then dca1_step = dca1 / MathF.Abs(dy1)
 
-      If dy2 <> 0 Then dcr2_step = dcr2 / CSng(MathF.Abs(dy2))
-      If dy2 <> 0 Then dcg2_step = dcg2 / CSng(MathF.Abs(dy2))
-      If dy2 <> 0 Then dcb2_step = dcb2 / CSng(MathF.Abs(dy2))
-      If dy2 <> 0 Then dca2_step = dca2 / CSng(MathF.Abs(dy2))
+      If dy2 <> 0 Then dcr2_step = dcr2 / MathF.Abs(dy2)
+      If dy2 <> 0 Then dcg2_step = dcg2 / MathF.Abs(dy2)
+      If dy2 <> 0 Then dcb2_step = dcb2 / MathF.Abs(dy2)
+      If dy2 <> 0 Then dca2_step = dca2 / MathF.Abs(dy2)
 
       'Dim pixel_r = 0.0F
       'Dim pixel_g = 0.0F

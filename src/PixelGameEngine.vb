@@ -1485,48 +1485,48 @@ Public MustInherit Class PixelGameEngine
 
     <Flags()>
     Public Enum XWindowAttributeFlags
-      CWBackPixel = (1 << 1)
-      CWBorderPixmap = (1 << 2)
-      CWBorderPixel = (1 << 3)
-      CWBitGravity = (1 << 4)
-      CWWinGravity = (1 << 5)
-      CWBackingStore = (1 << 6)
-      CWBackingPlanes = (1 << 7)
-      CWBackingPixel = (1 << 8)
-      CWOverrideRedirect = (1 << 9)
-      CWSaveUnder = (1 << 10)
-      CWEventMask = (1 << 11)
-      CWDontPropagate = (1 << 12)
-      CWColormap = (1 << 13)
-      CWCursor = (1 << 14)
+      CWBackPixel = 1 << 1
+      CWBorderPixmap = 1 << 2
+      CWBorderPixel = 1 << 3
+      CWBitGravity = 1 << 4
+      CWWinGravity = 1 << 5
+      CWBackingStore = 1 << 6
+      CWBackingPlanes = 1 << 7
+      CWBackingPixel = 1 << 8
+      CWOverrideRedirect = 1 << 9
+      CWSaveUnder = 1 << 10
+      CWEventMask = 1 << 11
+      CWDontPropagate = 1 << 12
+      CWColormap = 1 << 13
+      CWCursor = 1 << 14
     End Enum
 
     <Flags()>
     Public Enum XEventMask
-      KeyPressMask = (1 << 0)
-      KeyReleaseMask = (1 << 1)
-      ButtonPressMask = (1 << 2)
-      ButtonReleaseMask = (1 << 3)
-      EnterWindowMask = (1 << 4)
-      LeaveWindowMask = (1 << 5)
-      PointerMotionMask = (1 << 6)
-      PointerMotionHintMask = (1 << 7)
-      Button1MotionMask = (1 << 8)
-      Button2MotionMask = (1 << 9)
-      Button3MotionMask = (1 << 10)
-      Button4MotionMask = (1 << 11)
-      Button5MotionMask = (1 << 12)
-      ButtonMotionMask = (1 << 13)
-      KeymapStateMask = (1 << 14)
-      ExposureMask = (1 << 15)
-      VisibilityChangeMask = (1 << 16)
-      StructureNotifyMask = (1 << 17)
-      ResizeRedirectMask = (1 << 18)
-      SubstructureNotifyMask = (1 << 19)
-      SubstructureRedirectMask = (1 << 20)
-      FocusChangeMask = (1 << 21)
-      PropertyChangeMask = (1 << 22)
-      ColormapChangeMask = (1 << 23)
+      KeyPressMask = 1 << 0
+      KeyReleaseMask = 1 << 1
+      ButtonPressMask = 1 << 2
+      ButtonReleaseMask = 1 << 3
+      EnterWindowMask = 1 << 4
+      LeaveWindowMask = 1 << 5
+      PointerMotionMask = 1 << 6
+      PointerMotionHintMask = 1 << 7
+      Button1MotionMask = 1 << 8
+      Button2MotionMask = 1 << 9
+      Button3MotionMask = 1 << 10
+      Button4MotionMask = 1 << 11
+      Button5MotionMask = 1 << 12
+      ButtonMotionMask = 1 << 13
+      KeymapStateMask = 1 << 14
+      ExposureMask = 1 << 15
+      VisibilityChangeMask = 1 << 16
+      StructureNotifyMask = 1 << 17
+      ResizeRedirectMask = 1 << 18
+      SubstructureNotifyMask = 1 << 19
+      SubstructureRedirectMask = 1 << 20
+      FocusChangeMask = 1 << 21
+      PropertyChangeMask = 1 << 22
+      ColormapChangeMask = 1 << 23
     End Enum
 
 #End Region
@@ -1837,7 +1837,7 @@ Public MustInherit Class PixelGameEngine
     Get
       If IsOSPlatform(OSPlatform.Windows) Then
         Dim currentStyle = Win32.GetWindowLong(m_hWnd, GWL_STYLE)
-        Return Not ((currentStyle And WS_OVERLAPPEDWINDOW) = WS_OVERLAPPEDWINDOW)
+        Return Not (currentStyle And WS_OVERLAPPEDWINDOW) = WS_OVERLAPPEDWINDOW
       Else
         'Throw New NotImplementedException()
       End If
@@ -1854,7 +1854,7 @@ Public MustInherit Class PixelGameEngine
 
       ' Check if the window is currently in full screen mode
       'Dim isFullScreen = (currentStyle And WS_POPUP) = WS_POPUP
-      Dim isFullScreen = Not ((currentStyle And WS_OVERLAPPEDWINDOW) = WS_OVERLAPPEDWINDOW)
+      Dim isFullScreen = Not (currentStyle And WS_OVERLAPPEDWINDOW) = WS_OVERLAPPEDWINDOW
 
       If isFullScreen Then
         ' Restore to normal window
@@ -2192,7 +2192,7 @@ Public MustInherit Class PixelGameEngine
 
     If m_pixelMode = Pixel.Mode.Alpha Then
       Dim d = m_drawTarget.GetPixel(x, y)
-      Dim a = (p.A / 255.0F) * m_blendFactor
+      Dim a = p.A / 255.0F * m_blendFactor
       Dim c = 1.0F - a
       Dim r = a * p.R + c * d.R
       Dim g = a * p.G + c * d.G
@@ -3005,7 +3005,7 @@ next4:
       ElseIf c = vbTab Then
         sx += 8 * m_tabSizeInSpaces * scale
       Else
-        Dim ch = (Asc(c) - 32)
+        Dim ch = Asc(c) - 32
         Dim ox = ch Mod 16
         Dim oy = ch \ 16
         If scale > 1 Then
@@ -3210,8 +3210,8 @@ next4:
     x -= m_viewX
     y -= m_viewY
 
-    m_mousePosXcache = CInt(Fix((x / (m_windowWidth - (m_viewX * 2))) * m_screenWidth))
-    m_mousePosYcache = CInt(Fix((y / (m_windowHeight - (m_viewY * 2))) * m_screenHeight))
+    m_mousePosXcache = CInt(Fix(x / (m_windowWidth - (m_viewX * 2)) * m_screenWidth))
+    m_mousePosYcache = CInt(Fix(y / (m_windowHeight - (m_viewY * 2)) * m_screenHeight))
 
     If m_mousePosXcache >= m_screenWidth Then m_mousePosXcache = m_screenWidth - 1
     If m_mousePosYcache >= m_screenHeight Then m_mousePosYcache = m_screenHeight - 1
@@ -4174,8 +4174,8 @@ next4:
   Protected Sub Fill(x1 As Integer, y1 As Integer, x2 As Integer, y2 As Integer, dummy As PixelType, c As Color)
     If dummy = PixelType.Half Then
     End If
-    Dim w = (x2 - x1) + 1
-    Dim h = (y2 - y1) + 1
+    Dim w = x2 - x1 + 1
+    Dim h = y2 - y1 + 1
     FillRect(x1, y1, w, h, ConsoleColor2PixelColor(c))
   End Sub
 

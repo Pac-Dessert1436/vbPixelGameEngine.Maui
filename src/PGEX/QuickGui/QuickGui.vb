@@ -772,7 +772,7 @@ Namespace QuickGui
       Slider = New Slider(Group,
                           New Vf2d(pos.x + size.x - m_manager.GrabRadius - 1, pos.y + m_manager.GrabRadius + 1),
                           New Vf2d(pos.x + size.x - m_manager.GrabRadius - 1, pos.y + size.y - m_manager.GrabRadius - 1),
-                          0, CSng(list.Count), 0)
+                          0, list.Count, 0)
     End Sub
 
     ''' <summary>
@@ -829,7 +829,7 @@ Namespace QuickGui
 
       SelectionChanged = SelectedItem <> PreviouslySelectedItem
 
-      Slider.Maximum = CSng(List.Count)
+      Slider.Maximum = List.Count
       Group.Update(pge)
 
     End Sub

@@ -121,7 +121,7 @@
   End Function
 
   Public Function DistToLineSeg(a As Vi2d, b As Vi2d) As Integer
-    Return CInt(Fix(Dist(Me, LineSegProj(a, b))))
+    Return Fix(Dist(Me, LineSegProj(a, b)))
   End Function
 
   Public Shared Operator +(left As Vi2d, right As Vi2d) As Vi2d
@@ -201,11 +201,11 @@
   End Operator
 
   Public Shared Operator =(left As Vi2d, right As Vi2d) As Boolean
-    Return (left.x = right.x AndAlso left.y = right.y)
+    Return left.x = right.x AndAlso left.y = right.y
   End Operator
 
   Public Shared Operator <>(left As Vi2d, right As Vi2d) As Boolean
-    Return (left.x <> right.x OrElse left.y <> right.y)
+    Return left.x <> right.x OrElse left.y <> right.y
   End Operator
 
   Public Function Str() As String

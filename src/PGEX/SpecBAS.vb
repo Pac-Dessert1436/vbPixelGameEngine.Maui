@@ -732,7 +732,7 @@
   ''' <param name="mMax"></param>
   ''' <returns></returns>
   Public Shared Function MAP(n As Single, rMin As Single, rMax As Single, mMin As Single, mMax As Single) As Single
-    Return (((n - rMin) / (rMax - rMin)) * (mMax - mMin)) + mMin
+    Return ((n - rMin) / (rMax - rMin) * (mMax - mMin)) + mMin
   End Function
 
   Public Shared Sub PLOT(x As Double, y As Double)
@@ -793,7 +793,7 @@
   End Function
 
   Public Shared Function MSECS() As Integer
-    Return CInt(Fix((Microsoft.VisualBasic.DateAndTime.Timer * 1000)))
+    Return CInt(Fix(Microsoft.VisualBasic.DateAndTime.Timer * 1000))
   End Function
 
 End Class

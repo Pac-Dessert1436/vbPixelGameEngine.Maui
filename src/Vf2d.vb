@@ -23,7 +23,7 @@
 
   Public Function Norm() As Vf2d
     Dim m = Mag()
-    Dim r = If(m <> 0, CSng(1 / m), 0)
+    Dim r = If(m <> 0, 1 / m, 0)
     Return New Vf2d(x * r, y * r)
   End Function
 
@@ -178,11 +178,11 @@
   End Operator
 
   Public Shared Operator =(left As Vf2d, right As Vf2d) As Boolean
-    Return (left.x = right.x AndAlso left.y = right.y)
+    Return left.x = right.x AndAlso left.y = right.y
   End Operator
 
   Public Shared Operator <>(left As Vf2d, right As Vf2d) As Boolean
-    Return (left.x <> right.x OrElse left.y <> right.y)
+    Return left.x <> right.x OrElse left.y <> right.y
   End Operator
 
   Public Function Str() As String

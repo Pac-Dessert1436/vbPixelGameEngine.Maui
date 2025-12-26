@@ -89,10 +89,10 @@ Public Structure Pixel
 #End Region
 
   Public Shared Function FromRgb(rgb As UInteger) As Pixel
-    Dim a1 = CByte((rgb And &HFF))
-    Dim b1 = CByte(((rgb >> 8) And &HFF))
-    Dim g1 = CByte(((rgb >> 16) And &HFF))
-    Dim r1 = CByte(((rgb >> 24) And &HFF))
+    Dim a1 = CByte(rgb And &HFF)
+    Dim b1 = CByte((rgb >> 8) And &HFF)
+    Dim g1 = CByte((rgb >> 16) And &HFF)
+    Dim r1 = CByte((rgb >> 24) And &HFF)
     Return New Pixel(r1, g1, b1, a1)
   End Function
 
@@ -168,7 +168,7 @@ Public Structure Pixel
   End Operator
 
   Public Shared Operator <>(a1 As Pixel, b1 As Pixel) As Boolean
-    Return Not (a1 = b1)
+    Return Not a1 = b1
   End Operator
 
   Public Shared Widening Operator CType(p As Presets) As Pixel

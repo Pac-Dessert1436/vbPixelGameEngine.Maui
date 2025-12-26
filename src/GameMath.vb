@@ -1,3 +1,5 @@
+Imports System.MathF
+
 Public Module GameMath
 
   Private m_rnd As New Random
@@ -43,16 +45,16 @@ Public Module GameMath
     If p <= 0 Then Throw New ArgumentException(
       "Minkowski distance requires a positive order parameter (p > 0).", NameOf(p))
 
-    Dim absDiffX = MathF.Abs(vec1.x - vec2.x)
-    Dim absDiffY = MathF.Abs(vec1.y - vec2.y)
+    Dim absDiffX = Abs(vec1.x - vec2.x)
+    Dim absDiffY = Abs(vec1.y - vec2.y)
     ' Handle special cases for p=1 (Manhattan), p=2 (Euclidean) and p->inf (Chebyshev).
     Select Case p
       Case 1
         Return absDiffX + absDiffY
       Case 2
-        Return MathF.Sqrt(absDiffX * absDiffX + absDiffY * absDiffY)
+        Return Sqrt(absDiffX * absDiffX + absDiffY * absDiffY)
       Case Integer.MaxValue
-        Return MathF.Max(absDiffX, absDiffY)
+        Return Max(absDiffX, absDiffY)
       Case Else  ' General formula for Minkowski distance
         Return CSng((absDiffX ^ p + absDiffY ^ p) ^ (1 / p))
     End Select
@@ -62,17 +64,17 @@ Public Module GameMath
     If p <= 0 Then Throw New ArgumentException(
       "Minkowski distance requires a positive order parameter (p > 0).", NameOf(p))
 
-    Dim absDiffX = MathF.Abs(vec1.x - vec2.x)
-    Dim absDiffY = MathF.Abs(vec1.y - vec2.y)
+    Dim absDiffX = Abs(vec1.x - vec2.x)
+    Dim absDiffY = Abs(vec1.y - vec2.y)
     Dim res As Single
     ' Handle special cases for p=1 (Manhattan), p=2 (Euclidean) and p->inf (Chebyshev).
     Select Case p
       Case 1
         res = absDiffX + absDiffY
       Case 2
-        res = MathF.Sqrt(absDiffX * absDiffX + absDiffY * absDiffY)
+        res = Sqrt(absDiffX * absDiffX + absDiffY * absDiffY)
       Case Single.MaxValue
-        res = MathF.Max(absDiffX, absDiffY)
+        res = Max(absDiffX, absDiffY)
       Case Else  ' General formula for Minkowski distance
         res = CSng((absDiffX ^ p + absDiffY ^ p) ^ (1 / p))
     End Select
@@ -135,16 +137,16 @@ Public Module GameMath
   End Function
 
   Public Function CompareF(left As Single, right As Single, Optional orderOfMag As Integer = 6) As Boolean
-    Return MathF.Abs(left - right) <= MathF.Pow(10.0F, -orderOfMag)
+    Return Abs(left - right) <= Pow(10.0F, -orderOfMag)
   End Function
 
   Public Function RepeatF(num As Single, length As Single) As Single
-    Return ClampF(num - MathF.Floor(num / length) * length, 0, length)
+    Return ClampF(num - Floor(num / length) * length, 0, length)
   End Function
 
   Public Function PingPong(num As Single, length As Single) As Single
     num = RepeatF(num, length * 2)
-    Return length - MathF.Abs(num - length)
+    Return length - Abs(num - length)
   End Function
 
   Public Function SmoothStep(edge0 As Single, edge1 As Single, x As Single) As Single
@@ -155,10 +157,9 @@ Public Module GameMath
 
 #Region "Angle helpers measured in radians"
   Public Function NormalizeAngle(rad As Single) As Single
-    Dim twoPI = MathF.PI * 2.0F
-    Dim r = rad Mod twoPI
-    If r <= -MathF.PI Then r += twoPI
-    If r > MathF.PI Then r -= twoPI
+    Dim r = rad Mod Tau
+    If r <= -PI Then r += Tau
+    If r > PI Then r -= Tau
     Return r
   End Function
 
@@ -170,8 +171,8 @@ Public Module GameMath
   <Runtime.CompilerServices.Extension>
   Public Function MoveTowards(current As Single, target As Single, maxDelta As Single) As Single
     Dim diff = target - current
-    If MathF.Abs(diff) <= maxDelta Then Return target
-    Return current + MathF.Sign(diff) * maxDelta
+    If Abs(diff) <= maxDelta Then Return target
+    Return current + Sign(diff) * maxDelta
   End Function
 
   <Runtime.CompilerServices.Extension>
@@ -196,7 +197,7 @@ Public Module GameMath
     Dim rxs = r.CrossF(s)
     Dim qp = b1 - a1
     Dim qpxr = qp.CrossF(r)
-    If MathF.Abs(rxs) < 0.000001F Then
+    If Abs(rxs) < 0.000001F Then
       i = New Vf2d(0, 0)
       Return False
     End If
