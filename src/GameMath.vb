@@ -228,14 +228,20 @@ Public Module GameMath
 #Region "Bezier/spline curve tools"
   Public Function QuadraticBezier(p0 As Vf2d, p1 As Vf2d, p2 As Vf2d, t As Single) As Vf2d
     Dim u = 1.0F - t
-    Return p0 * (u * u) + p1 * (2.0F * u * t) + p2 * (t * t)
+    Return New Vf2d(
+      x:=p0.x * (u * u) + p1.x * (2.0F * u * t) + p2.x * (t * t),
+      y:=p0.y * (u * u) + p1.y * (2.0F * u * t) + p2.y * (t * t)
+    )
   End Function
 
   Public Function CubicBezier(p0 As Vf2d, p1 As Vf2d, p2 As Vf2d, p3 As Vf2d, t As Single) As Vf2d
     Dim u = 1.0F - t
     Dim u3 = u * u * u
     Dim t3 = t * t * t
-    Return p0 * u3 + p1 * (3.0F * u * u * t) + p2 * (3.0F * u * t * t) + p3 * t3
+    Return New Vf2d(
+      x:=p0.x * u3 + p1.x * (3.0F * u * u * t) + p2.x * (3.0F * u * t * t) + p3.x * t3,
+      y:=p0.y * u3 + p1.y * (3.0F * u * u * t) + p2.y * (3.0F * u * t * t) + p3.y * t3
+    )
   End Function
 
   Public Function CatmullRom(p0 As Vf2d, p1 As Vf2d, p2 As Vf2d, p3 As Vf2d, t As Single,
@@ -247,7 +253,10 @@ Public Module GameMath
     Dim coeff1 = (2 - 5 * t2 + 3 * t3) * scale
     Dim coeff2 = (t + 4 * t2 - 3 * t3) * scale
     Dim coeff3 = (-t2 + t3) * scale
-    Return p0 * coeff0 + (p1 * coeff1) + (p2 * coeff2) + (p3 * coeff3)
+    Return New Vf2d(
+      x:=p0.x * coeff0 + p1.x * coeff1 + p2.x * coeff2 + p3.x * coeff3,
+      y:=p0.y * coeff0 + p1.y * coeff1 + p2.y * coeff2 + p3.y * coeff3
+    )
   End Function
 
   Public Function Hermite(p0 As Vf2d, t0 As Vf2d, p1 As Vf2d, t1 As Vf2d, t As Single) As Vf2d
@@ -256,7 +265,10 @@ Public Module GameMath
     Dim h10 = t3 - 2.0F * t2 + t
     Dim h01 = -2.0F * t3 + 3.0F * t2
     Dim h11 = t3 - t2
-    Return p0 * h00 + (t0 * h10) + (p1 * h01) + (t1 * h11)
+    Return New Vf2d(
+      x:=p0.x * h00 + t0.x * h10 + p1.x * h01 + t1.x * h11,
+      y:=p0.y * h00 + t0.y * h10 + p1.y * h01 + t1.y * h11
+    )
   End Function
 #End Region
 End Module
