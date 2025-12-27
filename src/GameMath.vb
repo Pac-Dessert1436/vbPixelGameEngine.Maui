@@ -1,9 +1,12 @@
 Imports System.MathF
 
 Public Module GameMath
-
   Private m_rnd As New Random
   Private m_seed As Integer
+
+  Private Sub UpdateRNG()
+    m_rnd = New Random(m_seed)
+  End Sub
 
   Public Property RandomSeed As Integer
     Get
@@ -11,16 +14,17 @@ Public Module GameMath
     End Get
     Set(value As Integer)
       m_seed = value
-      m_rnd = New Random(value)
+      UpdateRNG()
     End Set
   End Property
 
   Sub New()
-    m_seed = Environment.TickCount
+    RefreshRandom()
   End Sub
 
   Public Sub RefreshRandom()
-    m_rnd = New Random
+    m_seed = Environment.TickCount
+    UpdateRNG()
   End Sub
 
   Public Function RandomByte() As Byte
@@ -53,14 +57,14 @@ Public Module GameMath
         Return absDiffX + absDiffY
       Case 2
         Return Sqrt(absDiffX * absDiffX + absDiffY * absDiffY)
-      Case Integer.MaxValue
+      Case Single.MaxValue
         Return Max(absDiffX, absDiffY)
       Case Else  ' General formula for Minkowski distance
         Return CSng((absDiffX ^ p + absDiffY ^ p) ^ (1 / p))
     End Select
   End Function
 
-  Public Function MinkoDist(vec1 As Vi2d, vec2 As Vi2d, p As Single) As Single
+  Public Function MinkoDist(vec1 As Vi2d, vec2 As Vi2d, p As Single) As Integer
     If p <= 0 Then Throw New ArgumentException(
       "Minkowski distance requires a positive order parameter (p > 0).", NameOf(p))
 
