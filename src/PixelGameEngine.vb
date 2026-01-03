@@ -12,7 +12,18 @@ End Module
 
 Public MustInherit Class PixelGameEngine
 
-#Region "Win32"
+  Private m_renderer As SkiaSharpRenderer
+
+  Public Sub SetRenderer(renderer As SkiaSharpRenderer)
+    m_renderer = renderer
+  End Sub
+
+  Public Function Update(elapsedTime As Single) As Boolean
+    ' Update game state
+    Return OnUserUpdate(elapsedTime)
+  End Function
+
+#Region "Deprecated Win32 - Will be removed"
 
 #Region "Win32 - Const"
 
@@ -1638,6 +1649,20 @@ Public MustInherit Class PixelGameEngine
   'Private m_mousePosX As Integer
   'Private m_mousePosY As Integer
   Private m_mousePos As Vi2d
+  
+  ' MAUI-specific mouse control methods
+  Public Sub SetMousePosition(x As Integer, y As Integer)
+    m_mousePos.x = x
+    m_mousePos.y = y
+    m_mousePosXcache = x
+    m_mousePosYcache = y
+  End Sub
+  
+  Public Sub SetMouseButtonState(button As Integer, pressed As Boolean)
+    If button >= 0 AndAlso button < m_mouseNewState.Length Then
+      m_mouseNewState(button) = pressed
+    End If
+  End Sub
   Private m_mouseWheelDelta As Integer
   Private m_mouseWheelDeltaCache As Integer
   Private m_viewX As Integer
