@@ -3,9 +3,9 @@
     <OptionStrict>On</OptionStrict>
     <OptionInfer>On</OptionInfer>
     <RootNamespace>VbPixelGameEngine.Maui</RootNamespace>
-    <CheckEolWorkloads>false</CheckEolWorkloads>
-    <TargetFrameworks>net8.0-android;net8.0-ios;net8.0-maccatalyst</TargetFrameworks>
-    <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);net8.0-windows10.0.19041.0</TargetFrameworks>
+    <!-- <CheckEolWorkloads>false</CheckEolWorkloads> -->
+    <TargetFrameworks>net9.0-android</TargetFrameworks> <!--net9.0-ios;net9.0-maccatalyst-->
+    <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);net9.0-windows10.0.19041.0</TargetFrameworks>
     <!-- Uncomment to also build the tizen app. You will need to install tizen by following this: https://github.com/Samsung/Tizen.NET -->
     <!-- <TargetFrameworks>$(TargetFrameworks);net8.0-tizen</TargetFrameworks> -->
     <UseMaui>true</UseMaui>
@@ -21,9 +21,13 @@
     <DefaultItemExcludes>$(DefaultItemExcludes);$(ProjectDir)**\*.cs</DefaultItemExcludes>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.Maui.Controls" Version="8.0.*" />
-    <PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="8.0.*" />
-    <PackageReference Include="SixLabors.ImageSharp" Version="3.1.10" />
+    <PackageReference Include="Microsoft.Maui.Controls" Version="9.0.120" />
+    <PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="9.0.120" />
+    <PackageReference Include="SixLabors.ImageSharp" Version="3.1.12" />
+    <PackageReference Include="SkiaSharp" Version="3.119.1" />
     <PackageReference Include="SkiaSharp.Views.Maui.Controls" Version="3.119.1" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)' == 'net9.0-android' or '$(TargetFramework)' == 'net9.0-windows10.0.19041.0'">
+    <PackageReference Include="GlobalKeyboardCapture.Maui" Version="1.0.2" />
   </ItemGroup>
 </Project>

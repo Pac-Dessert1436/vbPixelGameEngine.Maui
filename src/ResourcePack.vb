@@ -2,8 +2,8 @@
 Imports System.Runtime.InteropServices
 
 '=============================================================
-' Resource Packs - Allows you to store files in one large 
-' scrambled file - Thanks MaGetzUb for debugging a null char in std:stringstream bug
+' Resource Packs - Allows you to store files in one large scrambled file -
+' Thanks MaGetzUb for debugging a null char in std:stringstream bug
 Public Class ResourcePack
 
   Private Structure ResourceFile
@@ -47,10 +47,10 @@ Public Class ResourcePack
 
     ' 1) Read Scrambled index
     Dim indexSize As Integer = 0
-    m_baseFile.Read(BitConverter.GetBytes(indexSize), 0, 4)
+    m_baseFile.ReadExactly(BitConverter.GetBytes(indexSize), 0, 4)
 
     Dim buffer(indexSize - 1) As Byte
-    m_baseFile.Read(buffer, 0, indexSize)
+    m_baseFile.ReadExactly(buffer, 0, indexSize)
 
     Dim decoded = Scramble(buffer, key)
     Dim pos As Integer = 0
@@ -139,7 +139,7 @@ Public Class ResourcePack
       ' Load the file to be added
       Dim vBuffer(e.Size - 1) As Byte
       Using i = New System.IO.FileStream(pair.Key, IO.FileMode.Open)
-        i.Read(vBuffer, 0, e.Size)
+        i.ReadExactly(vBuffer, 0, e.Size)
       End Using
 
       ' Write the loaded file into resource pack file
