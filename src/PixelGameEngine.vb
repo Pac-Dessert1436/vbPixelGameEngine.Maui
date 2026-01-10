@@ -336,7 +336,7 @@ Public MustInherit Class PixelGameEngine
   Private m_KeyboardMap As List(Of Tuple(Of Key, String, String))
 
   Protected Friend Sub New()
-    AppName = "Undefined"
+    Title = "Undefined"
     Singleton.Pge = Me
   End Sub
 
@@ -1699,22 +1699,10 @@ next4:
     Return CShort(v >> 16)
   End Function
 
-  Public Shared Sub Swap(ByRef a As Integer, ByRef b As Integer)
-    Dim t = a
-    a = b
-    b = t
-  End Sub
-
-  Public Shared Sub Swap(ByRef a As Single, ByRef b As Single)
-    Dim t = a
-    a = b
-    b = t
-  End Sub
-
-  Public Shared Sub Swap(ByRef p1 As Pixel, ByRef p2 As Pixel)
-    Dim n = p1.N
-    p1.N = p2.N
-    p2.N = n
+  Private Shared Sub Swap(Of T)(ByRef left As T, ByRef right As T)
+    Dim temp = left
+    left = right
+    right = temp
   End Sub
 
 #End Region

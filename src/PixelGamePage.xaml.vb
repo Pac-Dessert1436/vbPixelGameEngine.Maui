@@ -114,7 +114,7 @@ Public Class PixelGameView
     Dispatcher.Dispatch(AddressOf InvalidateSurface)
   End Sub
 
-  Protected Sub OnDisappearing()
+  Protected Overrides Sub Finalize()
     Timer.Stop()
     Timer.Dispose()
   End Sub
