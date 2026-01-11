@@ -1,6 +1,5 @@
 Imports System.IO
-Imports SixLabors.ImageSharp
-Imports SixLabors.ImageSharp.PixelFormats
+Imports SkiaSharp
 
 Public Class Sprite
 
@@ -103,40 +102,51 @@ Public Class Sprite
     If String.IsNullOrWhiteSpace(imageFile) Then Return PixelGameEngine.RCode.Ok
 
     Try
+      Dim bitmap As SKBitmap = Nothing
+
       If pack IsNot Nothing Then
         Dim rb = pack.GetFileBuffer(imageFile)
         If rb.Data Is Nothing Then Return PixelGameEngine.RCode.NoFile
         Using ms As New MemoryStream(rb.Data)
-          Using img As Image(Of Rgba32) = Image.Load(Of Rgba32)(ms)
-            Width = img.Width
-            Height = img.Height
-            m_pixelColData = New Pixel(Width * Height - 1) {}
-            ProcessImagePixels(img)
-          End Using
+          ' Load image from memory stream
+          bitmap = SKBitmap.Decode(ms)
         End Using
       Else
-        Using img As Image(Of Rgba32) = Image.Load(Of Rgba32)(imageFile)
-          Width = img.Width
-          Height = img.Height
-          m_pixelColData = New Pixel(Width * Height - 1) {}
-          ProcessImagePixels(img)
-        End Using
+        ' Load image from local file
+        bitmap = SKBitmap.Decode(imageFile)
       End If
+
+      ' Validate bitmap loading
+      If bitmap Is Nothing Then Return PixelGameEngine.RCode.Fail
+
+      ' Set width and height
+      Width = bitmap.Width
+      Height = bitmap.Height
+      m_pixelColData = New Pixel(Width * Height - 1) {}
+
+      ' Process SkiaSharp pixel data into custom Pixel array
+      Dim pixels = bitmap.PeekPixels().GetPixelSpan()
+
+      For y = 0 To Height - 1
+        For x = 0 To Width - 1
+          Dim byteIdx = y * Width + x
+          Dim red = pixels(byteIdx + 2)
+          Dim green = pixels(byteIdx + 1)
+          Dim blue = pixels(byteIdx)
+          Dim alpha = pixels(byteIdx + 3)
+          SetPixel(x, y, New Pixel(red, green, blue, alpha))
+        Next
+      Next
+
+      ' Release SkiaSharp bitmap resource to avoid memory leaks
+      bitmap.Dispose()
+
       Return PixelGameEngine.RCode.Ok
     Catch ex As Exception
       Return PixelGameEngine.RCode.Fail
     End Try
 
   End Function
-
-  Private Sub ProcessImagePixels(image As Image(Of Rgba32))
-    For y = 0 To Height - 1
-      For x = 0 To Width - 1
-        Dim color = image(x, y)
-        SetPixel(x, y, New Pixel(color.R, color.G, color.B, color.A))
-      Next
-    Next
-  End Sub
 
   Public Function SetPixel(x As Integer, y As Integer, p As Pixel) As Boolean
     If x >= 0 AndAlso x < Width AndAlso y >= 0 AndAlso y < Height Then
