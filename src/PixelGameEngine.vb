@@ -10,6 +10,7 @@ Public Module Singleton
 End Module
 
 Public MustInherit Class PixelGameEngine
+  Implements IDisposable
 
   Private m_renderer As SkiaSharpRenderer
 
@@ -23,7 +24,7 @@ Public MustInherit Class PixelGameEngine
   End Function
 
   Public Delegate Function PixelModeDelegate(x As Integer, y As Integer, p1 As Pixel, p2 As Pixel) As Pixel
-  Private funcPixelMode As PixelModeDelegate
+  Private m_funcPixelMode As PixelModeDelegate
 
   Protected Property Title As String
 
@@ -585,7 +586,7 @@ Public MustInherit Class PixelGameEngine
     End If
 
     If m_pixelMode = Pixel.Mode.Custom Then
-      Return m_drawTarget.SetPixel(x, y, funcPixelMode(x, y, p, m_drawTarget.GetPixel(x, y)))
+      Return m_drawTarget.SetPixel(x, y, m_funcPixelMode(x, y, p, m_drawTarget.GetPixel(x, y)))
     End If
 
     Return False
@@ -1433,7 +1434,7 @@ next4:
   End Property
 
   Public Sub SetPixelMode(pixelMode As PixelModeDelegate)
-    funcPixelMode = pixelMode
+    m_funcPixelMode = pixelMode
     m_pixelMode = Pixel.Mode.Custom
   End Sub
 
@@ -1543,15 +1544,37 @@ next4:
   Public Overridable Sub OnTextEntryComplete(text As String)
   End Sub
 
-  Protected Overridable Function OnUserCreate() As Boolean
-    Return True
-  End Function
-
+  Protected MustOverride Function OnUserCreate() As Boolean
   Protected MustOverride Function OnUserUpdate(elapsedTime As Single) As Boolean
+  Protected MustOverride Function OnUserRender() As Boolean
+  Protected MustOverride Function OnUserDestroy() As Boolean
 
-  Protected Overridable Function OnUserDestroy() As Boolean
-    Return True
-  End Function
+  Private _isDisposed As Boolean = False
+  Protected Overridable Sub Dispose(disposing As Boolean)
+    If Not _isDisposed Then
+      Try
+        If disposing Then
+          ' TODO: dispose managed state (managed objects)
+          Debug.WriteLineIf(Not OnUserDestroy(), "[ENGINE WARNING] Some resources failed to dispose.")
+        End If
+
+        ' TODO: free unmanaged resources (unmanaged objects) and override finalizer
+        ' TODO: set large fields to null
+      Finally
+        _isDisposed = True
+      End Try
+    End If
+  End Sub
+
+  Protected Overrides Sub Finalize()
+    Dispose(disposing:=False)
+    MyBase.Finalize()
+  End Sub
+
+  Public Sub Dispose() Implements IDisposable.Dispose
+    Dispose(disposing:=True)
+    GC.SuppressFinalize(Me)
+  End Sub
 
   Private Sub Pge_UpdateViewport()
 
