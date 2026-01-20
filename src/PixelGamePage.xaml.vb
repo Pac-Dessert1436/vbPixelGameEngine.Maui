@@ -3,7 +3,7 @@ Imports SkiaSharp.Views.Maui.Controls
 Imports SkiaSharp.Views.Maui
 Imports GlobalKeyboardCapture.Maui.Core.Models
 
-Public Class PixelGamePage
+Partial Public Class PixelGamePage
   Inherits ContentPage
 
   Public Sub New()

@@ -4,7 +4,7 @@
 
 `vbPixelGameEngine.Maui` is a cross-platform pixel game engine written in VB.NET, ported from the original [vbPixelGameEngine](https://github.com/DualBrain/vbPixelGameEngine) developed by [@DualBrain](https://github.com/DualBrain). This port aims to make full use of .NET MAUI to create a unified, cross-platform game development framework that runs on Windows, Android, iOS, and MacCatalyst.
 
-- **Current Framework**: .NET 9.0 with MAUI
+- **Current Framework**: .NET 10.0 with MAUI
 - **Rendering**: Transitioning from platform-specific OpenGL to SkiaSharp
 - **Input Handling**: Adapted for MAUI event system
 - **API Design**: Simplified, MonoGame-inspired architecture with VB.NET-friendly syntax
@@ -44,7 +44,7 @@ The engine follows a clean, modular design:
 
 ### Prerequisites
 - [Visual Studio 2022/2026](https://visualstudio.microsoft.com/vs/) with .NET MAUI workload
-- [.NET SDK 9.0](https://dotnet.microsoft.com/en-us/download/dotnet/9.0)
+- [.NET SDK 10.0](https://dotnet.microsoft.com/en-us/download/dotnet/9.0)
 - Android SDK (for Android deployment)
 - Optional: iOS/MacCatalyst development environment (requires macOS)
 

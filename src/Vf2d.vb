@@ -13,6 +13,13 @@
     y = vec.y
   End Sub
 
+  Public Shared ReadOnly Property Zero As New Vf2d(0, 0)
+  Public Shared ReadOnly Property One As New Vf2d(1, 1)
+  Public Shared ReadOnly Property Up As New Vf2d(0, -1)
+  Public Shared ReadOnly Property Down As New Vf2d(0, 1)
+  Public Shared ReadOnly Property Left As New Vf2d(-1, 0)
+  Public Shared ReadOnly Property Right As New Vf2d(1, 0)
+
   Public Function Mag() As Single
     Return MathF.Sqrt(x * x + y * y)
   End Function
