@@ -7,7 +7,8 @@ Partial Public Class PixelGamePage
   Inherits ContentPage
 
   Public Sub New()
-    Content = New PixelGameView(Pge, 320, 240, 2)
+    Xaml.Extensions.LoadFromXaml(Me, [GetType]())
+    Content = New PixelGameView(Pge, Pge.ScreenWidth, Pge.ScreenHeight)
   End Sub
 End Class
 
