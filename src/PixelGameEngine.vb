@@ -1541,7 +1541,7 @@ next4:
 
   Protected MustOverride Function OnUserCreate() As Boolean
   Protected Friend MustOverride Function OnUserUpdate(elapsedTime As Single) As Boolean
-  Protected MustOverride Function OnUserRender() As Boolean
+  Protected Friend MustOverride Function OnUserRender() As Boolean
   Protected MustOverride Function OnUserDestroy() As Boolean
 
   Private _isDisposed As Boolean = False
