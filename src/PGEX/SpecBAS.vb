@@ -793,7 +793,7 @@
   End Function
 
   Public Shared Function MSECS() As Integer
-    Return CInt(Fix(Microsoft.VisualBasic.DateAndTime.Timer * 1000))
+    Return CInt(Fix(Timer * 1000))
   End Function
 
 End Class

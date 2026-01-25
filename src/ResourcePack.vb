@@ -42,7 +42,7 @@ Public Class ResourcePack
   Public Function LoadPack(filename As String, key As String) As Boolean
 
     ' Open the resource file
-    m_baseFile = New IO.FileStream(filename, IO.FileMode.Open, IO.FileAccess.Read, IO.FileShare.ReadWrite)
+    m_baseFile = New IO.FileStream(filename, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)
     If Not m_baseFile.CanRead Then Return False
 
     ' 1) Read Scrambled index
@@ -94,7 +94,7 @@ Public Class ResourcePack
 
   Public Function SavePack(filename As String, key As String) As Boolean
     ' Create/Overwrite the resource file
-    Dim ofs = New FileStream(filename, IO.FileMode.Create)
+    Dim ofs = New FileStream(filename, FileMode.Create)
     If Not ofs.CanWrite Then Return False
     ' Iterate through map
     Dim indexSize = 0 ' Unknown for now
@@ -138,7 +138,7 @@ Public Class ResourcePack
 
       ' Load the file to be added
       Dim vBuffer(e.Size - 1) As Byte
-      Using i = New System.IO.FileStream(pair.Key, IO.FileMode.Open)
+      Using i = New System.IO.FileStream(pair.Key, FileMode.Open)
         i.ReadExactly(vBuffer, 0, e.Size)
       End Using
 

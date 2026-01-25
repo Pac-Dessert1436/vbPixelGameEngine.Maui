@@ -137,8 +137,8 @@ Public Structure Pixel
                                                Return New Pixel(r, g, b)
                                              End Function
 
-    Dim presets As Presets() = DirectCast([Enum].GetValues(GetType(Presets)), Presets())
-    m_presetPixels = presets.ToDictionary(Function(p) p, Function(p) ToPixel(p))
+    Dim presets = [Enum].GetValues(Of Presets)()
+    m_presetPixels = Presets.ToDictionary(Function(p) p, ToPixel)
 
   End Sub
 

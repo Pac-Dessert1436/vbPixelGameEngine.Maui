@@ -4,9 +4,9 @@ Public Enum BuiltinFont
   ' ToDo: Add more built-in fonts
 End Enum
 
-Public Module BuiltinFontExtensions
+Friend Module BuiltinFontExtensions
   <Runtime.CompilerServices.Extension>
-  Public Function GetFontSheet(font As BuiltinFont) As String
+  Friend Function GetFontSheet(font As BuiltinFont) As String
     With New Text.StringBuilder
       Select Case font
         Case BuiltinFont.Default

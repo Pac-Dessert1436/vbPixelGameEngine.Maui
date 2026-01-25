@@ -8,7 +8,8 @@ Partial Public Class PixelGamePage
 
   Public Sub New()
     Xaml.Extensions.LoadFromXaml(Me, [GetType]())
-    Content = New PixelGameView(Pge, Pge.ScreenWidth, Pge.ScreenHeight)
+    ' Note: The following line will be refactored later to avoid circular reference.
+    'Content = New PixelGameView(Pge, Pge.ScreenWidth, Pge.ScreenHeight)
   End Sub
 End Class
 
@@ -27,7 +28,7 @@ Public Class PixelGameView
   Public Sub New(game As PixelGameEngine, vpWidth As Integer, vpHeight As Integer, Optional scale As Integer = 1)
     Me.game = game
     renderer = New SkiaSharpRenderer(vpWidth, vpHeight, scale)
-    game.Construct(vpWidth, vpHeight, scale, scale)
+    game.Construct(vpWidth, vpHeight, scale, scale)  ' FixMe: Avoid circular reference
     game.SetRenderer(renderer)
 
     ' Add gesture recognizers
@@ -100,7 +101,7 @@ Public Class PixelGameView
 
   Private Sub OnTimerElapsed(sender As Object, e As EventArgs) Handles Timer.Elapsed
     ' Update game state
-    game.Update(1.0F / FRAME_RATE)
+    game.OnUserUpdate(1.0F / FRAME_RATE)
 
     ' Update renderer with pixel data from the game's draw target
     Dim drawTarget As Sprite = game.GetDrawTarget()

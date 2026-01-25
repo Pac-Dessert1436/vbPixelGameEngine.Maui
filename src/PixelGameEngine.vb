@@ -18,11 +18,6 @@ Public MustInherit Class PixelGameEngine
     m_renderer = renderer
   End Sub
 
-  Public Function Update(elapsedTime As Single) As Boolean
-    ' Update game state
-    Return OnUserUpdate(elapsedTime)
-  End Function
-
   Public Delegate Function PixelModeDelegate(x As Integer, y As Integer, p1 As Pixel, p2 As Pixel) As Pixel
   Private m_funcPixelMode As PixelModeDelegate
 
@@ -326,19 +321,19 @@ Public MustInherit Class PixelGameEngine
   End Enum
 
   Private m_mouseButtons As Byte = 5
-  Private m_defaultAlpha As Byte = &HFF
+  Private ReadOnly m_defaultAlpha As Byte = &HFF
   Private m_defaultPixel As Integer = m_defaultAlpha << 24
-  Private m_tabSizeInSpaces As Byte = 4
+  Private ReadOnly m_tabSizeInSpaces As Byte = 4
   Private Const OLC_MAX_VERTS = 128
 
-  Private m_fontSprite As Sprite
+  Private m_fontSprite As New Dictionary(Of BuiltinFont, Sprite)
   Private m_spacing(95) As Byte
-  Private m_fontSpacing(95) As Vi2d
+  Private ReadOnly m_fontSpacing As New Dictionary(Of BuiltinFont, Vi2d())
   Private m_KeyboardMap As List(Of Tuple(Of Key, String, String))
 
   Protected Friend Sub New()
     Title = "Undefined"
-    Singleton.Pge = Me
+    Pge = Me
   End Sub
 
   ' Removed for MAUI - Window management handled by MAUI
@@ -1253,7 +1248,7 @@ next4:
 
   End Sub
 
-  Protected Function GetTextSize(text As String) As Vi2d
+  Public Function GetTextSize(text As String) As Vi2d
     Dim size = New Vi2d(0, 1)
     Dim pos = New Vi2d(0, 1)
     For Each c In text
@@ -1287,11 +1282,11 @@ next4:
     DrawString(x, y, text, Presets.White, 1)
   End Sub
 
-  Public Sub DrawString(x As Double, y As Double, text As String, col As Pixel, Optional scale As Integer = 1)
-    DrawString(CInt(x), CInt(y), text, col, scale)
+  Public Sub DrawString(x As Double, y As Double, text As String, col As Pixel, Optional scale As Integer = 1, Optional font As BuiltinFont = 0)
+    DrawString(CInt(x), CInt(y), text, col, scale, font)
   End Sub
 
-  Public Sub DrawString(x As Integer, y As Integer, text As String, col As Pixel, Optional scale As Integer = 1)
+  Public Sub DrawString(x As Integer, y As Integer, text As String, col As Pixel, Optional scale As Integer = 1, Optional font As BuiltinFont = 0)
 
     Dim sx = 0
     Dim sy = 0
@@ -1315,7 +1310,7 @@ next4:
         If scale > 1 Then
           For i = 0 To 7
             For j = 0 To 7
-              If m_fontSprite.GetPixel(i + ox * 8, j + oy * 8).R > 0 Then
+              If m_fontSprite(font).GetPixel(i + ox * 8, j + oy * 8).R > 0 Then
                 For iIs = 0 To scale - 1
                   For js = 0 To scale - 1
                     Draw(x + sx + (i * scale) + iIs, y + sy + (j * scale) + js, col)
@@ -1327,7 +1322,7 @@ next4:
         Else
           For i = 0 To 7
             For j = 0 To 7
-              If m_fontSprite.GetPixel(i + ox * 8, j + oy * 8).R > 0 Then
+              If m_fontSprite(font).GetPixel(i + ox * 8, j + oy * 8).R > 0 Then
                 Draw(x + sx + i, y + sy + j, col)
               End If
             Next
@@ -1342,7 +1337,7 @@ next4:
 
   End Sub
 
-  Friend Function GetTextSizeProp(text As String) As Vi2d
+  Friend Function GetTextSizeProp(text As String, font As BuiltinFont) As Vi2d
     Dim size = New Vi2d(0, 1)
     Dim pos = New Vi2d(0, 1)
     For Each c In text
@@ -1352,7 +1347,7 @@ next4:
       ElseIf c = vbTab Then
         pos.x += m_tabSizeInSpaces * 8
       Else
-        pos.x += m_fontSpacing(AscW(c) - 32).y
+        pos.x += m_fontSpacing(font)(AscW(c) - 32).y
       End If
       size.x = Math.Max(size.x, pos.x)
       size.y = Math.Max(size.y, pos.y)
@@ -1369,7 +1364,7 @@ next4:
     DrawStringProp(pos.x, pos.y, text, col, scale)
   End Sub
 
-  Friend Sub DrawStringProp(x As Integer, y As Integer, text As String, col As Pixel, Optional scale As Integer = 1)
+  Friend Sub DrawStringProp(x As Integer, y As Integer, text As String, col As Pixel, Optional scale As Integer = 1, Optional font As BuiltinFont = 0)
 
     Dim sx = 0
     Dim sy = 0
@@ -1394,9 +1389,9 @@ next4:
         Dim ox = ch Mod 16
         Dim oy = ch \ 16
         If scale > 1 Then
-          For i = 0 To m_fontSpacing(ch).y - 1 '7
+          For i = 0 To m_fontSpacing(font)(ch).y - 1 '7
             For j = 0 To 7
-              If m_fontSprite.GetPixel(i + ox * 8 + m_fontSpacing(ch).x, j + oy * 8).R > 0 Then
+              If m_fontSprite(font).GetPixel(i + ox * 8 + m_fontSpacing(font)(ch).x, j + oy * 8).R > 0 Then
                 For iIs = 0 To scale - 1
                   For js = 0 To scale - 1
                     Draw(x + sx + (i * scale) + iIs, y + sy + (j * scale) + js, col)
@@ -1406,15 +1401,15 @@ next4:
             Next
           Next
         Else
-          For i = 0 To m_fontSpacing(ch).y - 1 '7
+          For i = 0 To m_fontSpacing(font)(ch).y - 1 '7
             For j = 0 To 7
-              If m_fontSprite.GetPixel(i + ox * 8 + m_fontSpacing(ch).x, j + oy * 8).R > 0 Then
+              If m_fontSprite(font).GetPixel(i + ox * 8 + m_fontSpacing(font)(ch).x, j + oy * 8).R > 0 Then
                 Draw(x + sx + i, y + sy + j, col)
               End If
             Next
           Next
         End If
-        sx += m_fontSpacing(ch).y * scale
+        sx += m_fontSpacing(font)(ch).y * scale
       End If
 
     Next
@@ -1481,17 +1476,17 @@ next4:
     Next
 
     ' Check for command characters
-    If GetKey(PixelGameEngine.Key.LEFT).Pressed Then
+    If GetKey(Key.LEFT).Pressed Then
       m_textEntryCursor = Math.Max(0, m_textEntryCursor - 1)
     End If
-    If GetKey(PixelGameEngine.Key.RIGHT).Pressed Then
+    If GetKey(Key.RIGHT).Pressed Then
       m_textEntryCursor = Math.Min(m_textEntryString.Length, m_textEntryCursor + 1)
     End If
-    If GetKey(PixelGameEngine.Key.BACK).Pressed AndAlso m_textEntryCursor > 0 Then
+    If GetKey(Key.BACK).Pressed AndAlso m_textEntryCursor > 0 Then
       m_textEntryString = m_textEntryString.Remove(m_textEntryCursor - 1, 1)
       m_textEntryCursor = Math.Max(0, m_textEntryCursor - 1)
     End If
-    If GetKey(PixelGameEngine.Key.DEL).Pressed AndAlso m_textEntryCursor < m_textEntryString.Length Then
+    If GetKey(Key.DEL).Pressed AndAlso m_textEntryCursor < m_textEntryString.Length Then
       m_textEntryString = m_textEntryString.Remove(m_textEntryCursor, 1)
     End If
 
@@ -1520,7 +1515,7 @@ next4:
     '  End If
     'End If
 
-    If GetKey(PixelGameEngine.Key.ENTER).Pressed Then
+    If GetKey(Key.ENTER).Pressed Then
       'If m_consoleShow Then
       '  Console.WriteLine(">" & m_textEntryString)
       '  If OnConsoleCommand(m_textEntryString) Then
@@ -1545,7 +1540,7 @@ next4:
   End Sub
 
   Protected MustOverride Function OnUserCreate() As Boolean
-  Protected MustOverride Function OnUserUpdate(elapsedTime As Single) As Boolean
+  Protected Friend MustOverride Function OnUserUpdate(elapsedTime As Single) As Boolean
   Protected MustOverride Function OnUserRender() As Boolean
   Protected MustOverride Function OnUserDestroy() As Boolean
 
@@ -1637,64 +1632,48 @@ next4:
     Pge_ConstructFontSheet()
 
     ' Create user resources
-    If Not OnUserCreate() Then
-      Singleton.AtomActive = False
-    End If
+    If Not OnUserCreate() Then AtomActive = False
   End Sub
 
   Private Sub Pge_ConstructFontSheet()
 
-    Dim data As String = ""
-    data &= "?Q`0001oOch0o01o@F40o0<AGD4090LAGD<090@A7ch0?00O7Q`0600>00000000"
-    data &= "O000000nOT0063Qo4d8>?7a14Gno94AA4gno94AaOT0>o3`oO400o7QN00000400"
-    data &= "Of80001oOg<7O7moBGT7O7lABET024@aBEd714AiOdl717a_=TH013Q>00000000"
-    data &= "720D000V?V5oB3Q_HdUoE7a9@DdDE4A9@DmoE4A;Hg]oM4Aj8S4D84@`00000000"
-    data &= "OaPT1000Oa`^13P1@AI[?g`1@A=[OdAoHgljA4Ao?WlBA7l1710007l100000000"
-    data &= "ObM6000oOfMV?3QoBDD`O7a0BDDH@5A0BDD<@5A0BGeVO5ao@CQR?5Po00000000"
-    data &= "Oc``000?Ogij70PO2D]??0Ph2DUM@7i`2DTg@7lh2GUj?0TO0C1870T?00000000"
-    data &= "70<4001o?P<7?1QoHg43O;`h@GT0@:@LB@d0>:@hN@L0@?aoN@<0O7ao0000?000"
-    data &= "OcH0001SOglLA7mg24TnK7ln24US>0PL24U140PnOgl0>7QgOcH0K71S0000A000"
-    data &= "00H00000@Dm1S007@DUSg00?OdTnH7YhOfTL<7Yh@Cl0700?@Ah0300700000000"
-    data &= "<008001QL00ZA41a@6HnI<1i@FHLM81M@@0LG81?O`0nC?Y7?`0ZA7Y300080000"
-    data &= "O`082000Oh0827mo6>Hn?Wmo?6HnMb11MP08@C11H`08@FP0@@0004@000000000"
-    data &= "00P00001Oab00003OcKP0006@6=PMgl<@440MglH@000000`@000001P00000000"
-    data &= "Ob@8@@00Ob@8@Ga13R@8Mga172@8?PAo3R@827QoOb@820@0O`0007`0000007P0"
-    data &= "O`000P08Od400g`<3V=P0G`673IP0`@3>1`00P@6O`P00g`<O`000GP800000000"
-    data &= "?P9PL020O`<`N3R0@E4HC7b0@ET<ATB0@@l6C4B0O`H3N7b0?P01L3R000000020"
+    ' Note: Pixel font data has been moved to the GetFontSheet() extension method.
+    For Each font As BuiltinFont In [Enum].GetValues(Of BuiltinFont)()
+      Dim data = font.GetFontSheet()
+      m_fontSprite(font) = New Sprite(128, 48)
 
-    m_fontSprite = New Sprite(128, 48)
+      Dim px = 0, py = 0
+      For b = 0 To 1023 Step 4
 
-    Dim px = 0, py = 0
-    For b = 0 To 1023 Step 4
+        Dim sym1 = AscW(data(b + 0)) - 48
+        Dim sym2 = AscW(data(b + 1)) - 48
+        Dim sym3 = AscW(data(b + 2)) - 48
+        Dim sym4 = AscW(data(b + 3)) - 48
+        Dim r = sym1 << 18 Or sym2 << 12 Or sym3 << 6 Or sym4
 
-      Dim sym1 = AscW(data(b + 0)) - 48
-      Dim sym2 = AscW(data(b + 1)) - 48
-      Dim sym3 = AscW(data(b + 2)) - 48
-      Dim sym4 = AscW(data(b + 3)) - 48
-      Dim r = sym1 << 18 Or sym2 << 12 Or sym3 << 6 Or sym4
+        For i = 0 To 23
+          Dim k = If((r And (1 << i)) <> 0, 255, 0)
+          m_fontSprite(font).SetPixel(px, py, New Pixel(k, k, k, k))
+          If Interlocked.Increment(py) = 48 Then
+            px += 1 : py = 0
+          End If
+        Next
 
-      For i = 0 To 23
-        Dim k = If((r And (1 << i)) <> 0, 255, 0)
-        m_fontSprite.SetPixel(px, py, New Pixel(k, k, k, k))
-        If Interlocked.Increment(py) = 48 Then
-          px += 1 : py = 0
-        End If
       Next
 
-    Next
+      m_spacing = {
+        &H3, &H25, &H16, &H8, &H7, &H8, &H8, &H4, &H15, &H15, &H8, &H7, &H15, &H7, &H24, &H8,
+        &H8, &H17, &H8, &H8, &H8, &H8, &H8, &H8, &H8, &H8, &H24, &H15, &H6, &H7, &H16, &H17,
+        &H8, &H8, &H8, &H8, &H8, &H8, &H8, &H8, &H8, &H17, &H8, &H8, &H17, &H8, &H8, &H8,
+        &H8, &H8, &H8, &H8, &H17, &H8, &H8, &H8, &H8, &H17, &H8, &H15, &H8, &H15, &H8, &H8,
+        &H24, &H18, &H17, &H17, &H17, &H17, &H17, &H17, &H17, &H33, &H17, &H17, &H33, &H18, &H17, &H17,
+        &H17, &H17, &H17, &H17, &H7, &H17, &H17, &H18, &H18, &H17, &H17, &H7, &H33, &H7, &H8, &H0}
 
-    m_spacing = {
-      &H3, &H25, &H16, &H8, &H7, &H8, &H8, &H4, &H15, &H15, &H8, &H7, &H15, &H7, &H24, &H8,
-      &H8, &H17, &H8, &H8, &H8, &H8, &H8, &H8, &H8, &H8, &H24, &H15, &H6, &H7, &H16, &H17,
-      &H8, &H8, &H8, &H8, &H8, &H8, &H8, &H8, &H8, &H17, &H8, &H8, &H17, &H8, &H8, &H8,
-      &H8, &H8, &H8, &H8, &H17, &H8, &H8, &H8, &H8, &H17, &H8, &H15, &H8, &H15, &H8, &H8,
-      &H24, &H18, &H17, &H17, &H17, &H17, &H17, &H17, &H17, &H33, &H17, &H17, &H33, &H18, &H17, &H17,
-      &H17, &H17, &H17, &H17, &H7, &H17, &H17, &H18, &H18, &H17, &H17, &H7, &H33, &H7, &H8, &H0}
-
-    Dim offset = 0
-    For Each c In m_spacing
-      m_fontSpacing(offset) = New Vi2d(c >> 4, c And 15)
-      offset += 1
+      Dim offset = 0
+      For Each c In m_spacing
+        m_fontSpacing(font)(offset) = New Vi2d(c >> 4, c And 15)
+        offset += 1
+      Next
     Next
 
     m_KeyboardMap = New List(Of Tuple(Of Key, String, String)) From {

@@ -185,7 +185,7 @@ Public Class Gfx2D
       For j = sy To ey
         Dim ox, oy As Single
         transform.Backward(i, j, ox, oy)
-        Singleton.Pge.Draw(CInt(Fix(i)), CInt(Fix(j)), sprite.GetPixel(CInt(Fix(ox + 0.5F)), CInt(Fix(oy + 0.5F))))
+        Pge.Draw(CInt(Fix(i)), CInt(Fix(j)), sprite.GetPixel(CInt(Fix(ox + 0.5F)), CInt(Fix(oy + 0.5F))))
       Next
     Next
 
