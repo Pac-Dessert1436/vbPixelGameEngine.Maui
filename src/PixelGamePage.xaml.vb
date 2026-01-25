@@ -100,20 +100,22 @@ Public Class PixelGameView
   End Sub
 
   Private Sub OnTimerElapsed(sender As Object, e As EventArgs) Handles Timer.Elapsed
-    ' Update game state
-    game.OnUserUpdate(1.0F / FRAME_RATE)
+    ' Update game state, and quit program when `game.OnUserUpdate()` returns false
+    If game.OnUserUpdate(1.0F / FRAME_RATE) Then
+      ' Update renderer with pixel data from the game's draw target
+      Dim drawTarget As Sprite = game.GetDrawTarget()
+      If drawTarget IsNot Nothing Then
+        Dim pixels = drawTarget.GetData()
+        SyncLock _lock
+          renderer.UpdatePixels(pixels)
+        End SyncLock
+      End If
 
-    ' Update renderer with pixel data from the game's draw target
-    Dim drawTarget As Sprite = game.GetDrawTarget()
-    If drawTarget IsNot Nothing Then
-      Dim pixels = drawTarget.GetData()
-      SyncLock _lock
-        renderer.UpdatePixels(pixels)
-      End SyncLock
+      ' Redraw the view on the main thread
+      Dispatcher.Dispatch(AddressOf InvalidateSurface)
+    Else
+      Application.Current.Quit()
     End If
-
-    ' Redraw the view on the main thread
-    Dispatcher.Dispatch(AddressOf InvalidateSurface)
   End Sub
 
   Protected Overrides Sub Finalize()
