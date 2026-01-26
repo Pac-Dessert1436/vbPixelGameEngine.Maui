@@ -24,7 +24,8 @@ Partial Public Class MainPage
 #ElseIf WINDOWS10_0_19041_0_OR_GREATER Then
     ' Windows global keyboard capture
     'Try
-    '  _globalKeyHandler = New ?????
+    '  ' Note: GlobalKeyboardCapture.Maui is no longer used
+    '  _globalKeyHandler = New ?????   ' KEY HANDLER REQUIRED
     'Catch ex As Exception
     '  ' Fallback to MAUI keyboard events
     'End Try

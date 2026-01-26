@@ -1,9 +1,28 @@
 ﻿Imports System.IO
 Imports System.Runtime.InteropServices
 
-'=============================================================
-' Resource Packs - Allows you to store files in one large scrambled file -
-' Thanks MaGetzUb for debugging a null char in std:stringstream bug
+Friend Class ResourceBuffer
+
+  Friend vMemory As Byte()
+
+  Public ReadOnly Property Data As Byte()
+    Get
+      Return vMemory
+    End Get
+  End Property
+
+  Sub New(ifs As IO.FileStream, offset As Integer, size As Integer)
+    vMemory = New Byte(size - 1) {}
+    ifs.Seek(offset, IO.SeekOrigin.Begin)
+    ifs.ReadExactly(vMemory, 0, vMemory.Length)
+  End Sub
+
+End Class
+
+''' <summary>
+''' Allows you to store files in one large scrambled file. Thanks MaGetzUb for debugging a 
+''' null char in std:stringstream bug
+''' </summary>
 Public Class ResourcePack
 
   Private Structure ResourceFile
