@@ -28,7 +28,7 @@ Public MustInherit Class PixelGameEngine
   Private m_pixelMode As Pixel.Mode
   Private m_blendFactor As Single = 1.0F
 
-  Private m_lastElapsed As Single
+  Private ReadOnly m_lastElapsed As Single
   Private m_screenWidth As Integer
   Private m_screenHeight As Integer
   Private m_pixelWidth As Integer
@@ -43,11 +43,11 @@ Public MustInherit Class PixelGameEngine
   'Private Shared m_shutdown As Boolean
   Private m_windowWidth As Integer
   Private m_windowHeight As Integer
-  Private m_hasInputFocus As Boolean
-  Private m_hasMouseFocus As Boolean
-  Private m_frameTimer As Single = 1.0F
-  Private m_frameCount As Integer
-  Private m_totalFrameCount As Integer
+  Private ReadOnly m_hasInputFocus As Boolean
+  Private ReadOnly m_hasMouseFocus As Boolean
+  Private ReadOnly m_frameTimer As Single = 1.0F
+  Private ReadOnly m_frameCount As Integer
+  Private ReadOnly m_totalFrameCount As Integer
   'Private m_totalFrames As Integer
 
   Private ReadOnly m_keyNewState(255) As Boolean
@@ -187,7 +187,7 @@ Public MustInherit Class PixelGameEngine
     End If
   End Sub
 
-  Private m_mouseWheelDelta As Integer
+  Private ReadOnly m_mouseWheelDelta As Integer
   Private m_mouseWheelDeltaCache As Integer
   Private m_viewX As Integer
   Private m_viewY As Integer
@@ -320,13 +320,13 @@ Public MustInherit Class PixelGameEngine
     ENUM_END
   End Enum
 
-  Private m_mouseButtons As Byte = 5
+  Private ReadOnly m_mouseButtons As Byte = 5
   Private ReadOnly m_defaultAlpha As Byte = &HFF
-  Private m_defaultPixel As Integer = m_defaultAlpha << 24
+  Private ReadOnly m_defaultPixel As Integer = m_defaultAlpha << 24
   Private ReadOnly m_tabSizeInSpaces As Byte = 4
   Private Const OLC_MAX_VERTS = 128
 
-  Private m_fontSprite As New Dictionary(Of BuiltinFont, Sprite)
+  Private ReadOnly m_fontSprite As New Dictionary(Of BuiltinFont, Sprite)
   Private m_spacing(95) As Byte
   Private ReadOnly m_fontSpacing As New Dictionary(Of BuiltinFont, Vi2d())
   Private m_KeyboardMap As List(Of Tuple(Of Key, String, String))

@@ -975,15 +975,15 @@ Namespace QuickGui
 
     Private m_showDialog As Boolean = False
 
-    Private m_fileSelectManager As Manager
-    Private m_volumesListBox As ListBox = Nothing
-    Private m_directoryListBox As ListBox = Nothing
-    Private m_fileListBox As ListBox = Nothing
+    Private ReadOnly m_fileSelectManager As Manager
+    Private ReadOnly m_volumesListBox As ListBox = Nothing
+    Private ReadOnly m_directoryListBox As ListBox = Nothing
+    Private ReadOnly m_fileListBox As ListBox = Nothing
 
-    Private m_volumes As List(Of String)
-    Private m_directories As List(Of String)
-    Private m_files As List(Of String)
-    Private m_path As String
+    Private ReadOnly m_volumes As List(Of String)
+    Private ReadOnly m_directories As List(Of String)
+    Private ReadOnly m_files As List(Of String)
+    Private ReadOnly m_path As String
 
   End Class
 

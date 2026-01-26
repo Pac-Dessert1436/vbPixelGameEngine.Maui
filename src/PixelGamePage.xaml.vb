@@ -1,128 +1,25 @@
 Imports Microsoft.Maui.Controls
-Imports SkiaSharp.Views.Maui.Controls
-Imports SkiaSharp.Views.Maui
-Imports GlobalKeyboardCapture.Maui.Core.Models
 
 Partial Public Class PixelGamePage
   Inherits ContentPage
 
+  Private _pixelGameView As PixelGameView
+
   Public Sub New()
     Xaml.Extensions.LoadFromXaml(Me, [GetType]())
-    ' Note: The following line will be refactored later to avoid circular reference.
-    'Content = New PixelGameView(Pge, Pge.ScreenWidth, Pge.ScreenHeight)
-  End Sub
-End Class
-
-Public Class PixelGameView
-  Inherits SKCanvasView
-
-  Private WithEvents Timer As New Timers.Timer
-  Private WithEvents TapRecog As New TapGestureRecognizer
-  Private WithEvents PtrRecog As New PointerGestureRecognizer
-  Private ReadOnly game As PixelGameEngine
-  Private ReadOnly renderer As SkiaSharpRenderer
-  Private mousePos As New Vi2d
-  Private ReadOnly _lock As New Object
-  Private Const FRAME_RATE As Integer = 60
-
-  Public Sub New(game As PixelGameEngine, vpWidth As Integer, vpHeight As Integer, Optional scale As Integer = 1)
-    Me.game = game
-    renderer = New SkiaSharpRenderer(vpWidth, vpHeight, scale)
-    game.Construct(vpWidth, vpHeight, scale, scale)  ' FixMe: Avoid circular reference
-    game.SetRenderer(renderer)
-
-    ' Add gesture recognizers
-    GestureRecognizers.Add(TapRecog)
-    GestureRecognizers.Add(PtrRecog)
-
-    Timer.Interval = 1000 \ FRAME_RATE  ' Approx. 60 FPS
-    Timer.Start()
   End Sub
 
-  Protected Overrides Sub OnHandlerChanged()
-    MyBase.OnHandlerChanged()
-    ' View is now attached to the window
-    If Handler IsNot Nothing Then Focus()
+  Protected Overrides Sub OnAppearing()
+    MyBase.OnAppearing()
+
+    ' Create game view with example game instance
+    ' User should replace Example with their actual game class
+    _pixelGameView = New PixelGameView(Pge, 320, 180, 2)
+    Content = _pixelGameView
   End Sub
 
-  Protected Overrides Sub OnPaintSurface(e As SKPaintSurfaceEventArgs)
-    MyBase.OnPaintSurface(e)
-    ' Render the game directly with the canvas
-    renderer.Render(e.Surface.Canvas)
-  End Sub
-
-  Protected Sub OnKeyDown(e As KeyEventArgs)
-    ' ToDo: Connect this logic to the lifecycle of `PixelGameEngine` class.
-    game.SetKeyStateFromKey(e.Character.Value, True)
-  End Sub
-
-  Protected Sub OnKeyUp(e As KeyEventArgs)
-    ' ToDo: Connect this logic to the lifecycle of `PixelGameEngine` class.
-    game.SetKeyStateFromKey(e.Character.Value, False)
-  End Sub
-
-  Private Sub OnTapped(sender As Object, e As TappedEventArgs) Handles TapRecog.Tapped
-    Dim point = e.GetPosition(Me)
-    If point.HasValue Then
-      mousePos.x = CInt(point.Value.X) \ renderer.Scale
-      mousePos.y = CInt(point.Value.Y) \ renderer.Scale
-      game.SetMousePosition(mousePos.x, mousePos.y)
-      game.SetMouseButtonState(0, True)
-      game.SetMouseButtonState(0, False)
-    End If
-  End Sub
-
-  Private Sub OnPointerEntered(sender As Object, e As PointerEventArgs) Handles PtrRecog.PointerEntered
-    Dim point = e.GetPosition(Me)
-    If point.HasValue Then
-      mousePos.x = CInt(point.Value.X) \ renderer.Scale
-      mousePos.y = CInt(point.Value.Y) \ renderer.Scale
-      game.SetMousePosition(mousePos.x, mousePos.y)
-    End If
-  End Sub
-
-  Private Sub OnPointerMoved(sender As Object, e As PointerEventArgs) Handles PtrRecog.PointerMoved
-    Dim point = e.GetPosition(Me)
-    If point.HasValue Then
-      mousePos.x = CInt(point.Value.X) \ renderer.Scale
-      mousePos.y = CInt(point.Value.Y) \ renderer.Scale
-      game.SetMousePosition(mousePos.x, mousePos.y)
-    End If
-  End Sub
-
-  Private Sub OnPointerExited(sender As Object, e As PointerEventArgs) Handles PtrRecog.PointerExited
-    Dim point = e.GetPosition(Me)
-    If point.HasValue Then
-      mousePos.x = CInt(point.Value.X) \ renderer.Scale
-      mousePos.y = CInt(point.Value.Y) \ renderer.Scale
-      game.SetMousePosition(mousePos.x, mousePos.y)
-    End If
-  End Sub
-
-  Private Sub OnTimerElapsed(sender As Object, e As EventArgs) Handles Timer.Elapsed
-    ' Update game state only when the game is running
-    If game.OnUserUpdate(1.0F / FRAME_RATE) Then
-      If Not game.OnUserRender() Then Exit Sub
-
-      ' Update renderer with pixel data from the game's draw target
-      Dim drawTarget As Sprite = game.GetDrawTarget()
-      If drawTarget IsNot Nothing Then
-        Dim pixels = drawTarget.GetData()
-        SyncLock _lock
-          renderer.UpdatePixels(pixels)
-        End SyncLock
-      End If
-
-      ' Redraw the view on the main thread
-      Dispatcher.Dispatch(AddressOf InvalidateSurface)
-    Else
-      ' Quit the application when the game loop is done
-      Application.Current.Quit()
-    End If
-  End Sub
-
-  Protected Overrides Sub Finalize()
-    Timer.Stop()
-    Timer.Dispose()
+  Protected Overrides Sub OnDisappearing()
+    MyBase.OnDisappearing()
+    _pixelGameView?.Dispose()
   End Sub
 End Class
