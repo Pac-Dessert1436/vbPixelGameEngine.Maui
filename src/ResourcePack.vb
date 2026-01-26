@@ -20,7 +20,7 @@ Friend Class ResourceBuffer
 End Class
 
 ''' <summary>
-''' Allows you to store files in one large scrambled file. Thanks MaGetzUb for debugging a 
+''' Allows you to store files in one large scrambled file. Thanks MaGetzUb for debugging a
 ''' null char in std:stringstream bug
 ''' </summary>
 Public Class ResourcePack
