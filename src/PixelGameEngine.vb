@@ -1701,7 +1701,7 @@ next4:
     Return CShort(v >> 16)
   End Function
 
-  Private Shared Sub Swap(Of T)(ByRef left As T, ByRef right As T)
+  Public Shared Sub Swap(Of T)(ByRef left As T, ByRef right As T)
     Dim temp = left
     left = right
     right = temp

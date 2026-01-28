@@ -4,8 +4,8 @@ Partial Public Class App
   Inherits Application
 
   Public Sub New()
-    InitializeComponent()
-    MainPage = New MainPage()
+    Xaml.Extensions.LoadFromXaml(Me, GetType(App))
+    Windows(0).Page = New MainPage
   End Sub
 
   Protected Overrides Sub OnStart()

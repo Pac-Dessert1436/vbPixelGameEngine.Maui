@@ -6,7 +6,7 @@ Partial Public Class PixelGamePage
   Private _pixelGameView As PixelGameView
 
   Public Sub New()
-    Xaml.Extensions.LoadFromXaml(Me, [GetType]())
+    Xaml.Extensions.LoadFromXaml(Me, GetType(PixelGamePage))
   End Sub
 
   Protected Overrides Sub OnAppearing()

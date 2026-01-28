@@ -8,7 +8,7 @@ Partial Public Class MainPage
   Private Shared _globalKeyHandler As Object
 
   Public Sub New()
-    Xaml.Extensions.LoadFromXaml(Me, [GetType]())
+    Xaml.Extensions.LoadFromXaml(Me, GetType(MainPage))
   End Sub
 
   ' Start the game and navigate to PixelGamePage

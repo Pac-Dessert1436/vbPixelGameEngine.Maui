@@ -138,7 +138,7 @@ Public Structure Pixel
                                              End Function
 
     Dim presets = [Enum].GetValues(Of Presets)()
-    m_presetPixels = Presets.ToDictionary(Function(p) p, ToPixel)
+    m_presetPixels = presets.ToDictionary(Function(p) p, ToPixel)
 
   End Sub
 

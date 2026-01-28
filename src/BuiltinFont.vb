@@ -1,7 +1,12 @@
-Public Enum BuiltinFont
+Public Enum BuiltinFont As Byte
   [Default] = 0
   PacArrange = 1
-  ' ToDo: Add more built-in fonts
+  NamcoClassic = 2
+  TimePilot = 3
+  RollThunder = 4
+  Xevious = 5
+  Guardian = 6
+  DigDug1996 = 7
 End Enum
 
 Friend Module BuiltinFontExtensions
@@ -28,6 +33,24 @@ Friend Module BuiltinFontExtensions
           .Append("?P9PL020O`<`N3R0@E4HC7b0@ET<ATB0@@l6C4B0O`H3N7b0?P01L3R000000020")
         Case BuiltinFont.PacArrange
           ' ToDo: Add font sheet from Pac-Man Arrangement 1996
+          .Append("")
+        Case BuiltinFont.NamcoClassic
+          ' ToDo: Add classic Namco style font sheet
+          .Append("")
+        Case BuiltinFont.TimePilot
+          ' ToDo: Add font sheet from Time Pilot '84
+          .Append("")
+        Case BuiltinFont.RollThunder
+          ' ToDo: Add font sheet from Rolling Thunder 2
+          .Append("")
+        Case BuiltinFont.Xevious
+          ' ToDo: Add font sheet from Xevious (by Namco)
+          .Append("")
+        Case BuiltinFont.Guardian
+          ' ToDo: Add font sheet from Guardian (by Taito)
+          .Append("")
+        Case BuiltinFont.DigDug1996
+          ' ToDo: Add font sheet from Dig-Dug Arrangement 1996
           .Append("")
         Case Else
           Throw New ArgumentException($"Unknown built-in font name: {font}", NameOf(font))
