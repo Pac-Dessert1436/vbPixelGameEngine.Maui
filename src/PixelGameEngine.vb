@@ -1644,7 +1644,6 @@ next4:
 
       Dim px = 0, py = 0
       For b = 0 To 1023 Step 4
-
         Dim sym1 = AscW(data(b + 0)) - 48
         Dim sym2 = AscW(data(b + 1)) - 48
         Dim sym3 = AscW(data(b + 2)) - 48
@@ -1658,7 +1657,6 @@ next4:
             px += 1 : py = 0
           End If
         Next
-
       Next
 
       m_spacing = {

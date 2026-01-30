@@ -37,21 +37,21 @@ Friend Module BuiltinFontExtensions
         Case BuiltinFont.PacArrange
           ' Done: Add font sheet from Pac-Man Arrangement 1996
           .Append("73`0o01o8Wh0o01oBFH0o0MoEFH090\ACGh0900A4C`0?00O3P00600>00000000")
-          .Append("O01063PnOT4L?7aoOgl?96Ao4gl7=6AA4gl3o3aAOT00o7aoO000P41n00000000")
-          .Append("Of<0105oOg<?O7moOg\7N7moBGl014PABFl?14AaOfH737ao=P0063Q>00000000")
+          .Append("O00063PnOT50?7aoOglL96Ao4gl?=6AA4gl7o3aAOT03o7aoO000P41n00000000")
+          .Append("Of<0305oOg<?O7moOg\7N7moBGl014PABFl?14AaOfH737ao=P0063Q>00000000")
           .Append("76<R23PV?V]oG7a_Of\RG4a?Hf\RE4Ao@GlRM4aiHcioM0Qk8P0R800b00000000")
           .Append("Oah41303Oah^?gQ1Oa0ZOdQo@GmoOdUoHglZA7mo?WljI3m1700@840300000000")
           .Append("Ofm2?30oOflUO7QoOf\B@7aoBF\8H5A0BG\T?5A0@C=BO5ao000Q@1Po00000000")
           .Append("Oc`f70POOgio?7hoOfm9O7mo2F\i@7m`2G]FH0Th2C=8?0<O0@00708?00000000")
-          .Append("76<001Qo?W<0?;AoHc\?O:@h@Al7H:@LB@l0>?PhN@L0H7aoN@00O0Ao0000?000")
+          .Append("76<001Qo?W<0?;AoOc\?O:@hHal7H:@LB@l0>?PhN@L0H7aoN@00O0Ao0000?000")
           .Append("OcH0001gOglLA7mo26\nK7ln26]SO1PL27m1>0PnOcH0>7QoO`00K71g0000A000")
-          .Append("06H00007@Fm1C0@?Of]Sg3eoOg\nW7ehOclLT7eh@Ah0d40?0000O0070000?000")
+          .Append("06H00007@Fm1C0@?Of]Sg3eoOg\nW7ehOclLT7eh@Ah0h40?0000O0070000?000")
           .Append("<008021QL01[I61aL6HnM>1mHFHLO81o@@0nO8AOO`1[G?e7?`08C7e300000000")
           .Append("O`000000O`0807moOkH827mo?7Hn=S11MP08@GQ1H`08@F`0@@0004@000000000")
           .Append("00P00001Oa@00002OaB`03l4Ob9`Ogl8@28007l@@000040P@000001000000000")
           .Append("O`00@GP0Oa@8@Ga13Q@8=PA171@827ao3Q@800AoOa@807`0O`0007P000000000")
-          .Append("O`000W`4Ob800g`2OR9P0GP171AP0``2>1@00P@4O`P00g`0O`000GP000000000")
-          .Append("?PI0L3R0O`LPN7b0Oe<@C7b0@ET8ATB0@El4C4B0O`l2N7b0?PH1L3R000000020")
+          .Append("O`000W`0Ob800g`4OR9P0GP271AP0``1>1@00P@2O`P00g`4O`000GP000000000")
+          .Append("?PI0L3R0O`LPB7b0Oe<@A7b0@ET8@TB0@El4A4B0O`l2B7b0?PH1L3R000000020")
         Case BuiltinFont.NamcoClassic
           ' Done: Classic Namco style font sheet
           .Append("?Q`0001oOch0o01o@F40o0LAFD4090\AED<0900A7ch0?00O7Q`0600>00000000")
