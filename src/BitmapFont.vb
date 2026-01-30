@@ -71,7 +71,9 @@ Public Class BitmapFont
     End With
   End Function
 
-  Public Sub SetColor(color As Pixel)
-    _color = color
-  End Sub
+  Public WriteOnly Property Color As Pixel
+    Set(value As Pixel)
+      _color = value
+    End Set
+  End Property
 End Class
