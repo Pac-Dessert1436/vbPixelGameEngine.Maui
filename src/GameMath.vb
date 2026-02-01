@@ -263,15 +263,17 @@ Public Module GameMath
     )
   End Function
 
-  Public Function Hermite(p0 As Vf2d, t0 As Vf2d, p1 As Vf2d, t1 As Vf2d, t As Single) As Vf2d
+  Public Function Hermite(p0 As Vf2d, tgt0 As Vf2d, p1 As Vf2d, tgt1 As Vf2d, t As Single) As Vf2d
+    ' Note: `t0` and `t1` have been renamed to `tgt0` and `tgt1`, to avoid confusion with `t`.
+    '       These two parameters are the tangents at `p0` and `p1` respectively.
     Dim t2 As Single = t * t, t3 As Single = t2 * t
     Dim h00 = 2.0F * t3 - 3.0F * t2 + 1.0F
     Dim h10 = t3 - 2.0F * t2 + t
     Dim h01 = -2.0F * t3 + 3.0F * t2
     Dim h11 = t3 - t2
     Return New Vf2d(
-      x:=p0.x * h00 + t0.x * h10 + p1.x * h01 + t1.x * h11,
-      y:=p0.y * h00 + t0.y * h10 + p1.y * h01 + t1.y * h11
+      x:=p0.x * h00 + tgt0.x * h10 + p1.x * h01 + tgt1.x * h11,
+      y:=p0.y * h00 + tgt0.y * h10 + p1.y * h01 + tgt1.y * h11
     )
   End Function
 #End Region
