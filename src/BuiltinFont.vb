@@ -36,7 +36,7 @@ Friend Module BuiltinFontExtensions
           .Append("?P9PL020O`<`N3R0@E4HC7b0@ET<ATB0@@l6C4B0O`H3N7b0?P01L3R000000020")
         Case BuiltinFont.PacArrange
           ' Done: Add font sheet from Pac-Man Arrangement 1996
-          .Append("73`0o01o8Wh0o01oBFH0o0MoEFH090\ACGh0900A4C`0?00O3P00600>00000000")
+          .Append("73`0o01o8Wh0o01oBFH0o0MoEFH090\ACGh0900ADC`0?00O3P00600>00000000")
           .Append("O00063PnOT50?7aoOglL96Ao4gl?=6AA4gl7o3aAOT03o7aoO000P41n00000000")
           .Append("Of<0305oOg<?O7moOg\7N7moBGl014PABFl?14AaOfH737ao=P0063Q>00000000")
           .Append("76<R23PV?V]oG7a_Of\RG4a?Hf\RE4Ao@GlRM4aiHcioM0Qk8P0R800b00000000")
@@ -44,7 +44,7 @@ Friend Module BuiltinFontExtensions
           .Append("Ofm2?30oOflUO7QoOf\B@7aoBF\8H5A0BG\T?5A0@C=BO5ao000Q@1Po00000000")
           .Append("Oc`f70POOgio?7hoOfm9O7mo2F\i@7m`2G]FH0Th2C=8?0<O0@00708?00000000")
           .Append("76<001Qo?W<0?;AoOc\?O:@hHal7H:@LB@l0>?PhN@L0H7aoN@00O0Ao0000?000")
-          .Append("OcH0001gOglLA7mo26\nK7ln26]SO1PL27m1>0PnOcH0>7QoO`00K71g0000A000")
+          .Append("OcH0001gOglLA7moOf\nK7ln26]SO1PL27m1>0PnOcH0>7QoO`00K71g0000A000")
           .Append("06H00007@Fm1C0@?Of]Sg3eoOg\nW7ehOclLT7eh@Ah0h40?0000O0070000?000")
           .Append("<008021QL01[I61aL6HnM>1mHFHLO81o@@0nO8AOO`1[G?e7?`08C7e300000000")
           .Append("O`000000O`0807moOkH827mo?7Hn=S11MP08@GQ1H`08@F`0@@0004@000000000")
@@ -71,8 +71,23 @@ Friend Module BuiltinFontExtensions
           .Append("O`000P04Od400g`63V=P0GP373IP0`@3>1`00P@6O`P00g`4O`000GP000000000")
           .Append("?P90L020O`<PN3R0@E4@C4B0@ET8ATB0@@T4C4B0O`l2N7b0?PH1L3R000000020")
         Case BuiltinFont.Contra
-          ' ToDo: Add font sheet from Contra / Time Pilot '84
-          .Append("")
+          ' Done: Add font sheet from Contra / Time Pilot '84
+          .Append("73`0`01P8Wh0i01iBD<0?0LOEDT090\CCF40900ADCl0?00K7Qh0600>00000000")
+          .Append("L000430h6010>7Qn5F8L;4a34g8>96AAOgh4i3@aO`<0n7Qo@040W4a>00000000")
+          .Append("@600061PNG8;I3UiCgT7O5l?BDT024\IBDd;14AiOdl733a_=PH061P600000000")
+          .Append(">20R2310O49jG7PVCTTWG4a?@dTRE4A=@GUbM4AIHCL_M2aj9PHR80Pa00000000")
+          .Append("H1PT1200NA@Z=G1QCg9oOdQm@GTZCfPOHamoA3T3?Q<Z17l17Q0B04L100000000")
+          .Append("H216830aNFiUM7QmOd\CG5aOCd\8@5A3BD]T85@`BG]CO1`<0C4aG0P300000000")
+          .Append("H3P`10P1NGaFO4Qo?di?O7io3dXY@7lP2DUa80TH2GU>70440C48308300000000")
+          .Append(">0@00403O68019Qo@W<;O;@H@@\7@:@?:@L0>>AhN@<0@7PL6P40L0@30000?000")
+          .Append("H300061075HL@74Q2dlnI1lGJ5eW70lnO5U3>0Qd7cL1L7120`H0C40100001000")
+          .Append("@4@00000@4i00003LD]QQ3AWObUcW7enAcTnd4dH0AlLH2040@h0?00300003000")
+          .Append("H008061P@@0Z@<1cHFHLI81I>FH8M81=3`0LG>A70`0ZC7eS0@0811d100000000")
+          .Append("L0000000O008061`3kH8275o6gHn?Qm??008McM1HP08@FP1@@0004`0000000@0")
+          .Append("H0000000N@P00003Cab`0344@cI`Ogl8@28004l@@000041PH000000000000000")
+          .Append("H000@@@061@8Mga03a@8?PA1N1@827Qa31@800AoOa@807P?@000040000000000")
+          .Append("L00040@0300027`47b9P37P6O3IP70`1L1`060@670P027P40`00140000000000")
+          .Append(">010H300OP1PF7R0@d8@A4b0@A48@TB0H@T4A4B0?`l3F3b03PH1H1R000000000")
         Case BuiltinFont.RollThunder
           ' ToDo: Add font sheet from Rolling Thunder 2
           .Append("")
