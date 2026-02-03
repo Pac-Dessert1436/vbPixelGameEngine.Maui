@@ -328,7 +328,7 @@ Public MustInherit Class PixelGameEngine
 
   Private ReadOnly m_fontSprite As New Dictionary(Of BuiltinFont, Sprite)
   Private m_spacing(95) As Byte
-  Private ReadOnly m_fontSpacing As New Dictionary(Of BuiltinFont, Vi2d())
+  Private ReadOnly m_fontSpacing As Vi2d()
   Private m_KeyboardMap As List(Of Tuple(Of Key, String, String))
 
   Protected Friend Sub New()
@@ -1224,10 +1224,8 @@ next4:
 
   Protected Sub DrawPartialSprite(x As Integer, y As Integer, sprite As Sprite, ox As Integer, oy As Integer, w As Integer, h As Integer, Optional scale As Integer = 1)
 
-    If sprite Is Nothing Then
-      Return
-    End If
-
+    If sprite Is Nothing Then Return
+    
     If scale > 1 Then
       For i = 0 To w - 1
         For j = 0 To h - 1
@@ -1300,6 +1298,8 @@ next4:
     End If
     'End If
 
+    Dim fontSpr As Sprite
+    If Not m_fontSprite.TryGetValue(font, fontSpr) Then Exit Sub
     For Each c In text
       If c = vbLf Then
         sx = 0
@@ -1310,7 +1310,7 @@ next4:
         If scale > 1 Then
           For i = 0 To 7
             For j = 0 To 7
-              If m_fontSprite(font).GetPixel(i + ox * 8, j + oy * 8).R > 0 Then
+              If fontSpr.GetPixel(i + ox * 8, j + oy * 8).R > 0 Then
                 For iIs = 0 To scale - 1
                   For js = 0 To scale - 1
                     Draw(x + sx + (i * scale) + iIs, y + sy + (j * scale) + js, col)
@@ -1322,7 +1322,7 @@ next4:
         Else
           For i = 0 To 7
             For j = 0 To 7
-              If m_fontSprite(font).GetPixel(i + ox * 8, j + oy * 8).R > 0 Then
+              If fontSpr.GetPixel(i + ox * 8, j + oy * 8).R > 0 Then
                 Draw(x + sx + i, y + sy + j, col)
               End If
             Next
@@ -1338,6 +1338,7 @@ next4:
   End Sub
 
   Friend Function GetTextSizeProp(text As String, font As BuiltinFont) As Vi2d
+    ' Note: Edited on mobile - the 2nd parameter of this subroutine must be removed.
     Dim size = New Vi2d(0, 1)
     Dim pos = New Vi2d(0, 1)
     For Each c In text
@@ -1347,7 +1348,7 @@ next4:
       ElseIf c = vbTab Then
         pos.x += m_tabSizeInSpaces * 8
       Else
-        pos.x += m_fontSpacing(font)(AscW(c) - 32).y
+        pos.x += m_fontSpacing(AscW(c) - 32).y
       End If
       size.x = Math.Max(size.x, pos.x)
       size.y = Math.Max(size.y, pos.y)
@@ -1377,7 +1378,9 @@ next4:
       SetPixelMode(Pixel.Mode.Mask)
     End If
     'End If
-
+    
+    Dim fontSpr As Sprite
+    If Not m_fontSprite.TryGetValue(font, fontSpr) Then Exit Sub
     For Each c In text
       If c = vbLf Then
         sx = 0
@@ -1389,9 +1392,9 @@ next4:
         Dim ox = ch Mod 16
         Dim oy = ch \ 16
         If scale > 1 Then
-          For i = 0 To m_fontSpacing(font)(ch).y - 1 '7
+          For i = 0 To m_fontSpacing(ch).y - 1 '7
             For j = 0 To 7
-              If m_fontSprite(font).GetPixel(i + ox * 8 + m_fontSpacing(font)(ch).x, j + oy * 8).R > 0 Then
+              If fontSpr.GetPixel(i + ox * 8 + m_fontSpacing(ch).x, j + oy * 8).R > 0 Then
                 For iIs = 0 To scale - 1
                   For js = 0 To scale - 1
                     Draw(x + sx + (i * scale) + iIs, y + sy + (j * scale) + js, col)
@@ -1401,15 +1404,15 @@ next4:
             Next
           Next
         Else
-          For i = 0 To m_fontSpacing(font)(ch).y - 1 '7
+          For i = 0 To m_fontSpacing(ch).y - 1 '7
             For j = 0 To 7
-              If m_fontSprite(font).GetPixel(i + ox * 8 + m_fontSpacing(font)(ch).x, j + oy * 8).R > 0 Then
+              If fontSpr.GetPixel(i + ox * 8 + m_fontSpacing(ch).x, j + oy * 8).R > 0 Then
                 Draw(x + sx + i, y + sy + j, col)
               End If
             Next
           Next
         End If
-        sx += m_fontSpacing(font)(ch).y * scale
+        sx += m_fontSpacing(ch).y * scale
       End If
 
     Next
@@ -1658,22 +1661,22 @@ next4:
           End If
         Next
       Next
-
-      m_spacing = {
-        &H3, &H25, &H16, &H8, &H7, &H8, &H8, &H4, &H15, &H15, &H8, &H7, &H15, &H7, &H24, &H8,
-        &H8, &H17, &H8, &H8, &H8, &H8, &H8, &H8, &H8, &H8, &H24, &H15, &H6, &H7, &H16, &H17,
-        &H8, &H8, &H8, &H8, &H8, &H8, &H8, &H8, &H8, &H17, &H8, &H8, &H17, &H8, &H8, &H8,
-        &H8, &H8, &H8, &H8, &H17, &H8, &H8, &H8, &H8, &H17, &H8, &H15, &H8, &H15, &H8, &H8,
-        &H24, &H18, &H17, &H17, &H17, &H17, &H17, &H17, &H17, &H33, &H17, &H17, &H33, &H18, &H17, &H17,
-        &H17, &H17, &H17, &H17, &H7, &H17, &H17, &H18, &H18, &H17, &H17, &H7, &H33, &H7, &H8, &H0}
-
-      Dim offset = 0
-      For Each c In m_spacing
-        m_fontSpacing(font)(offset) = New Vi2d(c >> 4, c And 15)
-        offset += 1
-      Next
     Next
 
+    m_spacing = {
+      &H3, &H25, &H16, &H8, &H7, &H8, &H8, &H4, &H15, &H15, &H8, &H7, &H15, &H7, &H24, &H8,
+      &H8, &H17, &H8, &H8, &H8, &H8, &H8, &H8, &H8, &H8, &H24, &H15, &H6, &H7, &H16, &H17,
+      &H8, &H8, &H8, &H8, &H8, &H8, &H8, &H8, &H8, &H17, &H8, &H8, &H17, &H8, &H8, &H8,
+      &H8, &H8, &H8, &H8, &H17, &H8, &H8, &H8, &H8, &H17, &H8, &H15, &H8, &H15, &H8, &H8,
+      &H24, &H18, &H17, &H17, &H17, &H17, &H17, &H17, &H17, &H33, &H17, &H17, &H33, &H18, &H17, &H17,
+      &H17, &H17, &H17, &H17, &H7, &H17, &H17, &H18, &H18, &H17, &H17, &H7, &H33, &H7, &H8, &H0}
+
+    Dim offset = 0
+    For Each c In m_spacing
+      m_fontSpacing(offset) = New Vi2d(c >> 4, c And 15)
+      offset += 1
+    Next
+    
     m_KeyboardMap = New List(Of Tuple(Of Key, String, String)) From {
       Tuple.Create(Key.A, "a", "A"), Tuple.Create(Key.B, "b", "B"), Tuple.Create(Key.C, "c", "C"), Tuple.Create(Key.D, "d", "D"), Tuple.Create(Key.E, "e", "E"),
       Tuple.Create(Key.F, "f", "F"), Tuple.Create(Key.G, "g", "G"), Tuple.Create(Key.H, "h", "H"), Tuple.Create(Key.I, "i", "I"), Tuple.Create(Key.J, "j", "J"),
