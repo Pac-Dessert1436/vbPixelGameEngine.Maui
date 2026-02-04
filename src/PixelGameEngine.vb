@@ -1337,8 +1337,7 @@ next4:
 
   End Sub
 
-  Friend Function GetTextSizeProp(text As String, font As BuiltinFont) As Vi2d
-    ' Note: Edited on mobile - the 2nd parameter of this subroutine must be removed.
+  Friend Function GetTextSizeProp(text As String) As Vi2d
     Dim size = New Vi2d(0, 1)
     Dim pos = New Vi2d(0, 1)
     For Each c In text

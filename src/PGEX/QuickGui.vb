@@ -370,7 +370,7 @@ Namespace QuickGui
         pge.DrawRect(Position, Size - New Vf2d(1, 1), m_manager.BorderColor)
       End If
 
-      Dim vText = pge.GetTextSizeProp(Text, BuiltinFont.Default)
+      Dim vText = pge.GetTextSizeProp(Text)
       Select Case Alignment
         Case Alignment.Left
           pge.DrawStringProp(New Vf2d(Position.x + 2.0F, Position.y + (Size.y - vText.y) * 0.5F), Text, m_manager.TextColor)
@@ -499,7 +499,7 @@ Namespace QuickGui
       End Select
 
       pge.DrawRect(Position, Size - New Vf2d(1, 1), m_manager.BorderColor)
-      Dim vText = pge.GetTextSizeProp(Text, BuiltinFont.Default)
+      Dim vText = pge.GetTextSizeProp(Text)
       pge.DrawStringProp(Position + (Size - vText) * 0.5F, Text, m_manager.TextColor)
 
     End Sub
