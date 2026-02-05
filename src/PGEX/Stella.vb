@@ -1,8 +1,8 @@
-﻿Public Class Stella
-  Inherits PgeX
+﻿Namespace PGEX
+  Public Class Stella
 
-  ' 128 indexs - 16 colors x 8 shades
-  Public Shared ReadOnly Palette As New List(Of Pixel) From {New Pixel(&H0, &H0, &H0, &HFF),
+    ' 128 indexs - 16 colors x 8 shades
+    Public Shared ReadOnly Palette As New List(Of Pixel) From {New Pixel(&H0, &H0, &H0, &HFF),
                                                              New Pixel(&H44, &H44, &H0, &HFF),
                                                              New Pixel(&H70, &H28, &H0, &HFF),
                                                              New Pixel(&H84, &H18, &H0, &HFF),
@@ -131,4 +131,5 @@
                                                              New Pixel(&HFC, &HE0, &H8C, &HFF),
                                                              New Pixel(&HFF, &HFF, &HFF, &HFF)}
 
-End Class
+  End Class
+End Namespace

@@ -1,284 +1,284 @@
-﻿Public Class SpecBAS
-  Inherits PgeX
+﻿Namespace PGEX
+  Public Class SpecBAS
 
-  Public Const PI As Single = 3.14159274
-  Public Const TAU As Single = 6.28318548
+    Public Const PI As Single = 3.14159274
+    Public Const TAU As Single = 6.28318548
 
-  Private Shared m_ink As Integer = 0
-  Private Shared m_paper As Integer = 8
-  Private Shared m_stroke As Integer = 1
+    Private Shared m_ink As Integer = 0
+    Private Shared m_paper As Integer = 8
+    Private Shared m_stroke As Integer = 1
 
-  Private Shared m_mathMode As MathMode = MathMode.Radians
+    Private Shared m_mathMode As MathMode = MathMode.Radians
 
-  Private Enum MathMode
-    Radians
-    Degrees
-    Turns
-    Gradians
-  End Enum
+    Private Enum MathMode
+      Radians
+      Degrees
+      Turns
+      Gradians
+    End Enum
 
-  Public Shared Sub CLS()
-    Pge.Clear(Palette(m_paper))
-  End Sub
+    Public Shared Sub CLS()
+      Pge.Clear(Palette(m_paper))
+    End Sub
 
-  Public Shared Sub CLS(ink As Integer)
-    Pge.Clear(Palette(ink))
-  End Sub
+    Public Shared Sub CLS(ink As Integer)
+      Pge.Clear(Palette(ink))
+    End Sub
 
-  Public Shared Sub INK(index As Integer)
-    m_ink = index Mod 256
-  End Sub
+    Public Shared Sub INK(index As Integer)
+      m_ink = index Mod 256
+    End Sub
 
-  Public Shared Sub PAPER(index As Integer)
-    m_paper = index Mod 256
-  End Sub
+    Public Shared Sub PAPER(index As Integer)
+      m_paper = index Mod 256
+    End Sub
 
-  Public Shared Function SCRH() As Integer
-    Return Pge.ScreenHeight
-  End Function
+    Public Shared Function SCRH() As Integer
+      Return Pge.ScreenHeight
+    End Function
 
-  Public Shared Function SCRW() As Integer
-    Return Pge.ScreenWidth
-  End Function
+    Public Shared Function SCRW() As Integer
+      Return Pge.ScreenWidth
+    End Function
 
-  Public Shared Sub STROKE(size As Double)
-    m_stroke = CInt(Fix(size))
-  End Sub
+    Public Shared Sub STROKE(size As Double)
+      m_stroke = CInt(Fix(size))
+    End Sub
 
-  Public Shared Function RGBTOINT(r As Double, g As Double, b As Double) As Integer
-    Dim rr = CInt(r) : If rr < 0 Then rr = 0 Else If rr > 255 Then rr = 255
-    Dim gg = CInt(g) : If gg < 0 Then gg = 0 Else If gg > 255 Then gg = 255
-    Dim bb = CInt(b) : If bb < 0 Then bb = 0 Else If bb > 255 Then bb = 255
-    Return rr << 16 + gg << 8 + bb
-  End Function
+    Public Shared Function RGBTOINT(r As Double, g As Double, b As Double) As Integer
+      Dim rr = CInt(r) : If rr < 0 Then rr = 0 Else If rr > 255 Then rr = 255
+      Dim gg = CInt(g) : If gg < 0 Then gg = 0 Else If gg > 255 Then gg = 255
+      Dim bb = CInt(b) : If bb < 0 Then bb = 0 Else If bb > 255 Then bb = 255
+      Return rr << 16 + gg << 8 + bb
+    End Function
 
-  Public Shared Sub RADIANS()
-    m_mathMode = MathMode.Radians
-  End Sub
+    Public Shared Sub RADIANS()
+      m_mathMode = MathMode.Radians
+    End Sub
 
-  Public Shared Sub DEGREES()
-    m_mathMode = MathMode.Degrees
-  End Sub
+    Public Shared Sub DEGREES()
+      m_mathMode = MathMode.Degrees
+    End Sub
 
-  Public Shared Sub TURNS()
-    m_mathMode = MathMode.Turns
-  End Sub
+    Public Shared Sub TURNS()
+      m_mathMode = MathMode.Turns
+    End Sub
 
-  Public Shared Sub GRADIANS()
-    m_mathMode = MathMode.Gradians
-  End Sub
+    Public Shared Sub GRADIANS()
+      m_mathMode = MathMode.Gradians
+    End Sub
 
-  Public Shared Function DEGTORAD(n As Double) As Double
-    Return n * Math.PI / 180
-  End Function
+    Public Shared Function DEGTORAD(n As Double) As Double
+      Return n * Math.PI / 180
+    End Function
 
-  Public Shared Function DEGTORAD(n As Single) As Single
-    Return n * MathF.PI / 180
-  End Function
+    Public Shared Function DEGTORAD(n As Single) As Single
+      Return n * MathF.PI / 180
+    End Function
 
-  Public Shared Function RADTODEG(n As Double) As Double
-    Return n * 180 / Math.PI
-  End Function
+    Public Shared Function RADTODEG(n As Double) As Double
+      Return n * 180 / Math.PI
+    End Function
 
-  Public Shared Function RADTODEG(n As Single) As Single
-    Return n * 180 / MathF.PI
-  End Function
+    Public Shared Function RADTODEG(n As Single) As Single
+      Return n * 180 / MathF.PI
+    End Function
 
-  Private Shared Function RadToAngle(angle As Single) As Single
-    Select Case m_mathMode
-      Case MathMode.Degrees : Return RADTODEG(angle) ' Degrees to radians
-      Case MathMode.Turns : Return angle / (PI * 2) ' Turns to radians
-      Case MathMode.Gradians : Return angle / (PI / 200) ' Gradians to radians
-      Case Else ' MathMode.Radians
-        Return angle
-    End Select
-  End Function
+    Private Shared Function RadToAngle(angle As Single) As Single
+      Select Case m_mathMode
+        Case MathMode.Degrees : Return RADTODEG(angle) ' Degrees to radians
+        Case MathMode.Turns : Return angle / (PI * 2) ' Turns to radians
+        Case MathMode.Gradians : Return angle / (PI / 200) ' Gradians to radians
+        Case Else ' MathMode.Radians
+          Return angle
+      End Select
+    End Function
 
-  Private Shared Function RadToAngle(angle As Double) As Double
-    Select Case m_mathMode
-      Case MathMode.Degrees : Return RADTODEG(angle) ' Radians to degrees
-      Case MathMode.Turns : Return angle / (PI * 2) ' Radians to turns
-      Case MathMode.Gradians : Return angle / (PI / 200) ' Radians to Gradians
-      Case Else ' MathMode.Radians
-        Return angle
-    End Select
-  End Function
+    Private Shared Function RadToAngle(angle As Double) As Double
+      Select Case m_mathMode
+        Case MathMode.Degrees : Return RADTODEG(angle) ' Radians to degrees
+        Case MathMode.Turns : Return angle / (PI * 2) ' Radians to turns
+        Case MathMode.Gradians : Return angle / (PI / 200) ' Radians to Gradians
+        Case Else ' MathMode.Radians
+          Return angle
+      End Select
+    End Function
 
-  Private Shared Function AngleToRad(angle As Single) As Single
-    Select Case m_mathMode
-      Case MathMode.Degrees : Return DEGTORAD(angle) ' Degrees to radians
-      Case MathMode.Turns : Return angle * (PI * 2) ' Turns to radians
-      Case MathMode.Gradians : Return angle * (PI / 200) ' Gradians to radians
-      Case Else ' MathMode.Radians
-        Return angle
-    End Select
-  End Function
+    Private Shared Function AngleToRad(angle As Single) As Single
+      Select Case m_mathMode
+        Case MathMode.Degrees : Return DEGTORAD(angle) ' Degrees to radians
+        Case MathMode.Turns : Return angle * (PI * 2) ' Turns to radians
+        Case MathMode.Gradians : Return angle * (PI / 200) ' Gradians to radians
+        Case Else ' MathMode.Radians
+          Return angle
+      End Select
+    End Function
 
-  Private Shared Function AngleToRad(angle As Double) As Double
-    Select Case m_mathMode
-      Case MathMode.Degrees : Return DEGTORAD(angle) ' Degrees to radians
-      Case MathMode.Turns : Return angle * (PI * 2) ' Turns to radians
-      Case MathMode.Gradians : Return angle * (PI / 200) ' Gradians to radians
-      Case Else ' MathMode.Radians
-        Return angle
-    End Select
-  End Function
+    Private Shared Function AngleToRad(angle As Double) As Double
+      Select Case m_mathMode
+        Case MathMode.Degrees : Return DEGTORAD(angle) ' Degrees to radians
+        Case MathMode.Turns : Return angle * (PI * 2) ' Turns to radians
+        Case MathMode.Gradians : Return angle * (PI / 200) ' Gradians to radians
+        Case Else ' MathMode.Radians
+          Return angle
+      End Select
+    End Function
 
-  Public Shared Function SIN(n As Single) As Single
-    Dim v = AngleToRad(n)
-    Return MathF.Sin(v)
-  End Function
+    Public Shared Function SIN(n As Single) As Single
+      Dim v = AngleToRad(n)
+      Return MathF.Sin(v)
+    End Function
 
-  Public Shared Function SIN(n As Double) As Double
-    Dim v = AngleToRad(n)
-    Return Math.Sin(v)
-  End Function
+    Public Shared Function SIN(n As Double) As Double
+      Dim v = AngleToRad(n)
+      Return Math.Sin(v)
+    End Function
 
-  Public Shared Function COS(n As Single) As Single
-    Dim v = AngleToRad(n)
-    Return MathF.Cos(v)
-  End Function
+    Public Shared Function COS(n As Single) As Single
+      Dim v = AngleToRad(n)
+      Return MathF.Cos(v)
+    End Function
 
-  Public Shared Function COS(n As Double) As Double
-    Dim v = AngleToRad(n)
-    Return Math.Cos(v)
-  End Function
+    Public Shared Function COS(n As Double) As Double
+      Dim v = AngleToRad(n)
+      Return Math.Cos(v)
+    End Function
 
-  Public Shared Function CEIL(n As Single) As Integer
-    Return CInt(Fix(MathF.Ceiling(n)))
-  End Function
+    Public Shared Function CEIL(n As Single) As Integer
+      Return CInt(Fix(MathF.Ceiling(n)))
+    End Function
 
-  Public Shared Function CEIL(n As Double) As Integer
-    Return CInt(Fix(Math.Ceiling(n)))
-  End Function
+    Public Shared Function CEIL(n As Double) As Integer
+      Return CInt(Fix(Math.Ceiling(n)))
+    End Function
 
-  Public Shared Function ATN(n As Single) As Single
-    Dim v = AngleToRad(n)
-    Return MathF.Atan(v)
-  End Function
+    Public Shared Function ATN(n As Single) As Single
+      Dim v = AngleToRad(n)
+      Return MathF.Atan(v)
+    End Function
 
-  Public Shared Function ATN(n As Double) As Double
-    Dim v = AngleToRad(n)
-    Return Math.Atan(v)
-  End Function
+    Public Shared Function ATN(n As Double) As Double
+      Dim v = AngleToRad(n)
+      Return Math.Atan(v)
+    End Function
 
-  Public Shared Function ASN(n As Single) As Single
-    Dim v = AngleToRad(n)
-    Return MathF.Asin(v)
-  End Function
+    Public Shared Function ASN(n As Single) As Single
+      Dim v = AngleToRad(n)
+      Return MathF.Asin(v)
+    End Function
 
-  Public Shared Function ASN(n As Double) As Double
-    Dim v = AngleToRad(n)
-    Return Math.Asin(v)
-  End Function
+    Public Shared Function ASN(n As Double) As Double
+      Dim v = AngleToRad(n)
+      Return Math.Asin(v)
+    End Function
 
-  Public Shared Function TAN(n As Single) As Single
-    Dim v = AngleToRad(n)
-    Return MathF.Tan(v)
-  End Function
+    Public Shared Function TAN(n As Single) As Single
+      Dim v = AngleToRad(n)
+      Return MathF.Tan(v)
+    End Function
 
-  Public Shared Function TAN(n As Double) As Double
-    Dim v = AngleToRad(n)
-    Return Math.Tan(v)
-  End Function
+    Public Shared Function TAN(n As Double) As Double
+      Dim v = AngleToRad(n)
+      Return Math.Tan(v)
+    End Function
 
-  Public Shared Function SQR(n As Single) As Single
-    Return MathF.Sqrt(n)
-  End Function
+    Public Shared Function SQR(n As Single) As Single
+      Return MathF.Sqrt(n)
+    End Function
 
-  Public Shared Function SQR(n As Double) As Double
-    Return Math.Sqrt(n)
-  End Function
+    Public Shared Function SQR(n As Double) As Double
+      Return Math.Sqrt(n)
+    End Function
 
-  Public Shared Function ABS(n As Double) As Double
-    Return Math.Abs(n)
-  End Function
+    Public Shared Function ABS(n As Double) As Double
+      Return Math.Abs(n)
+    End Function
 
-  Public Shared Function ABS(n As Single) As Single
-    Return Math.Abs(n)
-  End Function
+    Public Shared Function ABS(n As Single) As Single
+      Return Math.Abs(n)
+    End Function
 
-  Public Shared Function ABS(n As Short) As Short
-    Return Math.Abs(n)
-  End Function
+    Public Shared Function ABS(n As Short) As Short
+      Return Math.Abs(n)
+    End Function
 
-  Public Shared Function ABS(n As Integer) As Integer
-    Return Math.Abs(n)
-  End Function
+    Public Shared Function ABS(n As Integer) As Integer
+      Return Math.Abs(n)
+    End Function
 
-  Public Shared Function ABS(n As Long) As Long
-    Return Math.Abs(n)
-  End Function
+    Public Shared Function ABS(n As Long) As Long
+      Return Math.Abs(n)
+    End Function
 
 #Region "DEC"
 
-  Public Shared Sub DEC(ByRef n As Byte, Optional amount As Byte = 1, Optional min As Byte = Byte.MinValue, Optional max As Byte = Byte.MaxValue)
-    n += amount
-    If n < min Then n = max
-  End Sub
+    Public Shared Sub DEC(ByRef n As Byte, Optional amount As Byte = 1, Optional min As Byte = Byte.MinValue, Optional max As Byte = Byte.MaxValue)
+      n += amount
+      If n < min Then n = max
+    End Sub
 
-  Public Shared Sub DEC(ByRef n As Short, Optional amount As Short = 1, Optional min As Short = Short.MinValue, Optional max As Short = Short.MaxValue)
-    n += amount
-    If n < min Then n = max
-  End Sub
+    Public Shared Sub DEC(ByRef n As Short, Optional amount As Short = 1, Optional min As Short = Short.MinValue, Optional max As Short = Short.MaxValue)
+      n += amount
+      If n < min Then n = max
+    End Sub
 
-  Public Shared Sub DEC(ByRef n As Integer, Optional amount As Integer = 1, Optional min As Integer = Integer.MinValue, Optional max As Integer = Integer.MaxValue)
-    n += amount
-    If n < min Then n = max
-  End Sub
+    Public Shared Sub DEC(ByRef n As Integer, Optional amount As Integer = 1, Optional min As Integer = Integer.MinValue, Optional max As Integer = Integer.MaxValue)
+      n += amount
+      If n < min Then n = max
+    End Sub
 
-  Public Shared Sub DEC(ByRef n As Long, Optional amount As Long = 1, Optional min As Long = Long.MinValue, Optional max As Long = Long.MaxValue)
-    n += amount
-    If n < min Then n = max
-  End Sub
+    Public Shared Sub DEC(ByRef n As Long, Optional amount As Long = 1, Optional min As Long = Long.MinValue, Optional max As Long = Long.MaxValue)
+      n += amount
+      If n < min Then n = max
+    End Sub
 
-  Public Shared Sub DEC(ByRef n As Single, Optional amount As Single = 1, Optional min As Single = Single.MinValue, Optional max As Single = Single.MaxValue)
-    n += amount
-    If n < min Then n = max
-  End Sub
+    Public Shared Sub DEC(ByRef n As Single, Optional amount As Single = 1, Optional min As Single = Single.MinValue, Optional max As Single = Single.MaxValue)
+      n += amount
+      If n < min Then n = max
+    End Sub
 
-  Public Shared Sub DEC(ByRef n As Double, Optional amount As Double = 1, Optional min As Double = Double.MinValue, Optional max As Double = Double.MaxValue)
-    n += amount
-    If n < min Then n = max
-  End Sub
+    Public Shared Sub DEC(ByRef n As Double, Optional amount As Double = 1, Optional min As Double = Double.MinValue, Optional max As Double = Double.MaxValue)
+      n += amount
+      If n < min Then n = max
+    End Sub
 
 #End Region
 
 #Region "INC"
 
-  Public Shared Sub INC(ByRef n As Byte, Optional amount As Byte = 1, Optional min As Byte = Byte.MinValue, Optional max As Byte = Byte.MaxValue)
-    n += amount
-    If n > max Then n = min
-  End Sub
+    Public Shared Sub INC(ByRef n As Byte, Optional amount As Byte = 1, Optional min As Byte = Byte.MinValue, Optional max As Byte = Byte.MaxValue)
+      n += amount
+      If n > max Then n = min
+    End Sub
 
-  Public Shared Sub INC(ByRef n As Short, Optional amount As Short = 1, Optional min As Short = Short.MinValue, Optional max As Short = Short.MaxValue)
-    n += amount
-    If n > max Then n = min
-  End Sub
+    Public Shared Sub INC(ByRef n As Short, Optional amount As Short = 1, Optional min As Short = Short.MinValue, Optional max As Short = Short.MaxValue)
+      n += amount
+      If n > max Then n = min
+    End Sub
 
-  Public Shared Sub INC(ByRef n As Integer, Optional amount As Integer = 1, Optional min As Integer = Integer.MinValue, Optional max As Integer = Integer.MaxValue)
-    n += amount
-    If n > max Then n = min
-  End Sub
+    Public Shared Sub INC(ByRef n As Integer, Optional amount As Integer = 1, Optional min As Integer = Integer.MinValue, Optional max As Integer = Integer.MaxValue)
+      n += amount
+      If n > max Then n = min
+    End Sub
 
-  Public Shared Sub INC(ByRef n As Long, Optional amount As Long = 1, Optional min As Long = Long.MinValue, Optional max As Long = Long.MaxValue)
-    n += amount
-    If n > max Then n = min
-  End Sub
+    Public Shared Sub INC(ByRef n As Long, Optional amount As Long = 1, Optional min As Long = Long.MinValue, Optional max As Long = Long.MaxValue)
+      n += amount
+      If n > max Then n = min
+    End Sub
 
-  Public Shared Sub INC(ByRef n As Single, Optional amount As Single = 1, Optional min As Single = Single.MinValue, Optional max As Single = Single.MaxValue)
-    n += amount
-    If n > max Then n = min
-  End Sub
+    Public Shared Sub INC(ByRef n As Single, Optional amount As Single = 1, Optional min As Single = Single.MinValue, Optional max As Single = Single.MaxValue)
+      n += amount
+      If n > max Then n = min
+    End Sub
 
-  Public Shared Sub INC(ByRef n As Double, Optional amount As Double = 1, Optional min As Double = Double.MinValue, Optional max As Double = Double.MaxValue)
-    n += amount
-    If n > max Then n = min
-  End Sub
+    Public Shared Sub INC(ByRef n As Double, Optional amount As Double = 1, Optional min As Double = Double.MinValue, Optional max As Double = Double.MaxValue)
+      n += amount
+      If n > max Then n = min
+    End Sub
 
 #End Region
 
-  Public Shared ReadOnly Palette As New List(Of Pixel) From {New Pixel(&H0, &H0, &H0, &HFF), ' Black
+    Public Shared ReadOnly Palette As New List(Of Pixel) From {New Pixel(&H0, &H0, &H0, &HFF), ' Black
                                                              New Pixel(&H0, &H0, &HB0, &HFF), ' Blue
                                                              New Pixel(&HB0, &H0, &H0, &HFF), ' Red
                                                              New Pixel(&HB0, &H0, &HB0, &HFF), ' Magenta
@@ -535,80 +535,80 @@
                                                              New Pixel() With {.B = &HF0, .G = &HF0, .R = &HF0, .A = &HFF},
                                                              New Pixel() With {.B = &HF8, .G = &HF8, .R = &HF8, .A = &HFF}}
 
-  Private Shared Function Polyterm(x As Single, p As Single, q As Single, r As Single, n As Integer) As Single
+    Private Shared Function Polyterm(x As Single, p As Single, q As Single, r As Single, n As Integer) As Single
 
-    Dim acc = 0!
-    Dim mul = 1.0!
+      Dim acc = 0!
+      Dim mul = 1.0!
 
-    For s = 1 To n - 1
-      Dim harm = MathF.Log(s)
-      Dim zeta = If(r = 0, 1, MathF.Exp(harm * r))
-      harm = If(p = 0, 1, MathF.Exp(harm * p))
-      mul = mul * x * harm
-      acc += mul * zeta * MathF.Cos(q * (s - 1))
-    Next
+      For s = 1 To n - 1
+        Dim harm = MathF.Log(s)
+        Dim zeta = If(r = 0, 1, MathF.Exp(harm * r))
+        harm = If(p = 0, 1, MathF.Exp(harm * p))
+        mul = mul * x * harm
+        acc += mul * zeta * MathF.Cos(q * (s - 1))
+      Next
 
-    Return acc
+      Return acc
 
-  End Function
+    End Function
 
-  Private Shared Function Under(x As Single, p As Single, q As Single, r As Single, n As Integer) As Single
+    Private Shared Function Under(x As Single, p As Single, q As Single, r As Single, n As Integer) As Single
 
-    Dim acc = 0!
-    For s = 1 To n - 1
-      Dim harm = x / s
-      acc = acc + harm + Polyterm(harm, p, q, r, n)
-    Next
+      Dim acc = 0!
+      For s = 1 To n - 1
+        Dim harm = x / s
+        acc = acc + harm + Polyterm(harm, p, q, r, n)
+      Next
 
-    Return Polyterm(acc, r, q, p, n)
+      Return Polyterm(acc, r, q, p, n)
 
-  End Function
+    End Function
 
-  'TODO: SP_CompSimpson
+    'TODO: SP_CompSimpson
 
-  Private Shared Function Mandel(x As Single, y As Single, MaxIters As Integer) As Integer
+    Private Shared Function Mandel(x As Single, y As Single, MaxIters As Integer) As Integer
 
-    Dim p2y = y * y
-    Dim q = ((x - 0.25!) * (x - 0.25!)) + p2y
-    If (((x + 1) * (x + 1)) + p2y < 0.0625) Or (q * (q + (x - 0.25)) < p2y / 4) Then
-      Return 0
-    End If
+      Dim p2y = y * y
+      Dim q = ((x - 0.25!) * (x - 0.25!)) + p2y
+      If (((x + 1) * (x + 1)) + p2y < 0.0625) Or (q * (q + (x - 0.25)) < p2y / 4) Then
+        Return 0
+      End If
 
-    Dim zr = x
-    Dim zi = y
-    Dim p = 0
-    Dim ptot = 8
-
-    Do
-
-      Dim ckr = zr
-      Dim cki = zi
-      ptot += ptot
-      If ptot > MaxIters Then ptot = MaxIters
+      Dim zr = x
+      Dim zi = y
+      Dim p = 0
+      Dim ptot = 8
 
       Do
-        p += 1
-        Dim tmp = (zr * zr) - (zi * zi) + x
-        zi = (zi * 2 * zr) + y
-        zr = tmp
 
-        If (zr * zr) + (zi * zi) > 4 Then
-          Return p
-        ElseIf (zr = ckr) And (zi = cki) Then
-          Return 0
-        End If
+        Dim ckr = zr
+        Dim cki = zi
+        ptot += ptot
+        If ptot > MaxIters Then ptot = MaxIters
 
-      Loop Until p >= ptot
+        Do
+          p += 1
+          Dim tmp = (zr * zr) - (zi * zi) + x
+          zi = (zi * 2 * zr) + y
+          zr = tmp
 
-    Loop Until ptot = MaxIters
+          If (zr * zr) + (zi * zi) > 4 Then
+            Return p
+          ElseIf (zr = ckr) And (zi = cki) Then
+            Return 0
+          End If
 
-    Return 0
+        Loop Until p >= ptot
 
-  End Function
+      Loop Until ptot = MaxIters
 
-  ' Perlin noise
+      Return 0
 
-  Private Shared ReadOnly p2 As New List(Of Integer) _
+    End Function
+
+    ' Perlin noise
+
+    Private Shared ReadOnly p2 As New List(Of Integer) _
     From {151, 160, 137, 91, 90, 15, 131, 13, 201, 95, 96, 53, 194, 233, 7, 225, 140, 36, 103, 30, 69, 142, 8, 99, 37, 240, 21, 10, 23,
           190, 6, 148, 247, 120, 234, 75, 0, 26, 197, 62, 94, 252, 219, 203, 117, 35, 11, 32, 57, 177, 33, 88, 237, 149, 56, 87, 174, 20, 125, 136, 171, 168, 68, 175, 74, 165, 71, 134, 139, 48, 27, 166,
           77, 146, 158, 231, 83, 111, 229, 122, 60, 211, 133, 230, 220, 105, 92, 41, 55, 46, 245, 40, 244, 102, 143, 54, 65, 25, 63, 161, 1, 216, 80, 73, 209, 76, 132, 187, 208, 89, 18, 169, 200, 196,
@@ -623,177 +623,178 @@
           251, 34, 242, 193, 238, 210, 144, 12, 191, 179, 162, 241, 81, 51, 145, 235, 249, 14, 239, 107, 49, 192, 214, 31, 181, 199, 106, 157, 184, 84, 204, 176, 115, 121, 50, 45, 127, 4, 150, 254,
           138, 236, 205, 93, 222, 114, 67, 29, 24, 72, 243, 141, 128, 195, 78, 66, 215, 61, 156, 180}
 
-  Private Shared Function Lerp(a As Single, b As Single, x As Single) As Single
-    Return a + x * (b - a)
-  End Function
+    Private Shared Function Lerp(a As Single, b As Single, x As Single) As Single
+      Return a + x * (b - a)
+    End Function
 
-  Private Shared Function Fade(t As Single) As Single
-    Return t * t * t * (t * (t * 6 - 15) + 10)
-  End Function
+    Private Shared Function Fade(t As Single) As Single
+      Return t * t * t * (t * (t * 6 - 15) + 10)
+    End Function
 
-  Private Shared Function Grad(hash As Integer, x As Single, y As Single, z As Single) As Single
+    Private Shared Function Grad(hash As Integer, x As Single, y As Single, z As Single) As Single
 
-    Select Case hash And &HF
-      Case 0 : Return x + y
-      Case 1 : Return -x + y
-      Case 2 : Return x - y
-      Case 3 : Return -x - y
-      Case 4 : Return x + z
-      Case 5 : Return -x + z
-      Case 6 : Return x - z
-      Case 7 : Return -x - z
-      Case 8 : Return y + z
-      Case 9 : Return -y + z
-      Case &HA : Return y - z
-      Case &HB : Return -y - z
-      Case &HC : Return y + x
-      Case &HD : Return -y + z
-      Case &HE : Return y - x
-      Case &HF : Return -y - z
-      Case Else : Return 0
-    End Select
+      Select Case hash And &HF
+        Case 0 : Return x + y
+        Case 1 : Return -x + y
+        Case 2 : Return x - y
+        Case 3 : Return -x - y
+        Case 4 : Return x + z
+        Case 5 : Return -x + z
+        Case 6 : Return x - z
+        Case 7 : Return -x - z
+        Case 8 : Return y + z
+        Case 9 : Return -y + z
+        Case &HA : Return y - z
+        Case &HB : Return -y - z
+        Case &HC : Return y + x
+        Case &HD : Return -y + z
+        Case &HE : Return y - x
+        Case &HF : Return -y - z
+        Case Else : Return 0
+      End Select
 
-  End Function
+    End Function
 
-  Public Shared Function NOISE(x As Single, y As Single, z As Single) As Single
-    ' Internally calls Perlin, but the keyword is NOISE
+    Public Shared Function NOISE(x As Single, y As Single, z As Single) As Single
+      ' Internally calls Perlin, but the keyword is NOISE
 
-    x = MathF.Abs(x)
-    y = MathF.Abs(y)
-    z = MathF.Abs(z)
+      x = MathF.Abs(x)
+      y = MathF.Abs(y)
+      z = MathF.Abs(z)
 
-    Dim t = CInt(MathF.Truncate(x))
-    Dim xi = t And &HFF
-    Dim xf = x - t
+      Dim t = CInt(MathF.Truncate(x))
+      Dim xi = t And &HFF
+      Dim xf = x - t
 
-    t = CInt(MathF.Truncate(y))
-    Dim yi = t And &HFF
-    Dim yf = y - t
+      t = CInt(MathF.Truncate(y))
+      Dim yi = t And &HFF
+      Dim yf = y - t
 
-    t = CInt(Math.Truncate(z))
-    Dim zi = t And &HFF
-    Dim zf = z - t
+      t = CInt(Math.Truncate(z))
+      Dim zi = t And &HFF
+      Dim zf = z - t
 
-    Dim u = Fade(xf)
-    Dim v = Fade(yf)
-    Dim w = Fade(zf)
+      Dim u = Fade(xf)
+      Dim v = Fade(yf)
+      Dim w = Fade(zf)
 
-    Dim p = p2(xi)
-    Dim aaa = p2(p2(p + yi) + zi)
-    Dim aba = p2(p2(p + yi + 1) + zi)
-    Dim aab = p2(p2(p + yi) + zi + 1)
-    Dim abb = p2(p2(p + yi + 1) + zi + 1)
+      Dim p = p2(xi)
+      Dim aaa = p2(p2(p + yi) + zi)
+      Dim aba = p2(p2(p + yi + 1) + zi)
+      Dim aab = p2(p2(p + yi) + zi + 1)
+      Dim abb = p2(p2(p + yi + 1) + zi + 1)
 
-    p = p2(xi + 1)
-    Dim baa = p2(p2(p + yi) + zi)
-    Dim bba = p2(p2(p + yi + 1) + zi)
-    Dim bab = p2(p2(p + yi) + zi + 1)
-    Dim bbb = p2(p2(p + yi + 1) + zi + 1)
+      p = p2(xi + 1)
+      Dim baa = p2(p2(p + yi) + zi)
+      Dim bba = p2(p2(p + yi + 1) + zi)
+      Dim bab = p2(p2(p + yi) + zi + 1)
+      Dim bbb = p2(p2(p + yi + 1) + zi + 1)
 
-    Dim x1 = Lerp(Grad(aaa, xf, yf, zf), Grad(baa, xf - 1, yf, zf), u)
-    Dim x2 = Lerp(Grad(aba, xf, yf - 1, zf), Grad(bba, xf - 1, yf - 1, zf), u)
-    Dim y1 = Lerp(x1, x2, v)
-    x1 = Lerp(Grad(aab, xf, yf, zf - 1), Grad(bab, xf - 1, yf, zf - 1), u)
-    x2 = Lerp(Grad(abb, xf, yf - 1, zf - 1), Grad(bbb, xf - 1, yf - 1, zf - 1), u)
-    Dim y2 = Lerp(x1, x2, v)
+      Dim x1 = Lerp(Grad(aaa, xf, yf, zf), Grad(baa, xf - 1, yf, zf), u)
+      Dim x2 = Lerp(Grad(aba, xf, yf - 1, zf), Grad(bba, xf - 1, yf - 1, zf), u)
+      Dim y1 = Lerp(x1, x2, v)
+      x1 = Lerp(Grad(aab, xf, yf, zf - 1), Grad(bab, xf - 1, yf, zf - 1), u)
+      x2 = Lerp(Grad(abb, xf, yf - 1, zf - 1), Grad(bbb, xf - 1, yf - 1, zf - 1), u)
+      Dim y2 = Lerp(x1, x2, v)
 
-    Return Lerp(y1, y2, w) + 0.5!
+      Return Lerp(y1, y2, w) + 0.5!
 
-  End Function
+    End Function
 
-  Public Shared Function OCTNOISE(x As Single, y As Single, z As Single, octaves As Integer, persistence As Single) As Single
-    ' Internally calls OctavePerlin, but the keyword is OCTNOISE
+    Public Shared Function OCTNOISE(x As Single, y As Single, z As Single, octaves As Integer, persistence As Single) As Single
+      ' Internally calls OctavePerlin, but the keyword is OCTNOISE
 
-    Dim total = 0!
-    Dim frequency = 1.0!
-    Dim amplitude = 1.0!
-    Dim maxvalue = 0!
+      Dim total = 0!
+      Dim frequency = 1.0!
+      Dim amplitude = 1.0!
+      Dim maxvalue = 0!
 
-    For i = 0 To octaves - 1
-      total += NOISE(x * frequency, y * frequency, z * frequency) * amplitude
-      maxvalue += amplitude
-      amplitude *= persistence
-      frequency *= 2
-    Next
+      For i = 0 To octaves - 1
+        total += NOISE(x * frequency, y * frequency, z * frequency) * amplitude
+        maxvalue += amplitude
+        amplitude *= persistence
+        frequency *= 2
+      Next
 
-    Return total / maxvalue
+      Return total / maxvalue
 
-  End Function
+    End Function
 
-  ' -----
+    ' -----
 
-  ''' <summary>
-  ''' MAP(n,a1,a2,b1,b2) where a and b are ranges, n gets mapped from range a to range b
-  ''' </summary>
-  ''' <param name="n"></param>
-  ''' <param name="rMin"></param>
-  ''' <param name="rMax"></param>
-  ''' <param name="mMin"></param>
-  ''' <param name="mMax"></param>
-  ''' <returns></returns>
-  Public Shared Function MAP(n As Single, rMin As Single, rMax As Single, mMin As Single, mMax As Single) As Single
-    Return ((n - rMin) / (rMax - rMin) * (mMax - mMin)) + mMin
-  End Function
+    ''' <summary>
+    ''' MAP(n,a1,a2,b1,b2) where a and b are ranges, n gets mapped from range a to range b
+    ''' </summary>
+    ''' <param name="n"></param>
+    ''' <param name="rMin"></param>
+    ''' <param name="rMax"></param>
+    ''' <param name="mMin"></param>
+    ''' <param name="mMax"></param>
+    ''' <returns></returns>
+    Public Shared Function MAP(n As Single, rMin As Single, rMax As Single, mMin As Single, mMax As Single) As Single
+      Return ((n - rMin) / (rMax - rMin) * (mMax - mMin)) + mMin
+    End Function
 
-  Public Shared Sub PLOT(x As Double, y As Double)
-    Pge.Draw(x, y, Palette(m_ink))
-  End Sub
+    Public Shared Sub PLOT(x As Double, y As Double)
+      Pge.Draw(x, y, Palette(m_ink))
+    End Sub
 
-  Public Shared Sub PLOT(ink As Double, x As Double, y As Double)
-    Dim c = CInt(ink) Mod 256
-    Pge.Draw(x, y, Palette(c))
-  End Sub
-
-  Public Shared Sub PLOT(a(,) As Double)
-    For i = 0 To UBound(a, 1)
-      Dim x = a(i, 1), y = a(i, 2)
-      Dim c = If(UBound(a, 2) > 2, CInt(a(i, 3)) Mod 256, m_ink)
+    Public Shared Sub PLOT(ink As Double, x As Double, y As Double)
+      Dim c = CInt(ink) Mod 256
       Pge.Draw(x, y, Palette(c))
-    Next
-  End Sub
+    End Sub
 
-  Public Shared Sub MAT(target(,) As Integer, source(,) As Integer)
-    For a = 0 To UBound(target, 1)
-      For b = 0 To UBound(target, 2)
-        target(a, b) = source(a, b)
+    Public Shared Sub PLOT(a(,) As Double)
+      For i = 0 To UBound(a, 1)
+        Dim x = a(i, 1), y = a(i, 2)
+        Dim c = If(UBound(a, 2) > 2, CInt(a(i, 3)) Mod 256, m_ink)
+        Pge.Draw(x, y, Palette(c))
       Next
-    Next
-  End Sub
+    End Sub
 
-  Public Shared Sub MAT(target(,) As Long, source(,) As Long)
-    For a = 0 To UBound(target, 1)
-      For b = 0 To UBound(target, 2)
-        target(a, b) = source(a, b)
+    Public Shared Sub MAT(target(,) As Integer, source(,) As Integer)
+      For a = 0 To UBound(target, 1)
+        For b = 0 To UBound(target, 2)
+          target(a, b) = source(a, b)
+        Next
       Next
-    Next
-  End Sub
+    End Sub
 
-  Public Shared Sub MAT(target(,) As Single, source(,) As Single)
-    For a = 0 To UBound(target, 1)
-      For b = 0 To UBound(target, 2)
-        target(a, b) = source(a, b)
+    Public Shared Sub MAT(target(,) As Long, source(,) As Long)
+      For a = 0 To UBound(target, 1)
+        For b = 0 To UBound(target, 2)
+          target(a, b) = source(a, b)
+        Next
       Next
-    Next
-  End Sub
+    End Sub
 
-  Public Shared Sub MAT(target(,) As Double, source(,) As Double)
-    For a = 0 To UBound(target, 1)
-      For b = 0 To UBound(target, 2)
-        target(a, b) = source(a, b)
+    Public Shared Sub MAT(target(,) As Single, source(,) As Single)
+      For a = 0 To UBound(target, 1)
+        For b = 0 To UBound(target, 2)
+          target(a, b) = source(a, b)
+        Next
       Next
-    Next
-  End Sub
+    End Sub
 
-  Public Shared Function MID(a As Single, b As Single, c As Single) As Single
-    Return MathF.Max(MathF.Min(a, b), MathF.Min(MathF.Max(a, b), c))
-  End Function
+    Public Shared Sub MAT(target(,) As Double, source(,) As Double)
+      For a = 0 To UBound(target, 1)
+        For b = 0 To UBound(target, 2)
+          target(a, b) = source(a, b)
+        Next
+      Next
+    End Sub
 
-  Public Shared Function MID(a As Double, b As Double, c As Double) As Double
-    Return Math.Max(Math.Min(a, b), Math.Min(Math.Max(a, b), c))
-  End Function
+    Public Shared Function MID(a As Single, b As Single, c As Single) As Single
+      Return MathF.Max(MathF.Min(a, b), MathF.Min(MathF.Max(a, b), c))
+    End Function
 
-  Public Shared Function MSECS() As Integer
-    Return CInt(Fix(Timer * 1000))
-  End Function
+    Public Shared Function MID(a As Double, b As Double, c As Double) As Double
+      Return Math.Max(Math.Min(a, b), Math.Min(Math.Max(a, b), c))
+    End Function
 
-End Class
+    Public Shared Function MSECS() As Integer
+      Return CInt(Fix(Timer * 1000))
+    End Function
+
+  End Class
+End Namespace

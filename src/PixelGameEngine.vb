@@ -1298,8 +1298,9 @@ next4:
     End If
     'End If
 
-    Dim fontSpr As Sprite
+    Dim fontSpr As Sprite = Nothing
     If Not m_fontSprite.TryGetValue(font, fontSpr) Then Exit Sub
+
     For Each c In text
       If c = vbLf Then
         sx = 0
@@ -1377,9 +1378,10 @@ next4:
       SetPixelMode(Pixel.Mode.Mask)
     End If
     'End If
-    
-    Dim fontSpr As Sprite
+
+    Dim fontSpr As Sprite = Nothing
     If Not m_fontSprite.TryGetValue(font, fontSpr) Then Exit Sub
+
     For Each c In text
       If c = vbLf Then
         sx = 0
@@ -1823,11 +1825,10 @@ next4:
 
 End Class
 
-Public MustInherit Class PgeX
-
-  'Public Shared Property Pge As PixelGameEngine
-
-End Class
+' Note: This empty base class has been reorganized as the "PGEX" namespace.
+'Public MustInherit Class PgeX
+'  'Public Shared Property Pge As PixelGameEngine
+'End Class
 
 #Region "CGE"
 
