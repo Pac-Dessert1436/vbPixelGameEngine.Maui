@@ -3,9 +3,9 @@ Public Enum BuiltinFont As Byte
   PacArrange = 1
   NamcoClassic = 2
   Contra = 3
-  RollThunder = 4
+  SonicPocket = 4
   Xevious = 5
-  Guardian = 6
+  Gradius3 = 6
   DigDug1996 = 7
   Flicky = 8
   KamikCabbie = 9
@@ -88,15 +88,60 @@ Friend Module BuiltinFontExtensions
           .Append("H000@@@061@8Mga03a@8?PA1N1@827Qa31@800AoOa@807P?@000040000000000")
           .Append("L00040@0300027`47b9P37P6O3IP70`1L1`060@670P027P40`00140000000000")
           .Append(">010H300OP1PF7R0@d8@A4b0@A48@TB0H@T4A4B0?`l3F3b03PH1H1R000000000")
-        Case BuiltinFont.RollThunder
-          ' ToDo: Add font sheet from Rolling Thunder 2
-          .Append("")
+        Case BuiltinFont.SonicPocket
+          ' Done: Add font sheet from Sonic Pocket Adventure
+          .Append("?Sh0O01o@Gl0O01oGDT0O0=oEDD050LACGl070PODGl0700O7Sh0200>00000000")
+          .Append("H000220n744077Ao4gl075Ao7gm_55A9Ogm_O7aoO41_O7`oH000O7Qn00000000")
+          .Append("OgT0O7moOgd7O7moOgd3O7moADD024@9OdL737aoOdL337ao>T8033Qf00000000")
+          .Append("?T4TF3Q6OdEnG7a?OdDTG7a?@DDBE4A=@GloM4Am@GlBM4Am@CX0=4@i00000000")
+          .Append("OaP\13P1Oa@Z17`1Oa8Z?gao@GmoOdAoOglZOgaoOglZA7l1?Q0JA7l100000000")
+          .Append("OdM7?3PoOdLUO7aoOdLGO7aoADD8@5A0AGedO5aoAGeBO5ao@CUaO5Po00000000")
+          .Append("Och`70@OOgm:?0@oOgm5O7mo1DE5@7m01Gd[O7mo1Gd@?0Do0CU\70DO00000000")
+          .Append("?P40?4QoO`40O5aoOgT7@5ao@Gd3?5@HNGl0@7aoN@L0O7ahN@<0?3ao00000000")
+          .Append("OcX0C7m3OglL;7lWOglR77lO14E160@nOgm1L7alOgl0J7abOcX0I7QQ00000000")
+          .Append("04h0C00705m1G00?Oem1G7eoOe4RD7e`OelLG7eo07l0O00?03h0?00700000000")
+          .Append("@000I41a@00RM41i@6`DO41m@6aoO7eOO`0DO7e?O`0RG3e7?`00C01300000000")
+          .Append("O`0807l0O`0827moOgH8=Wm113Io@A11OP08@Ga1N`0806`0L@0806`000000000")
+          .Append("O`P00001Oa@00042Ob:`07l4@45`Mgl8@000Mgl@@000000P@000001000000000")
+          .Append("Ob8807`03b88@Ga1?b88@@A13288=Wa1Ob8820AoO`0807`0O`0007P000000000")
+          .Append("O`0027`83d4017`47b9P17`2?QAP20@1O0P047`2N00047`4O`0027P800000000")
+          .Append("?P9P<3R0O`<`>7b0OeTH?7b0@ET<?TB0Oel6?7b0O`l3>7b0?PH1<3R000000020")
         Case BuiltinFont.Xevious
-          ' ToDo: Add font sheet from Xevious (by Namco)
-          .Append("")
-        Case BuiltinFont.Guardian
-          ' ToDo: Add font sheet from Guardian (by Taito)
-          .Append("")
+          ' Done: Add font sheet from Xevious (by Namco)
+          .Append("03h0001o?7l0o01o@Wl0o0=oFT40A0LAFT40A0@AG440?00A03h0000>00000000")
+          .Append("OP0>000n4@5OO7Ao4GmOO5Ao4Gl?A5A1Ogl6a7a1O`00o7aaOP00000n00000000")
+          .Append("Og40001oOgT7O7l?OgT7O4L?BDT024@9BDl717aiBDl717ai=TH0001f00000000")
+          .Append("?R80000VOd4DG7a?OdTnG7a?@DTDE4A9@GlnM4Ai@GlDM4Ai@CH0000b00000000")
+          .Append("Oc`40001@B8^17`1@B4^14Ao@Gm[O4AoOgljOgmoOglj17l1?R0@000100000000")
+          .Append("Odm2000oOdlUO7aoOdlBO5AoBDT8@5A0BGTT@5a0BGUBO5a0BC4Q000o00000000")
+          .Append("Och`000?Odmj70@OOdmm?7lo2DU?H7e`2GUG80D`2GTR70@@2C5@000?00000000")
+          .Append("?P<0O00o@@44O=aoBG47@;a0BGd3O:AoNgl0O?aoN`l0@>A0>P<0O00o00000000")
+          .Append("OcH00013OdlnC7lWOdmo?0LO24U140@L27U1N7al27T0I7abOcH0001Q00000000")
+          .Append("04H0000704m1O00?Odm1O7eoOdUo@7ehOgTn`01h07T0o00803h0000700000000")
+          .Append("0000001Q@00ZI81a@3HLM81iOcH8O;eMO`0LG?e??`0ZC0170000001300000000")
+          .Append("O`0000003d0807mo3gH821mo63Hn?Q11O008MgQ1LP08@F@0H@00000000000000")
+          .Append("O`000001O`Q00002OaA`07l4@28`Ogl8@000000@@000000P@000001000000000")
+          .Append("O`00@G`00A@8M`A1Oa@8?Wa1Oa@827ao0A@800AoOa@807`0OP0007`000000000")
+          .Append("O`000P000@000G`40B9`0@@20AA`0P@1O`P00W`2O`000W`4OP000@0000000000")
+          .Append("?P90L020O`4PB7b0Oe4@A4B0@ET8@TB0@@l4A7b0@@l2B7b0?PH1L02000000020")
+        Case BuiltinFont.Gradius3
+          ' Done: Add font sheet from Gradius 3 (by Konami)
+          .Append("?Sh0001m@F40o009GE4090L9EDT090\9CDD09009DD<090097Sh0600600000000")
+          .Append("H000000n<00063Q1:09@94A197l<94A18P0?94AA8@0392@QO`00o7aN00000400")
+          .Append("OG44001mBDT3O7l9BDT324@9BDT014@9BDT414@9BDT314@I=TH313QV00000000")
+          .Append("744D00168T5dB3Q9@DTOE4A9@DTDE4A9@DUlE4A9@DTGE4A9@CHD94@a00000000")
+          .Append("OC0T1001@BPZ13P1@B@Z14@1@B9oOdAo@B4Z14@18WTZ14@1720@07l100000000")
+          .Append("74M2000O:TTU?3PPBDTB@5A0BDT8@5A0BDTT@5A0BDUB@5@PBC4QO5PO00000000")
+          .Append("O3hf000o2TU970Q02DU980PP2DU9@7h@2DTm@0T82DU880T42C5870T300000000")
+          .Append("7040001o8T44?0PH@B43@9@6@A43@9AoB@T0>9@`B@D0@9@<<@<0@7`30000?000")
+          .Append("OcH0001124TLA7lR24TRA0PD24U1:0P824U140PD24T0:0PROcH0A7110000A000")
+          .Append("04H0000304U1S00404U1T0@8OdTRT3e`04TLT40804T0D00403h0?00300000000")
+          .Append("00080011@00ZA41Q@6<LI81A@6<8E819@00LE815800ZC8A37`08A7e100000000")
+          .Append("O`002000000827mo2;<8=P1127<n@A115008@A118P08@BP0@@0004@000000000")
+          .Append("7`P0000181@00002@2:`0044@45`Mcl8@000040@@000040P@000001000000000")
+          .Append("O`00@@001Q@8@Ga121@8@@A141@8=PA121@827Qo1Q@820@0Oa@800@0000007P0")
+          .Append("O`0020080T4017`4129P10P221AP30@140P020@2800020@4O`0017P800000000")
+          .Append("?P50L020@@4PB3R0@E4@A4B0@@T8@TB0@@T4A4B0@@T2B4B0?PH1L3R000000020")
         Case BuiltinFont.DigDug1996
           ' ToDo: Add font sheet from Dig-Dug Arrangement 1996
           .Append("")
