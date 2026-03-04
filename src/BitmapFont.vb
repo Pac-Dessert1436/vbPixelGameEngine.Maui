@@ -59,7 +59,7 @@ Public Class BitmapFont
     End Using
   End Function
 
-    Public Function RenderTextToSprite(text As String) As Sprite
+  Public Function RenderTextToSprite(text As String) As Sprite
     With RenderTextToPixels(text)
       Dim sprite = New Sprite(.width, .height)
       For y = 0 To .height - 1

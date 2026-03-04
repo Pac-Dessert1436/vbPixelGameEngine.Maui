@@ -7,8 +7,8 @@
     ''' <remark>
     ''' To avoid modifing the original palette, it's best to make it a read-only property.
     ''' </remark>
-    Public Shared ReadOnly Property Palette As List(Of Pixel) 
-      Get 
+    Public Shared ReadOnly Property Palette As List(Of Pixel)
+      Get
         Return New List(Of Pixel) From {
           New Pixel(&H0, &H0, &H0, &HFF),
           New Pixel(&H44, &H44, &H0, &HFF),

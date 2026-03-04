@@ -374,16 +374,6 @@ Public MustInherit Class PixelGameEngine
     ' MAUI: Pixel size change handled by renderer scale
   End Sub
 
-  Public Function CapsLock() As Boolean
-    ' MAUI: Caps lock state - platform-specific implementation needed
-    Return False
-  End Function
-
-  Public Function NumLock() As Boolean
-    ' MAUI: Num lock state - platform-specific implementation needed
-    Return False
-  End Function
-
   Public Overloads Function Construct(screenW As Integer, screenH As Integer, Optional fullScreen As Boolean = False, Optional vsync As Boolean = False) As RCode
     Return Construct(screenW, screenH, 1, 1, fullScreen, vsync)
   End Function
@@ -1225,7 +1215,7 @@ next4:
   Protected Sub DrawPartialSprite(x As Integer, y As Integer, sprite As Sprite, ox As Integer, oy As Integer, w As Integer, h As Integer, Optional scale As Integer = 1)
 
     If sprite Is Nothing Then Return
-    
+
     If scale > 1 Then
       For i = 0 To w - 1
         For j = 0 To h - 1
@@ -1545,7 +1535,7 @@ next4:
 
   Protected MustOverride Function OnUserCreate() As Boolean
   Protected Friend MustOverride Function OnUserUpdate(elapsedTime As Single) As Boolean
-  Protected Friend MustOverride Function OnUserRender() As Boolean
+  Protected Friend MustOverride Function OnUserDraw() As Boolean
   Protected MustOverride Function OnUserDestroy() As Boolean
 
   Private _isDisposed As Boolean = False
@@ -1677,7 +1667,7 @@ next4:
       m_fontSpacing(offset) = New Vi2d(c >> 4, c And 15)
       offset += 1
     Next
-    
+
     m_KeyboardMap = New List(Of Tuple(Of Key, String, String)) From {
       Tuple.Create(Key.A, "a", "A"), Tuple.Create(Key.B, "b", "B"), Tuple.Create(Key.C, "c", "C"), Tuple.Create(Key.D, "d", "D"), Tuple.Create(Key.E, "e", "E"),
       Tuple.Create(Key.F, "f", "F"), Tuple.Create(Key.G, "g", "G"), Tuple.Create(Key.H, "h", "H"), Tuple.Create(Key.I, "i", "I"), Tuple.Create(Key.J, "j", "J"),

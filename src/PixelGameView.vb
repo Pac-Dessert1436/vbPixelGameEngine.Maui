@@ -1,13 +1,14 @@
 Imports Microsoft.Maui.Controls
 Imports SkiaSharp.Views.Maui.Controls
 Imports SkiaSharp.Views.Maui
-Imports CommunityToolkit.Maui.Core.Platform
+Imports Microsoft.Maui.Dispatching
 
 ''' <summary>
 ''' Cross-platform game view for rendering and input handling
 ''' </summary>
 Public Class PixelGameView
   Inherits SKCanvasView
+  Implements IDisposable
 
   Private WithEvents Timer As New Timers.Timer
   Private WithEvents TapRecog As New TapGestureRecognizer
@@ -17,6 +18,8 @@ Public Class PixelGameView
   Private ReadOnly _lock As New Object()
   Private Const FRAME_RATE As Integer = 60
   Private _isRunning As Boolean = False
+  Private _keyboardHandler As KeyboardHandler
+  Private _isDisposed As Boolean
 
   Public Sub New(game As PixelGameEngine, vpWidth As Integer, vpHeight As Integer, Optional scale As Integer = 1)
     Me._game = game
@@ -34,93 +37,55 @@ Public Class PixelGameView
 
     ' Configure game loop timer
     Timer.Interval = 1000 \ FRAME_RATE
+
+    ' Initialize keyboard handler
+    _keyboardHandler = New KeyboardHandler(game)
   End Sub
 
   Protected Overrides Sub OnHandlerChanged()
     MyBase.OnHandlerChanged()
 
-    ' View is attached to window
     If Handler IsNot Nothing Then
-      ' Request focus to receive keyboard events (desktop platforms)
-      Focus()
+      ' Get the parent page
+      Dim parentPage = GetParentPage()
+
+      If parentPage IsNot Nothing Then
+        ' Register keyboard events
+        _keyboardHandler?.RegisterKeyboardEvents(parentPage)
+
+        ' Request focus to enable keyboard input
+        Me.Focus()
+      End If
+
+      ' Start the game loop
       _isRunning = True
       Timer.Start()
-      RegisterPlatformInput()
     Else
-      ' View is detached from window
+      ' Clean up when handler is removed
       _isRunning = False
       Timer.Stop()
-      UnregisterPlatformInput()
+
+      ' Unregister keyboard events
+      _keyboardHandler?.UnregisterKeyboardEvents(Nothing)
     End If
   End Sub
+
+  Private Function GetParentPage() As Page
+    If Me.Parent Is Nothing Then Return Nothing
+
+    Dim element = Me.Parent
+    While element IsNot Nothing AndAlso Not TypeOf element Is Page
+      element = element.Parent
+    End While
+
+    Return TryCast(element, Page)
+  End Function
 
   Protected Overrides Sub OnPaintSurface(e As SKPaintSurfaceEventArgs)
     MyBase.OnPaintSurface(e)
     ' Render the game using SkiaSharp canvas
     _renderer.Render(e.Surface.Canvas)
   End Sub
-
-  Private Sub RegisterPlatformInput()
-#If WINDOWS10_0_19041_0_OR_GREATER Then
-    ' Windows: Register keyboard and mouse events
-    'RegisterWindowsInput()
-#ElseIf ANDROID29_0_OR_GREATER Then
-    ' Android: Input handled via gesture recognizers (already added)
-#End If
-  End Sub
-
-  Private Sub UnregisterPlatformInput()
-#If WINDOWS10_0_19041_0_OR_GREATER Then
-    'UnregisterWindowsInput()
-#End If
-  End Sub
-
-#Region "FixMe: This part of code cannot be compiled for lack of KeyboardEventArgs"
-  ' ToDo: Make full use of input handlers & events with MAUI Community Toolkit.
-
-#If WINDOWS10_0_19041_0_OR_GREATER Then
-  ' Windows-specific input handling
-  'Private _windowsKeyHandler As ?????  ' KEY HANDLER NEEDED
-
-  'Private Sub RegisterWindowsInput()
-  '  Try
-  '    _windowsKeyHandler = New ?????  ' KEY HANDLER NEEDED
-  '    AddHandler _windowsKeyHandler.KeyDown, AddressOf OnGlobalKeyDown
-  '    AddHandler _windowsKeyHandler.KeyUp, AddressOf OnGlobalKeyUp
-  '  Catch ex As Exception
-  '    ' Global keyboard capture may not be available, fall back to MAUI events
-  '  End Try
-  'End Sub
-
-  'Private Sub UnregisterWindowsInput()
-  '  If _windowsKeyHandler IsNot Nothing Then
-  '    RemoveHandler _windowsKeyHandler.KeyDown, AddressOf OnGlobalKeyDown
-  '    RemoveHandler _windowsKeyHandler.KeyUp, AddressOf OnGlobalKeyUp
-  '    _windowsKeyHandler?.Dispose()
-  '    _windowsKeyHandler = Nothing
-  '  End If
-  'End Sub
-  '
-  'Private Sub OnGlobalKeyDown(sender As Object, e As ?????)  ' EVENT ARGUMENTS NEEDED
-  '  _game?.SetKeyStateFromKey(e.Key.ToString(), True)
-  'End Sub
-
-  'Private Sub OnGlobalKeyUp(sender As Object, e As ?????)  ' EVENT ARGUMENTS NEEDED
-  '  _game?.SetKeyStateFromKey(e.Key.ToString(), False)
-  'End Sub
-#End If
-
-  ' MAUI keyboard events (works on all platforms but requires focus)
-  'Protected Overrides Sub OnKeyDown(e As KeyboardEventArgs)
-  '  MyBase.OnKeyDown(e)
-  '  _game?.SetKeyStateFromKey(e.Key.ToString(), True)
-  'End Sub
-
-  'Protected Overrides Sub OnKeyUp(e As KeyboardEventArgs)
-  '  MyBase.OnKeyUp(e)
-  '  _game?.SetKeyStateFromKey(e.Key.ToString(), False)
-  'End Sub
-#End Region
 
   ' Touch/Mouse pointer events (cross-platform)
   Private Sub OnTapped(sender As Object, e As TappedEventArgs) Handles TapRecog.Tapped
@@ -168,7 +133,7 @@ Public Class PixelGameView
     ' Update game state
     If _game.OnUserUpdate(1.0F / FRAME_RATE) Then
       ' Render and update display
-      If _game.OnUserRender() Then
+      If _game.OnUserDraw() Then
         Dim drawTarget As Sprite = _game.GetDrawTarget()
         If drawTarget IsNot Nothing Then
           Dim pixels = drawTarget.GetData()
@@ -178,18 +143,32 @@ Public Class PixelGameView
         End If
       End If
       ' Trigger repaint on UI thread
-      Dispatcher.Dispatch(AddressOf InvalidateSurface)
+      Dispatcher.DispatchAsync(Sub() InvalidateSurface())
     Else
       ' Game wants to exit
       Application.Current.Quit()
     End If
   End Sub
 
-  Public Sub Dispose()
-    _isRunning = False
-    Timer.Stop()
-    Timer.Dispose()
-    UnregisterPlatformInput()
-    _renderer?.Dispose()
+  Protected Overridable Sub Dispose(disposing As Boolean)
+    If Not _isDisposed Then
+      If disposing Then
+        ' Dispose managed state
+        _isRunning = False
+        Timer.Stop()
+        Timer.Dispose()
+        _keyboardHandler?.Dispose()
+        _renderer?.Dispose()
+      End If
+
+      ' Free unmanaged resources
+      _isDisposed = True
+    End If
+  End Sub
+
+  Public Sub Dispose() Implements IDisposable.Dispose
+    ' Do not change this code. Put cleanup code in 'Dispose(disposing As Boolean)' method
+    Dispose(disposing:=True)
+    GC.SuppressFinalize(Me)
   End Sub
 End Class
