@@ -47,7 +47,7 @@ Public MustInherit Class PixelGameEngine
   Private ReadOnly m_hasMouseFocus As Boolean
   Private ReadOnly m_frameTimer As Single = 1.0F
   Private ReadOnly m_frameCount As Integer
-  Private ReadOnly m_totalFrameCount As Integer
+  Private m_totalFrameCount As Integer
   'Private m_totalFrames As Integer
 
   Private ReadOnly m_keyNewState(255) As Boolean
@@ -420,7 +420,44 @@ Public MustInherit Class PixelGameEngine
 
   <DebuggerNonUserCode, DebuggerStepThrough>
   Public Function Start() As RCode
-    ' MAUI: Game loop is handled by PixelGameView, this is just for initialization
+    ' In MAUI, the game loop is managed by the UI framework
+    ' This method initializes the game state
+
+    ' Initialize the game by calling user's OnUserCreate method
+    If Not OnUserCreate() Then
+      Return RCode.Fail
+    End If
+
+    ' Reset frame counter
+    m_totalFrameCount = 0
+
+    ' Initialize keyboard state
+    For i = 0 To 255
+      m_keyOldState(i) = False
+      m_keyNewState(i) = False
+      m_keyboardState(i) = New HwButton With {
+        .Held = False,
+        .Pressed = False,
+        .Released = False
+      }
+    Next
+
+    ' Initialize mouse state
+    For i = 0 To 3
+      m_mouseOldState(i) = False
+      m_mouseNewState(i) = False
+      m_mouseState(i) = New HwButton With {
+        .Held = False,
+        .Pressed = False,
+        .Released = False
+      }
+    Next
+
+    ' Reset mouse position
+    m_mousePosXcache = 0
+    m_mousePosYcache = 0
+    m_mousePos = New Vi2d(0, 0)
+
     Return RCode.Ok
   End Function
 

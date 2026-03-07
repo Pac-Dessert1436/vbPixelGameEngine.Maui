@@ -4,7 +4,6 @@ Imports Microsoft.Maui.Controls
 Partial Public Class MainPage
   Inherits ContentPage
 
-  'Private ReadOnly _keyHandlerService As New KeyHandlerService()
   Private Shared _globalKeyHandler As Object
 
   Public Sub New()
