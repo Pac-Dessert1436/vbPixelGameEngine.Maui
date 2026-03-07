@@ -1200,15 +1200,15 @@ next4:
 
   End Sub
 
-  Protected Sub DrawSprite(pos As Vi2d, sprite As Sprite, Optional scale As Integer = 1)
+  Public Sub DrawSprite(pos As Vi2d, sprite As Sprite, Optional scale As Integer = 1)
     DrawSprite(pos.x, pos.y, sprite, scale)
   End Sub
 
-  Friend Sub DrawSprite(pos As Vf2d, sprite As Sprite, Optional scale As Integer = 1)
+  Public Sub DrawSprite(pos As Vf2d, sprite As Sprite, Optional scale As Integer = 1)
     DrawSprite(pos.x, pos.y, sprite, scale)
   End Sub
 
-  Public Sub DrawSprite(x As Double, y As Double, sprite As Sprite, Optional scale As Integer = 1)
+  Public Sub DrawSprite(x As Single, y As Single, sprite As Sprite, Optional scale As Integer = 1)
     DrawSprite(CInt(x), CInt(y), sprite, scale)
   End Sub
 

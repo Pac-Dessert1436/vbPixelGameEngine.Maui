@@ -31,7 +31,7 @@ Public Class BitmapFont
   End Sub
 
   ' Render text to Pixel array for pixel engine
-  Public Function RenderTextToPixels(text As String) As (pixels As Pixel(), width As Integer, height As Integer)
+  Private Function RenderTextToPixels(text As String) As (pixels As Pixel(), width As Integer, height As Integer)
     If String.IsNullOrEmpty(text) Then Return (Array.Empty(Of Pixel)(), 0, 0)
 
     ' Measure text size to determine bitmap size
@@ -59,7 +59,7 @@ Public Class BitmapFont
     End Using
   End Function
 
-  Public Function RenderTextToSprite(text As String) As Sprite
+  Private Function RenderTextToSprite(text As String) As Sprite
     With RenderTextToPixels(text)
       Dim sprite = New Sprite(.width, .height)
       For y = 0 To .height - 1
@@ -70,6 +70,22 @@ Public Class BitmapFont
       Return sprite
     End With
   End Function
+
+  Public Sub DrawPixelText(pos As Vi2d, text As String, Optional scale As Integer = 1)
+    Pge.DrawSprite(pos.x, pos.y, RenderTextToSprite(text), scale)
+  End Sub
+
+  Public Sub DrawPixelText(pos As Vf2d, text As String, Optional scale As Integer = 1)
+    Pge.DrawSprite(pos.x, pos.y, RenderTextToSprite(text), scale)
+  End Sub
+
+  Public Sub DrawPixelText(x As Single, y As Single, text As String, Optional scale As Integer = 1)
+    Pge.DrawSprite(CInt(x), CInt(y), RenderTextToSprite(text), scale)
+  End Sub
+
+  Public Sub DrawPixelText(x As Integer, y As Integer, text As String, Optional scale As Integer = 1)
+    Pge.DrawSprite(x, y, RenderTextToSprite(text), scale)
+  End Sub
 
   Public WriteOnly Property Color As Pixel
     Set(value As Pixel)

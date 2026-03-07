@@ -31,11 +31,12 @@ Public Class AudioPlayer
     Me.introDuration = introDuration
     _audioSource = filename
 
-    ' Initialize the platform-specific audio agent using dependency injection
+    ' Initialize the platform-specific audio agent using dependency lookup
     _audioAgent = PlatformAudioAgent
   End Sub
 
-  ' Factory method to get the platform-specific audio agent
+  ' Factory method to get the platform-specific audio agent (more like a 
+  ' dependency lookup than a dependency injection)
   Private Shared ReadOnly Property PlatformAudioAgent As IAudioAgent
     Get
 #If WINDOWS10_0_19041_0_OR_GREATER Then
