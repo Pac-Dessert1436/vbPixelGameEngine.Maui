@@ -1,10 +1,7 @@
 Imports Microsoft.Maui.Controls
-Imports Microsoft.Maui.ApplicationModel
 
-' Platform-specific imports
 #If WINDOWS10_0_19041_0_OR_GREATER Then
-' Platform-specific imports for Windows
-Imports System.Windows.Input
+Imports System.Runtime.InteropServices
 #End If
 
 ''' <summary>
@@ -26,11 +23,9 @@ Public Class KeyboardHandler
   Public Sub RegisterKeyboardEvents(page As Page)
     If page Is Nothing Then Return
 
-    ' Register for keyboard events
     AddHandler page.Focused, AddressOf OnPageFocused
     AddHandler page.Unfocused, AddressOf OnPageUnfocused
 
-    ' Platform-specific registration
 #If WINDOWS10_0_19041_0_OR_GREATER Then
     RegisterWindowsKeyboardEvents(page)
 #End If
@@ -42,37 +37,37 @@ Public Class KeyboardHandler
   Public Sub UnregisterKeyboardEvents(page As Page)
     If page Is Nothing Then Return
 
-    ' Unregister keyboard events
     RemoveHandler page.Focused, AddressOf OnPageFocused
     RemoveHandler page.Unfocused, AddressOf OnPageUnfocused
 
-    ' Platform-specific unregistration
 #If WINDOWS10_0_19041_0_OR_GREATER Then
     UnregisterWindowsKeyboardEvents()
 #End If
   End Sub
 
   Private Sub OnPageFocused(sender As Object, e As FocusEventArgs)
-    System.Diagnostics.Debug.WriteLine("Page focused - keyboard input enabled")
+    ' TODO: Continue the game when page is focused
+    Debug.WriteLine("Page focused - keyboard input enabled")
   End Sub
 
   Private Sub OnPageUnfocused(sender As Object, e As FocusEventArgs)
-    System.Diagnostics.Debug.WriteLine("Page unfocused - keyboard input disabled")
+    ' TODO: Suspend the game when page is unfocused
+    Debug.WriteLine("Page unfocused - keyboard input disabled")
   End Sub
 
 #Region "Platform-specific implementation"
 #If WINDOWS10_0_19041_0_OR_GREATER Then
   Private _windowsKeyListener As WindowsKeyListener
-  
+
   Private Sub RegisterWindowsKeyboardEvents(page As Page)
     Try
       _windowsKeyListener = New WindowsKeyListener(_game)
       _windowsKeyListener.Register(page)
     Catch ex As Exception
-      System.Diagnostics.Debug.WriteLine($"Failed to register Windows keyboard events: {ex.Message}")
+      Debug.WriteLine($"Failed to register Windows keyboard events: {ex.Message}")
     End Try
   End Sub
-  
+
   Private Sub UnregisterWindowsKeyboardEvents()
     Try
       If _windowsKeyListener IsNot Nothing Then
@@ -80,7 +75,7 @@ Public Class KeyboardHandler
         _windowsKeyListener = Nothing
       End If
     Catch ex As Exception
-      System.Diagnostics.Debug.WriteLine($"Failed to unregister Windows keyboard events: {ex.Message}")
+      Debug.WriteLine($"Failed to unregister Windows keyboard events: {ex.Message}")
     End Try
   End Sub
 #End If
@@ -93,12 +88,7 @@ Public Class KeyboardHandler
 
   Protected Overridable Sub Dispose(disposing As Boolean)
     If Not _isDisposed Then
-      If disposing Then
-        ' Dispose managed resources
-        UnregisterKeyboardEvents(Nothing)
-      End If
-
-      ' Free unmanaged resources
+      If disposing Then UnregisterKeyboardEvents(Nothing)
       _isDisposed = True
     End If
   End Sub
@@ -107,128 +97,85 @@ End Class
 #Region "Platform-specific keyboard listeners"
 #If WINDOWS10_0_19041_0_OR_GREATER Then
 ''' <summary>
-''' Windows-specific keyboard listener using WinUI3
+''' Windows-specific keyboard listener using Win32 API
 ''' </summary>
 Public Class WindowsKeyListener
   Private ReadOnly _game As PixelGameEngine
-  Private _parentPage As Page
-  Private _keyboardTimer As Timers.Timer
-  
+  Private _keyboardTimer As System.Threading.Timer
+
+  Private Const VK_SPACE As Integer = &H20
+  Private Const VK_ESCAPE As Integer = &H1B
+  Private Const VK_RETURN As Integer = &HD
+  Private Const VK_SHIFT As Integer = &H10
+  Private Const VK_CONTROL As Integer = &H11
+  Private Const VK_MENU As Integer = &H12
+  Private Const VK_LEFT As Integer = &H25
+  Private Const VK_UP As Integer = &H26
+  Private Const VK_RIGHT As Integer = &H27
+  Private Const VK_DOWN As Integer = &H28
+  Private Const VK_F1 As Integer = &H70
+
+  <DllImport("user32.dll", CharSet:=CharSet.Auto, ExactSpelling:=True)>
+  Private Shared Function GetAsyncKeyState(vKey As Integer) As Short
+  End Function
+
   Public Sub New(game As PixelGameEngine)
     _game = game
   End Sub
-  
+
   Public Sub Register(page As Page)
-    _parentPage = page
-    
-    ' For MAUI on Windows, we'll use a timer to poll keyboard state
-    ' This is not ideal but will work for basic input
-    _keyboardTimer = New Timers.Timer(16) ' ~60 FPS polling
-    AddHandler _keyboardTimer.Elapsed, AddressOf PollKeyboardState
-    _keyboardTimer.Start()
+    _keyboardTimer = New System.Threading.Timer(
+      Sub(state) PollKeyboardState(),
+      Nothing,
+      TimeSpan.Zero,
+      TimeSpan.FromMilliseconds(16))
   End Sub
-  
+
   Public Sub Unregister()
-    ' Clean up keyboard polling
     If _keyboardTimer IsNot Nothing Then
-      _keyboardTimer.Stop()
       _keyboardTimer.Dispose()
       _keyboardTimer = Nothing
     End If
-    _parentPage = Nothing
   End Sub
-  
-  Private Sub PollKeyboardState(sender As Object, e As EventArgs)
-    ' ' Check for common keys
-    ' For key = Key.A To Key.Z
-    '   If Keyboard.IsKeyDown(key) Then
-    '     _game?.SetKeyStateFromKey(key.ToString(), True)
-    '   Else
-    '     _game?.SetKeyStateFromKey(key.ToString(), False)
-    '   End If
-    ' Next
-    
-    ' ' Check for spacebar
-    ' If Keyboard.IsKeyDown(Key.Space) Then
-    '   _game?.SetKeyStateFromKey("SPACE", True)
-    ' Else
-    '   _game?.SetKeyStateFromKey("SPACE", False)
-    ' End If
-    
-    ' ' Check for escape
-    ' If Keyboard.IsKeyDown(Key.Escape) Then
-    '   _game?.SetKeyStateFromKey("ESCAPE", True)
-    ' Else
-    '   _game?.SetKeyStateFromKey("ESCAPE", False)
-    ' End If
-    
-    ' ' Check for enter
-    ' If Keyboard.IsKeyDown(Key.Enter) Then
-    '   _game?.SetKeyStateFromKey("ENTER", True)
-    ' Else
-    '   _game?.SetKeyStateFromKey("ENTER", False)
-    ' End If
-    
-    ' ' Check for shift
-    ' If Keyboard.IsKeyDown(Key.LeftShift) OrElse
-    '    Keyboard.IsKeyDown(Key.RightShift) Then
-    '   _game?.SetKeyStateFromKey("SHIFT", True)
-    ' Else
-    '   _game?.SetKeyStateFromKey("SHIFT", False)
-    ' End If
-    
-    ' ' Check for control
-    ' If Keyboard.IsKeyDown(Key.LeftCtrl) OrElse
-    '    Keyboard.IsKeyDown(Key.RightCtrl) Then
-    '   _game?.SetKeyStateFromKey("CTRL", True)
-    ' Else
-    '   _game?.SetKeyStateFromKey("CTRL", False)
-    ' End If
-    
-    ' ' Check for arrow keys
-    ' If Keyboard.IsKeyDown(Key.Up) Then
-    '   _game?.SetKeyStateFromKey("UP", True)
-    ' Else
-    '   _game?.SetKeyStateFromKey("UP", False)
-    ' End If
-    
-    ' If Keyboard.IsKeyDown(Key.Down) Then
-    '   _game?.SetKeyStateFromKey("DOWN", True)
-    ' Else
-    '   _game?.SetKeyStateFromKey("DOWN", False)
-    ' End If
-    
-    ' If Keyboard.IsKeyDown(Key.Left) Then
-    '   _game?.SetKeyStateFromKey("LEFT", True)
-    ' Else
-    '   _game?.SetKeyStateFromKey("LEFT", False)
-    ' End If
-    
-    ' If Keyboard.IsKeyDown(Key.Right) Then
-    '   _game?.SetKeyStateFromKey("RIGHT", True)
-    ' Else
-    '   _game?.SetKeyStateFromKey("RIGHT", False)
-    ' End If
-    
-    ' ' Check for function keys
-    ' For i As Integer = 1 To 12
-    '   Dim fKey = Key.F1 + i - 1
-    '   If Keyboard.IsKeyDown(fKey) Then
-    '     _game?.SetKeyStateFromKey($"F{i}", True)
-    '   Else
-    '     _game?.SetKeyStateFromKey($"F{i}", False)
-    '   End If
-    ' Next
-    
-    ' ' Check for number keys
-    ' For i As Integer = 0 To 9
-    '   Dim numKey = Key.D0 + i
-    '   If Keyboard.IsKeyDown(numKey) Then
-    '     _game?.SetKeyStateFromKey(i.ToString(), True)
-    '   Else
-    '     _game?.SetKeyStateFromKey(i.ToString(), False)
-    '   End If
-    ' Next
+
+  Private Sub PollKeyboardState()
+    If _game Is Nothing Then Return
+
+    Try
+      For i As Integer = 0 To 25
+        Dim vk As Integer = &H41 + i
+        Dim isDown = (GetAsyncKeyState(vk) And &H8000) <> 0
+        _game.SetKeyStateFromKey(ChrW(&H41 + i).ToString(), isDown)
+      Next
+
+      For i As Integer = 0 To 9
+        Dim vk As Integer = &H30 + i
+        Dim isDown = (GetAsyncKeyState(vk) And &H8000) <> 0
+        _game.SetKeyStateFromKey(i.ToString(), isDown)
+      Next
+
+      _game?.SetKeyStateFromKey("SPACE", (GetAsyncKeyState(VK_SPACE) And &H8000) <> 0)
+      _game?.SetKeyStateFromKey("ESCAPE", (GetAsyncKeyState(VK_ESCAPE) And &H8000) <> 0)
+      _game?.SetKeyStateFromKey("ENTER", (GetAsyncKeyState(VK_RETURN) And &H8000) <> 0)
+
+      Dim isShiftDown = (GetAsyncKeyState(VK_SHIFT) And &H8000) <> 0
+      _game?.SetKeyStateFromKey("SHIFT", isShiftDown)
+
+      Dim isCtrlDown = (GetAsyncKeyState(VK_CONTROL) And &H8000) <> 0
+      _game?.SetKeyStateFromKey("CTRL", isCtrlDown)
+
+      _game?.SetKeyStateFromKey("UP", (GetAsyncKeyState(VK_UP) And &H8000) <> 0)
+      _game?.SetKeyStateFromKey("DOWN", (GetAsyncKeyState(VK_DOWN) And &H8000) <> 0)
+      _game?.SetKeyStateFromKey("LEFT", (GetAsyncKeyState(VK_LEFT) And &H8000) <> 0)
+      _game?.SetKeyStateFromKey("RIGHT", (GetAsyncKeyState(VK_RIGHT) And &H8000) <> 0)
+
+      For i As Integer = 0 To 11
+        Dim vk As Integer = VK_F1 + i
+        Dim isDown = (GetAsyncKeyState(vk) And &H8000) <> 0
+        _game?.SetKeyStateFromKey($"F{i + 1}", isDown)
+      Next
+    Catch
+    End Try
   End Sub
 End Class
 #End If
