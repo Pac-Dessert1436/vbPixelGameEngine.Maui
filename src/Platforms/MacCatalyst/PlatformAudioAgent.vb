@@ -38,7 +38,7 @@ Namespace Platforms.MacCatalyst
         _isLooping = shouldLoop
         
         If _audioPlayer IsNot Nothing Then
-          _audioPlayer.NumberOfLoops = If(shouldLoop, -1, 0) ' -1 for infinite loop
+          _audioPlayer.NumberOfLoops = CType(If(shouldLoop, -1, 0), IntPtr) ' -1 for infinite loop
           _audioPlayer.Volume = 1.0F
           _audioPlayer.Play()
           _isInitialized = True
@@ -54,6 +54,7 @@ Namespace Platforms.MacCatalyst
     Private Sub OnFinishedPlaying(sender As Object, e As AVStatusEventArgs)
       ' Handle completion event if needed
       If _isLooping AndAlso _audioPlayer IsNot Nothing Then
+        If _hasPlayedIntro Then _audioPlayer.CurrentTime = _introDuration
         _audioPlayer.Play()
       End If
     End Sub
@@ -108,7 +109,7 @@ Namespace Platforms.MacCatalyst
       
       ' Update the audio player looping state if needed
       If _audioPlayer IsNot Nothing AndAlso _isInitialized Then
-        _audioPlayer.NumberOfLoops = If(isLooping, -1, 0) ' -1 for infinite loop
+        _audioPlayer.NumberOfLoops = CType(If(isLooping, -1, 0), IntPtr) ' -1 for infinite loop
       End If
     End Sub
   End Class

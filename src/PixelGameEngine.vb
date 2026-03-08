@@ -390,9 +390,8 @@ Public MustInherit Class PixelGameEngine
     m_pixelX = 2.0F / m_screenWidth
     m_pixelY = 2.0F / m_screenHeight
 
-    If m_pixelWidth = 0 OrElse m_pixelHeight = 0 OrElse m_screenWidth = 0 OrElse m_screenHeight = 0 Then
-      Return RCode.Fail
-    End If
+    If m_pixelWidth = 0 OrElse m_pixelHeight = 0 OrElse m_screenWidth = 0 _
+      OrElse m_screenHeight = 0 Then Return RCode.Fail
 
     ' Load the default font sheet
     Pge_ConstructFontSheet()

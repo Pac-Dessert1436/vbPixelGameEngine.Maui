@@ -2,7 +2,8 @@ Option Strict On
 Option Infer On
 
 ''' <summary>
-''' Interface for audio playback agent.
+''' Interface for audio playback agent. Users can implement this interface for
+''' custom audio playback agent.
 ''' </summary>
 Public Interface IAudioAgent
   Sub PlayAudioFile(filename As String, shouldLoop As Boolean)
@@ -27,16 +28,19 @@ Public Class AudioPlayer
   Private _isPlaying As Boolean = False
   Private _isDisposed As Boolean
 
-  Public Sub New(filename As String, Optional introDuration As Single = 0)
+  Public Sub New(filename As String, Optional introDuration As Single = 0,
+                 Optional audioAgent As IAudioAgent = Nothing)
     Me.introDuration = introDuration
     _audioSource = filename
 
-    ' Initialize the platform-specific audio agent using dependency lookup
-    _audioAgent = PlatformAudioAgent
+    ' Initialize the user-defined audio agent using a real dependency injection.
+    ' Fall back to dependency lookup for platform-specific audio agent when the custom
+    ' audio agent is not provided.
+    _audioAgent = If(audioAgent, PlatformAudioAgent)
   End Sub
 
-  ' Factory method to get the platform-specific audio agent (more like a 
-  ' dependency lookup than a dependency injection)
+  ' Factory method to get the platform-specific audio agent (more like a dependency lookup
+  ' than a dependency injection)
   Private Shared ReadOnly Property PlatformAudioAgent As IAudioAgent
     Get
 #If WINDOWS10_0_19041_0_OR_GREATER Then
