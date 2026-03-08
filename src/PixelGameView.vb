@@ -26,7 +26,7 @@ Public Class PixelGameView
     _renderer = New SkiaSharpRenderer(vpWidth, vpHeight, scale)
 
     ' Initialize game & check for errors
-    If game.Construct(vpWidth, vpHeight, scale, scale) = PixelGameEngine.RCode.Fail Then
+    If game.Construct(vpWidth, vpHeight, scale, scale).IsRCodeFail() Then
       ArgumentOutOfRangeException.ThrowIfZero(vpWidth, NameOf(vpWidth))
       ArgumentOutOfRangeException.ThrowIfZero(vpHeight, NameOf(vpHeight))
       ArgumentOutOfRangeException.ThrowIfZero(scale, NameOf(scale))

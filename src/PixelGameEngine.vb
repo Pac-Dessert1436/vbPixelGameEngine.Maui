@@ -1903,3 +1903,20 @@ Public Enum PixelType As Short
 End Enum
 
 #End Region
+
+Public Module RCodeExtensions
+  <Runtime.CompilerServices.Extension>
+  Public Function IsRCodeOk(RCode As PixelGameEngine.RCode) As Boolean
+    Return RCode = PixelGameEngine.RCode.Ok
+  End Function
+
+  <Runtime.CompilerServices.Extension>
+  Public Function IsRCodeFail(RCode As PixelGameEngine.RCode) As Boolean
+    Return RCode = PixelGameEngine.RCode.Fail
+  End Function
+
+  <Runtime.CompilerServices.Extension>
+  Public Function IsRCodeNoFile(RCode As PixelGameEngine.RCode) As Boolean
+    Return RCode = PixelGameEngine.RCode.NoFile
+  End Function
+End Module
