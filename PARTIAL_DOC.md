@@ -334,17 +334,17 @@ Public Class MyGame
         Title = "My MAUI Game"
     End Sub
 
-    Public Overrides Function OnUserCreate() As Boolean
+    Protected Overrides Function OnUserCreate() As Boolean
         ' Initialize game resources
         Return True
     End Function
 
-    Public Overrides Function OnUserUpdate(elapsedTime As Single) As Boolean
+    Protected Overrides Function OnUserUpdate(elapsedTime As Single) As Boolean
         ' Update game logic
         Return True
     End Function
 
-    Public Overrides Function OnUserRender(elapsedTime As Single) As Boolean
+    Protected Overrides Function OnUserDraw() As Boolean
         ' Render game graphics
         Return True
     End Function
@@ -365,13 +365,13 @@ playerSpriteSheet.AddCharacterName("player")
 playerSpriteSheet.DefineAnimation("player", (0, 0), (2, 0))
 
 ' In game loop
-Public Overrides Function OnUserUpdate(elapsedTime As Single) As Boolean
+Protected Overrides Function OnUserUpdate(elapsedTime As Single) As Boolean
     ' Update animation
     playerSpriteSheet.UpdateCharacterFrame("player", elapsedTime)
     Return True
 End Function
 
-Public Overrides Function OnUserRender(elapsedTime As Single) As Boolean
+Protected Overrides Function OnUserDraw() As Boolean
     ' Draw current frame
     playerSpriteSheet.DrawFrame("player", New Vf2d(100, 100))
     Return True

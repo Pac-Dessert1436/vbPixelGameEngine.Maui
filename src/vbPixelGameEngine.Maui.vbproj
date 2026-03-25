@@ -21,7 +21,6 @@
     <DefaultItemExcludes>$(DefaultItemExcludes);$(ProjectDir)**\*.cs</DefaultItemExcludes>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="CommunityToolkit.Maui.Core" Version="13.0.0" />
     <PackageReference Include="Microsoft.Maui.Controls" Version="10.0.30" />
     <PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="10.0.30" />
     <PackageReference Include="SixLabors.Fonts" Version="2.1.3" />

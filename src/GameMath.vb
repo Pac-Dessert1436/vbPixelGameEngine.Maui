@@ -230,7 +230,7 @@ Public Module GameMath
   End Function
 
 #Region "Bezier/spline curve tools"
-  Public Function QuadraticBezier(p0 As Vf2d, p1 As Vf2d, p2 As Vf2d, t As Single) As Vf2d
+  Public Function BezierQuad(p0 As Vf2d, p1 As Vf2d, p2 As Vf2d, t As Single) As Vf2d
     Dim u = 1.0F - t
     Return New Vf2d(
       x:=p0.x * (u * u) + p1.x * (2.0F * u * t) + p2.x * (t * t),
@@ -238,7 +238,7 @@ Public Module GameMath
     )
   End Function
 
-  Public Function CubicBezier(p0 As Vf2d, p1 As Vf2d, p2 As Vf2d, p3 As Vf2d, t As Single) As Vf2d
+  Public Function BezierCubic(p0 As Vf2d, p1 As Vf2d, p2 As Vf2d, p3 As Vf2d, t As Single) As Vf2d
     Dim u = 1.0F - t
     Dim u3 = u * u * u
     Dim t3 = t * t * t

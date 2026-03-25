@@ -1,5 +1,7 @@
 # `vbPixelGameEngine.Maui` - A VB.NET Pixel Game Engine Targeting .NET MAUI
 
+_**Important Note**: This pixel game engine is mostly done but not yet validated. Full cross-platform testing across desktop and mobile platforms is required before it can be released as a stable, production-ready product._
+
 ## Description
 
 `vbPixelGameEngine.Maui` is a cross-platform pixel game engine written in VB.NET, ported from the original [vbPixelGameEngine](https://github.com/DualBrain/vbPixelGameEngine) developed by [@DualBrain](https://github.com/DualBrain). This port aims to make full use of .NET MAUI to create a unified, cross-platform game development framework that runs on Windows, Android, iOS, and MacCatalyst.
@@ -19,6 +21,8 @@ The project started as an experiment to create a VB.NET-compatible game engine t
 - **Collision Detection**: Introduced `RectI` and `RectF` rectangle structures with Jaccard similarity/distance metrics
 - **Sprite System**: Implemented `SpriteSheet` class for sprite animation and tilemap creation
 - **Math Utilities**: Expanded `GameMath.vb` (formerly `Randoms.vb`) with advanced game development utilities
+- **Bitmap Font Support**: Custom bitmap font rendering system
+- **Audio Integration**: Cross-platform audio playback capabilities
 
 ### 🔄 In Progress
 - **Rendering Migration**: Transitioning from platform-specific OpenGL to SkiaSharp
@@ -26,8 +30,6 @@ The project started as an experiment to create a VB.NET-compatible game engine t
 - **Documentation**: Creating comprehensive guides and API reference
 
 ### 📋 Planned Features
-- **Bitmap Font Support**: Custom bitmap font rendering system
-- **Audio Integration**: Cross-platform audio playback capabilities
 - **Component Architecture**: Modular system for easy feature extension
 - **Example Projects**: Mini-games demonstrating engine capabilities
 

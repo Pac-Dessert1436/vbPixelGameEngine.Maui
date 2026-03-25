@@ -12,12 +12,6 @@ End Module
 Public MustInherit Class PixelGameEngine
   Implements IDisposable
 
-  Private m_renderer As SkiaSharpRenderer
-
-  Public Sub SetRenderer(renderer As SkiaSharpRenderer)
-    m_renderer = renderer
-  End Sub
-
   Public Delegate Function PixelModeDelegate(x As Integer, y As Integer, p1 As Pixel, p2 As Pixel) As Pixel
   Private m_funcPixelMode As PixelModeDelegate
 
@@ -28,7 +22,7 @@ Public MustInherit Class PixelGameEngine
   Private m_pixelMode As Pixel.Mode
   Private m_blendFactor As Single = 1.0F
 
-  Private ReadOnly m_lastElapsed As Single
+  Private m_lastElapsed As Single
   Private m_screenWidth As Integer
   Private m_screenHeight As Integer
   Private m_pixelWidth As Integer
@@ -187,7 +181,7 @@ Public MustInherit Class PixelGameEngine
     End If
   End Sub
 
-  Private ReadOnly m_mouseWheelDelta As Integer
+  Private m_mouseWheelDelta As Integer
   Private m_mouseWheelDeltaCache As Integer
   Private m_viewX As Integer
   Private m_viewY As Integer
@@ -1845,6 +1839,69 @@ next4:
     If dummy = PixelType.Half Then
     End If
     DrawLine(x1, y1, x2, y2, ConsoleColor2PixelColor(c))
+  End Sub
+
+#End Region
+
+#Region "Input State Updates"
+
+  ''' <summary>
+  ''' Update keyboard button states for this frame
+  ''' This should be called at the beginning of each game loop iteration
+  ''' </summary>
+  Public Sub UpdateKeyStates(elapsedTime As Single)
+    ' Store elapsed time for this frame
+    m_lastElapsed = elapsedTime
+
+    ' Update keyboard button states
+    For i = 0 To 255
+      ' Copy new state to old state
+      m_keyOldState(i) = m_keyNewState(i)
+
+      ' Calculate pressed/released events
+      m_keyboardState(i).Pressed = m_keyNewState(i) AndAlso Not m_keyOldState(i)
+      m_keyboardState(i).Released = Not m_keyNewState(i) AndAlso m_keyOldState(i)
+      m_keyboardState(i).Held = m_keyNewState(i)
+
+      ' Update elapsed time if key is held
+      If m_keyboardState(i).Held Then
+        m_keyboardState(i).ElapsedTime += elapsedTime
+      Else
+        m_keyboardState(i).ElapsedTime = 0
+      End If
+    Next
+  End Sub
+
+  ''' <summary>
+  ''' Update mouse button states for this frame
+  ''' This should be called at the beginning of each game loop iteration
+  ''' </summary>
+  Public Sub UpdateMouseStates(elapsedTime As Single)
+    ' Update mouse position
+    m_mousePos.x = m_mousePosXcache
+    m_mousePos.y = m_mousePosYcache
+
+    ' Update mouse wheel
+    m_mouseWheelDelta = m_mouseWheelDeltaCache
+    m_mouseWheelDeltaCache = 0
+
+    ' Update mouse button states
+    For i = 0 To 3
+      ' Copy new state to old state
+      m_mouseOldState(i) = m_mouseNewState(i)
+
+      ' Calculate pressed/released events
+      m_mouseState(i).Pressed = m_mouseNewState(i) AndAlso Not m_mouseOldState(i)
+      m_mouseState(i).Released = Not m_mouseNewState(i) AndAlso m_mouseOldState(i)
+      m_mouseState(i).Held = m_mouseNewState(i)
+
+      ' Update elapsed time if button is held
+      If m_mouseState(i).Held Then
+        m_mouseState(i).ElapsedTime += elapsedTime
+      Else
+        m_mouseState(i).ElapsedTime = 0
+      End If
+    Next
   End Sub
 
 #End Region

@@ -31,7 +31,6 @@ Public Class PixelGameView
       ArgumentOutOfRangeException.ThrowIfZero(vpHeight, NameOf(vpHeight))
       ArgumentOutOfRangeException.ThrowIfZero(scale, NameOf(scale))
     End If
-    game.SetRenderer(_renderer)
 
     ' Setup gesture recognizers
     GestureRecognizers.Add(TapRecog)
@@ -132,8 +131,15 @@ Public Class PixelGameView
   Private Sub OnTimerElapsed(sender As Object, e As EventArgs) Handles Timer.Elapsed
     If Not _isRunning Then Return
 
+    ' Calculate elapsed time for this frame
+    Dim elapsedTime As Single = 1.0F / FRAME_RATE
+
+    ' Update keyboard and mouse states
+    _game.UpdateKeyStates(elapsedTime)
+    _game.UpdateMouseStates(elapsedTime)
+
     ' Update game state
-    If _game.OnUserUpdate(1.0F / FRAME_RATE) Then
+    If _game.OnUserUpdate(elapsedTime) Then
       ' Render and update display
       If _game.OnUserDraw() Then
         Dim drawTarget As Sprite = _game.GetDrawTarget()

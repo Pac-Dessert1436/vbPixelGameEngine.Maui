@@ -17,3 +17,4 @@ for root, dirs, files in walk("."):
         if file == TARGET_CSHARP_FILE:
             with open(root + "/" + file, "w") as f:
                 f.write(NEW_CONTENT)
+print("Resource designer conversion completed.")
