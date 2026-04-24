@@ -211,6 +211,7 @@ Public Class ResourcePack
   End Function
 
   Friend Function GetFileBuffer(filename As String) As ResourceBuffer
+    If m_baseFile Is Nothing Then Return Nothing
     Dim e = m_mapFiles(filename)
     Return New ResourceBuffer(m_baseFile, e.Offset, e.Size)
   End Function

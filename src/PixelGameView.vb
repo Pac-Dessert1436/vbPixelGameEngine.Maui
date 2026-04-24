@@ -22,11 +22,11 @@ Public Class PixelGameView
   Private _isDisposed As Boolean
 
   Public Sub New(game As PixelGameEngine, vpWidth As Integer, vpHeight As Integer, Optional scale As Integer = 1)
-    Me._game = game
+    _game = game
     _renderer = New SkiaSharpRenderer(vpWidth, vpHeight, scale)
 
     ' Initialize game & check for errors
-    If game.Construct(vpWidth, vpHeight, scale, scale).IsRCodeFail() Then
+    If _game.Construct(vpWidth, vpHeight, scale, scale).IsRCodeFail() Then
       ArgumentOutOfRangeException.ThrowIfZero(vpWidth, NameOf(vpWidth))
       ArgumentOutOfRangeException.ThrowIfZero(vpHeight, NameOf(vpHeight))
       ArgumentOutOfRangeException.ThrowIfZero(scale, NameOf(scale))
@@ -40,7 +40,7 @@ Public Class PixelGameView
     Timer.Interval = 1000 \ FRAME_RATE
 
     ' Initialize keyboard handler
-    _keyboardHandler = New KeyboardHandler(game)
+    _keyboardHandler = New KeyboardHandler(_game)
   End Sub
 
   Protected Overrides Sub OnHandlerChanged()
@@ -145,9 +145,11 @@ Public Class PixelGameView
         Dim drawTarget As Sprite = _game.GetDrawTarget()
         If drawTarget IsNot Nothing Then
           Dim pixels = drawTarget.GetData()
-          SyncLock _lock
-            _renderer.UpdatePixels(pixels)
-          End SyncLock
+          If pixels IsNot Nothing Then
+            SyncLock _lock
+              _renderer.UpdatePixels(pixels)
+            End SyncLock
+          End If
         End If
       End If
       ' Trigger repaint on UI thread

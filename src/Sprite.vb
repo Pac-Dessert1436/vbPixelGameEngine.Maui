@@ -139,6 +139,7 @@ Public Class Sprite
   End Sub
 
   Public Function SetPixel(x As Integer, y As Integer, p As Pixel) As Boolean
+    If m_pixelColData Is Nothing Then Return False
     If x >= 0 AndAlso x < Width AndAlso y >= 0 AndAlso y < Height Then
       m_pixelColData(y * Width + x) = p
       Return True
@@ -148,6 +149,8 @@ Public Class Sprite
   End Function
 
   Public Function GetPixel(x As Integer, y As Integer) As Pixel
+    If m_pixelColData Is Nothing Then Return New Pixel(0, 0, 0, &HFF)
+    
     If m_modeSample = Mode.Normal Then
       If x >= 0 AndAlso x < Width AndAlso y >= 0 AndAlso y < Height Then
         Return m_pixelColData(y * Width + x)
@@ -160,12 +163,15 @@ Public Class Sprite
   End Function
 
   Public Function Sample(x As Single, y As Single) As Pixel
+    If m_pixelColData Is Nothing Then Return New Pixel(0, 0, 0, &HFF)
     Dim sx = Math.Min(CInt(Fix(x * Width)), Width - 1)
     Dim sy = Math.Min(CInt(Fix(y * Height)), Height - 1)
     Return GetPixel(sx, sy)
   End Function
 
   Public Function SampleBL(u As Single, v As Single) As Pixel
+
+    If m_pixelColData Is Nothing Then Return New Pixel(0, 0, 0, &HFF)
 
     u = u * Width - 0.5F
     v = v * Height - 0.5F

@@ -13,7 +13,6 @@ Partial Public Class PixelGamePage
   Protected Overrides Sub OnAppearing()
     MyBase.OnAppearing()
 
-    ' Create game instance - User should replace ExampleGame with their actual game class
     _game = New ExampleGame
     _pixelGameView = New PixelGameView(_game, 320, 180, 2)
     Content = _pixelGameView

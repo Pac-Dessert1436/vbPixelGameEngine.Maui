@@ -76,6 +76,7 @@ Namespace PGEX.QuickGui
     ''' </summary>
     ''' <param name="pge"></param>
     Public Sub Update(pge As PixelGameEngine)
+      If m_controls Is Nothing Then Return
       For Each p In m_controls
         p.Update(pge)
       Next
@@ -86,6 +87,7 @@ Namespace PGEX.QuickGui
     ''' </summary>
     ''' <param name="pge"></param>
     Public Sub Draw(pge As PixelGameEngine)
+      If m_controls Is Nothing Then Return
       For Each p In m_controls
         p.Draw(pge)
       Next
@@ -96,6 +98,7 @@ Namespace PGEX.QuickGui
     ''' </summary>
     ''' <param name="pge"></param>
     Public Sub DrawDecal(pge As PixelGameEngine)
+      If m_controls Is Nothing Then Return
       For Each p In m_controls
         p.DrawDecal(pge)
       Next

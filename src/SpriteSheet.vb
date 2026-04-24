@@ -26,7 +26,7 @@ Public Class SpriteSheet
     Public Property FramePointer As IEnumerator(Of Sprite)
 
     Protected Overrides Sub Finalize()
-      FramePointer.Dispose()  ' Dispose the frame pointer for memory safety.
+      FramePointer?.Dispose()  ' Dispose the frame pointer for memory safety.
     End Sub
 
     Public Function Clone() As Object Implements ICloneable.Clone
@@ -37,7 +37,7 @@ Public Class SpriteSheet
       Return New AnimationHelper With {
         .CurrFrame = CurrFrame,
         .AnimFrames = AnimFrames,
-        .FramePointer = FramePointer
+        .FramePointer = Nothing
       }
     End Function
   End Class
@@ -104,6 +104,8 @@ Public Class SpriteSheet
   Public Function CreateTileMap(start As (row As Integer, col As Integer),
       [end] As (row As Integer, col As Integer)) As List(Of Sprite)
 
+    If AllFrameIndices Is Nothing Then Return New List(Of Sprite)
+
     Dim outputTileMap As New List(Of Sprite)
 
     Dim tileMapStartIdx = start.row * Columns + start.col
@@ -146,27 +148,27 @@ Public Class SpriteSheet
     With gameCharacters(charaName)
       ArgumentNullException.ThrowIfNull(.AnimFrames)
       If animName <> prevAnimName Then
-        If .FramePointer IsNot Nothing Then .FramePointer.Reset()
+        .FramePointer?.Reset()
         .FramePointer = .AnimFrames(animName).GetEnumerator()
         prevAnimName = animName
         ' On switching animations, the following line is required to avoid flicker.
-        .FramePointer.MoveNext()
+        .FramePointer?.MoveNext()
       End If
 
       Static frameTimer As Single = 0F
       If .AnimFrames(animName).Count = 0 Then
         Throw New InvalidOperationException("Current animation has no frames and cannot be played.")
       End If
-      .CurrFrame = .FramePointer.Current
+      .CurrFrame = .FramePointer?.Current
       If isAnimPaused OrElse PauseAllAnimations Then Exit Sub
       frameTimer += Pge.GetElapsedTime()
       If frameTimer < frameDuration Then Exit Sub
 
-      If .FramePointer.MoveNext() Then
+      If .FramePointer?.MoveNext() = True Then
         frameTimer = 0
       ElseIf isLooping Then
-        .FramePointer.Reset()
-        .FramePointer.MoveNext()  ' Move to the first frame.
+        .FramePointer?.Reset()
+        .FramePointer?.MoveNext()  ' Move to the first frame.
       End If
     End With
   End Sub
@@ -174,7 +176,9 @@ Public Class SpriteSheet
   Public Sub DrawFrame(charaName As String, pos As Vf2d, Optional scale As Integer = 1)
     ' Note: The original singleton object `Pge` might be changed in the future,
     '       because of the migration from Desktop to MAUI.
-    Pge.DrawSprite(pos, gameCharacters(charaName).CurrFrame, scale)
+    If gameCharacters(charaName).CurrFrame IsNot Nothing Then
+      Pge.DrawSprite(pos, gameCharacters(charaName).CurrFrame, scale)
+    End If
   End Sub
 
   Public Function Clone() As Object Implements ICloneable.Clone

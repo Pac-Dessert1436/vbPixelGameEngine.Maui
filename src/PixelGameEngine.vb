@@ -17,8 +17,6 @@ Public MustInherit Class PixelGameEngine
 
   Protected Property Title As String
 
-  ' Removed for MAUI - SkiaSharp rendering used instead
-
   Private m_pixelMode As Pixel.Mode
   Private m_blendFactor As Single = 1.0F
 
@@ -322,15 +320,13 @@ Public MustInherit Class PixelGameEngine
 
   Private ReadOnly m_fontSprite As New Dictionary(Of BuiltinFont, Sprite)
   Private m_spacing(95) As Byte
-  Private ReadOnly m_fontSpacing As Vi2d()
+  Private ReadOnly m_fontSpacing(95) As Vi2d
   Private m_KeyboardMap As List(Of Tuple(Of Key, String, String))
 
   Protected Friend Sub New()
     Title = "Undefined"
     Pge = Me
   End Sub
-
-  ' Removed for MAUI - Window management handled by MAUI
 
   Public Function GetScreenSize() As (w As Integer, h As Integer)
     ' For MAUI, return default screen size
@@ -551,6 +547,7 @@ Public MustInherit Class PixelGameEngine
   End Function
 
   Protected Function GetPixel(x As Integer, y As Integer) As Pixel
+    If m_drawTarget Is Nothing Then Return New Pixel(0, 0, 0, &HFF)
     Return m_drawTarget.GetPixel(x, y)
   End Function
 
@@ -917,8 +914,13 @@ Public MustInherit Class PixelGameEngine
   End Sub
 
   Public Sub Clear(p As Pixel)
+    Dim drawTarget = GetDrawTarget()
+    If drawTarget Is Nothing Then Return
+    
     Dim pixels = GetDrawTargetWidth() * GetDrawTargetHeight()
-    Dim m() = GetDrawTarget().GetData()
+    Dim m() = drawTarget.GetData()
+    If m Is Nothing Then Return
+    
     For i = 0 To pixels - 1
       m(i) = p
     Next

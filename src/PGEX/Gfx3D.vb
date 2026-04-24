@@ -16,6 +16,7 @@ Namespace PGEX
     End Sub
 
     Public Shared Sub ClearDepth()
+      If m_DepthBuffer Is Nothing Then Return
       'Array.Clear(m_DepthBuffer, 0, m_DepthBuffer.Length)
       'm_DepthBuffer = New Single(Pge.ScreenWidth() * Pge.ScreenHeight() - 1) {}
       For i = 0 To (Pge.ScreenWidth() * Pge.ScreenHeight()) - 1
