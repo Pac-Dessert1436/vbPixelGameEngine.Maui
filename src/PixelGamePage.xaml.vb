@@ -19,6 +19,9 @@ Partial Public Class PixelGamePage
 
     ' Start the game engine initialization
     _game.Start()
+
+    ' Request keyboard focus for the page
+    Me.Focus()
   End Sub
 
   Protected Overrides Sub OnDisappearing()
@@ -31,5 +34,11 @@ Partial Public Class PixelGamePage
     ' Dispose the game engine
     _game?.Dispose()
     _game = Nothing
+  End Sub
+
+  ' Handle keyboard events at page level for better focus management
+  Private Sub OnPageKeyboard(sender As Object, e As KeyboardEventArgs) Handles Me.Keyboard
+    ' Debug output for troubleshooting
+    Debug.WriteLine($"Key pressed: {e.Key}")
   End Sub
 End Class

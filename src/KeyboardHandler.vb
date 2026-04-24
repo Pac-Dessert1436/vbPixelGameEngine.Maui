@@ -1,9 +1,5 @@
 Imports Microsoft.Maui.Controls
 
-#If WINDOWS10_0_19041_0_OR_GREATER Then
-Imports System.Runtime.InteropServices
-#End If
-
 ''' <summary>
 ''' Cross-platform keyboard handler for MAUI applications
 ''' </summary>
@@ -12,6 +8,7 @@ Public Class KeyboardHandler
 
   Private ReadOnly _game As PixelGameEngine
   Private _isDisposed As Boolean = False
+  Private _currentPage As Page
 
   Public Sub New(game As PixelGameEngine)
     _game = game
@@ -21,64 +18,164 @@ Public Class KeyboardHandler
   ''' Register keyboard event handlers for the specified page
   ''' </summary>
   Public Sub RegisterKeyboardEvents(page As Page)
-    If page Is Nothing Then Return
+    If page Is Nothing Then Exit Sub
 
+    _currentPage = page
     AddHandler page.Focused, AddressOf OnPageFocused
     AddHandler page.Unfocused, AddressOf OnPageUnfocused
 
-#If WINDOWS10_0_19041_0_OR_GREATER Then
-    RegisterWindowsKeyboardEvents(page)
-#End If
+    RegisterMauiKeyboardEvents(page)
   End Sub
 
   ''' <summary>
   ''' Unregister keyboard event handlers
   ''' </summary>
   Public Sub UnregisterKeyboardEvents(page As Page)
-    If page Is Nothing Then Return
+    If page Is Nothing Then Exit Sub
 
     RemoveHandler page.Focused, AddressOf OnPageFocused
     RemoveHandler page.Unfocused, AddressOf OnPageUnfocused
 
-#If WINDOWS10_0_19041_0_OR_GREATER Then
-    UnregisterWindowsKeyboardEvents()
-#End If
+    UnregisterMauiKeyboardEvents(page)
   End Sub
 
   Private Sub OnPageFocused(sender As Object, e As FocusEventArgs)
-    ' TODO: Continue the game when page is focused
     Debug.WriteLine("Page focused - keyboard input enabled")
   End Sub
 
   Private Sub OnPageUnfocused(sender As Object, e As FocusEventArgs)
-    ' TODO: Suspend the game when page is unfocused
     Debug.WriteLine("Page unfocused - keyboard input disabled")
   End Sub
 
-#Region "Platform-specific implementation"
-#If WINDOWS10_0_19041_0_OR_GREATER Then
-  Private _windowsKeyListener As WindowsKeyListener
-
-  Private Sub RegisterWindowsKeyboardEvents(page As Page)
+#Region "MAUI Keyboard Events"
+  Private Sub RegisterMauiKeyboardEvents(page As Page)
     Try
-      _windowsKeyListener = New WindowsKeyListener(_game)
-      _windowsKeyListener.Register(page)
+      ' Register keyboard press event for the page
+      AddHandler page.Keyboard, AddressOf OnKeyboardKeyPressed
     Catch ex As Exception
-      Debug.WriteLine($"Failed to register Windows keyboard events: {ex.Message}")
+      Debug.WriteLine($"Failed to register MAUI keyboard events: {ex.Message}")
     End Try
   End Sub
 
-  Private Sub UnregisterWindowsKeyboardEvents()
+  Private Sub UnregisterMauiKeyboardEvents(page As Page)
     Try
-      If _windowsKeyListener IsNot Nothing Then
-        _windowsKeyListener.Unregister()
-        _windowsKeyListener = Nothing
+      If page IsNot Nothing Then RemoveHandler page.Keyboard, AddressOf OnKeyboardKeyPressed
+    Catch ex As Exception
+      Debug.WriteLine($"Failed to unregister MAUI keyboard events: {ex.Message}")
+    End Try
+  End Sub
+
+  Private Sub OnKeyboardKeyPressed(sender As Object, e As KeyboardEventArgs)
+    If _game Is Nothing Then Exit Sub
+    Try
+      Dim keyName = GetKeyNameFromKey(e.Key)
+      If Not String.IsNullOrEmpty(keyName) Then
+        _game.SetKeyStateFromKey(keyName, True)
       End If
     Catch ex As Exception
-      Debug.WriteLine($"Failed to unregister Windows keyboard events: {ex.Message}")
+      Debug.WriteLine($"Error processing keyboard input: {ex.Message}")
     End Try
   End Sub
-#End If
+
+  Private Shared Function GetKeyNameFromKey(key As KeyboardKey) As String
+    Select Case key
+      Case KeyboardKey.A : Return "A"
+      Case KeyboardKey.B : Return "B"
+      Case KeyboardKey.C : Return "C"
+      Case KeyboardKey.D : Return "D"
+      Case KeyboardKey.E : Return "E"
+      Case KeyboardKey.F : Return "F"
+      Case KeyboardKey.G : Return "G"
+      Case KeyboardKey.H : Return "H"
+      Case KeyboardKey.I : Return "I"
+      Case KeyboardKey.J : Return "J"
+      Case KeyboardKey.K : Return "K"
+      Case KeyboardKey.L : Return "L"
+      Case KeyboardKey.M : Return "M"
+      Case KeyboardKey.N : Return "N"
+      Case KeyboardKey.O : Return "O"
+      Case KeyboardKey.P : Return "P"
+      Case KeyboardKey.Q : Return "Q"
+      Case KeyboardKey.R : Return "R"
+      Case KeyboardKey.S : Return "S"
+      Case KeyboardKey.T : Return "T"
+      Case KeyboardKey.U : Return "U"
+      Case KeyboardKey.V : Return "V"
+      Case KeyboardKey.W : Return "W"
+      Case KeyboardKey.X : Return "X"
+      Case KeyboardKey.Y : Return "Y"
+      Case KeyboardKey.Z : Return "Z"
+      Case KeyboardKey.D0 : Return "0"
+      Case KeyboardKey.D1 : Return "1"
+      Case KeyboardKey.D2 : Return "2"
+      Case KeyboardKey.D3 : Return "3"
+      Case KeyboardKey.D4 : Return "4"
+      Case KeyboardKey.D5 : Return "5"
+      Case KeyboardKey.D6 : Return "6"
+      Case KeyboardKey.D7 : Return "7"
+      Case KeyboardKey.D8 : Return "8"
+      Case KeyboardKey.D9 : Return "9"
+      Case KeyboardKey.F1 : Return "F1"
+      Case KeyboardKey.F2 : Return "F2"
+      Case KeyboardKey.F3 : Return "F3"
+      Case KeyboardKey.F4 : Return "F4"
+      Case KeyboardKey.F5 : Return "F5"
+      Case KeyboardKey.F6 : Return "F6"
+      Case KeyboardKey.F7 : Return "F7"
+      Case KeyboardKey.F8 : Return "F8"
+      Case KeyboardKey.F9 : Return "F9"
+      Case KeyboardKey.F10 : Return "F10"
+      Case KeyboardKey.F11 : Return "F11"
+      Case KeyboardKey.F12 : Return "F12"
+      Case KeyboardKey.Up : Return "UP"
+      Case KeyboardKey.Down : Return "DOWN"
+      Case KeyboardKey.Left : Return "LEFT"
+      Case KeyboardKey.Right : Return "RIGHT"
+      Case KeyboardKey.Space : Return "SPACE"
+      Case KeyboardKey.Tab : Return "TAB"
+      Case KeyboardKey.Enter : Return "ENTER"
+      Case KeyboardKey.Escape : Return "ESCAPE"
+      Case KeyboardKey.Shift : Return "SHIFT"
+      Case KeyboardKey.CtrlLeft, KeyboardKey.CtrlRight : Return "CTRL"
+      Case KeyboardKey.AltLeft, KeyboardKey.AltRight : Return "ALT"
+      Case KeyboardKey.Backspace : Return "BACK"
+      Case KeyboardKey.Delete : Return "DEL"
+      Case KeyboardKey.Home : Return "HOME"
+      Case KeyboardKey.[End] : Return "END"
+      Case KeyboardKey.PageUp : Return "PGUP"
+      Case KeyboardKey.PageDown : Return "PGDN"
+      Case KeyboardKey.CapsLock : Return "CAPSLOCK"
+      Case KeyboardKey.Insert : Return "INS"
+      Case KeyboardKey.Pause : Return "PAUSE"
+      Case KeyboardKey.ScrollLock : Return "SCROLL"
+      Case KeyboardKey.Numpad0 : Return "0"
+      Case KeyboardKey.Numpad1 : Return "1"
+      Case KeyboardKey.Numpad2 : Return "2"
+      Case KeyboardKey.Numpad3 : Return "3"
+      Case KeyboardKey.Numpad4 : Return "4"
+      Case KeyboardKey.Numpad5 : Return "5"
+      Case KeyboardKey.Numpad6 : Return "6"
+      Case KeyboardKey.Numpad7 : Return "7"
+      Case KeyboardKey.Numpad8 : Return "8"
+      Case KeyboardKey.Numpad9 : Return "9"
+      Case KeyboardKey.NumpadMultiply : Return "NP_MUL"
+      Case KeyboardKey.NumpadDivide : Return "NP_DIV"
+      Case KeyboardKey.NumpadAdd : Return "NP_ADD"
+      Case KeyboardKey.NumpadSubtract : Return "NP_SUB"
+      Case KeyboardKey.NumpadDecimal : Return "NP_DECIMAL"
+      Case KeyboardKey.Period : Return "."
+      Case KeyboardKey.Equals : Return "="
+      Case KeyboardKey.Comma : Return ","
+      Case KeyboardKey.Minus : Return "-"
+      Case KeyboardKey.Semicolon : Return ";"
+      Case KeyboardKey.Slash : Return "/"
+      Case KeyboardKey.Quote : Return "'"
+      Case KeyboardKey.BracketLeft : Return "["
+      Case KeyboardKey.Backslash : Return "\"
+      Case KeyboardKey.BracketRight : Return "]"
+      Case Else : Return Nothing
+    End Select
+  End Function
 #End Region
 
   Public Sub Dispose() Implements IDisposable.Dispose
@@ -88,95 +185,10 @@ Public Class KeyboardHandler
 
   Protected Overridable Sub Dispose(disposing As Boolean)
     If Not _isDisposed Then
-      If disposing Then UnregisterKeyboardEvents(Nothing)
+      If disposing Then
+        UnregisterKeyboardEvents(_currentPage)
+      End If
       _isDisposed = True
     End If
   End Sub
 End Class
-
-#Region "Platform-specific keyboard listeners"
-#If WINDOWS10_0_19041_0_OR_GREATER Then
-''' <summary>
-''' Windows-specific keyboard listener using Win32 API
-''' </summary>
-Public Class WindowsKeyListener
-  Private ReadOnly _game As PixelGameEngine
-  Private _keyboardTimer As System.Threading.Timer
-
-  Private Const VK_SPACE As Integer = &H20
-  Private Const VK_ESCAPE As Integer = &H1B
-  Private Const VK_RETURN As Integer = &HD
-  Private Const VK_SHIFT As Integer = &H10
-  Private Const VK_CONTROL As Integer = &H11
-  Private Const VK_MENU As Integer = &H12
-  Private Const VK_LEFT As Integer = &H25
-  Private Const VK_UP As Integer = &H26
-  Private Const VK_RIGHT As Integer = &H27
-  Private Const VK_DOWN As Integer = &H28
-  Private Const VK_F1 As Integer = &H70
-
-  <DllImport("user32.dll", CharSet:=CharSet.Auto, ExactSpelling:=True)>
-  Private Shared Function GetAsyncKeyState(vKey As Integer) As Short
-  End Function
-
-  Public Sub New(game As PixelGameEngine)
-    _game = game
-  End Sub
-
-  Public Sub Register(page As Page)
-    _keyboardTimer = New System.Threading.Timer(
-      Sub(state) PollKeyboardState(),
-      Nothing,
-      TimeSpan.Zero,
-      TimeSpan.FromMilliseconds(16))
-  End Sub
-
-  Public Sub Unregister()
-    If _keyboardTimer IsNot Nothing Then
-      _keyboardTimer.Dispose()
-      _keyboardTimer = Nothing
-    End If
-  End Sub
-
-  Private Sub PollKeyboardState()
-    If _game Is Nothing Then Return
-
-    Try
-      For i As Integer = 0 To 25
-        Dim vk As Integer = &H41 + i
-        Dim isDown = (GetAsyncKeyState(vk) And &H8000) <> 0
-        _game.SetKeyStateFromKey(ChrW(&H41 + i).ToString(), isDown)
-      Next
-
-      For i As Integer = 0 To 9
-        Dim vk As Integer = &H30 + i
-        Dim isDown = (GetAsyncKeyState(vk) And &H8000) <> 0
-        _game.SetKeyStateFromKey(i.ToString(), isDown)
-      Next
-
-      _game?.SetKeyStateFromKey("SPACE", (GetAsyncKeyState(VK_SPACE) And &H8000) <> 0)
-      _game?.SetKeyStateFromKey("ESCAPE", (GetAsyncKeyState(VK_ESCAPE) And &H8000) <> 0)
-      _game?.SetKeyStateFromKey("ENTER", (GetAsyncKeyState(VK_RETURN) And &H8000) <> 0)
-
-      Dim isShiftDown = (GetAsyncKeyState(VK_SHIFT) And &H8000) <> 0
-      _game?.SetKeyStateFromKey("SHIFT", isShiftDown)
-
-      Dim isCtrlDown = (GetAsyncKeyState(VK_CONTROL) And &H8000) <> 0
-      _game?.SetKeyStateFromKey("CTRL", isCtrlDown)
-
-      _game?.SetKeyStateFromKey("UP", (GetAsyncKeyState(VK_UP) And &H8000) <> 0)
-      _game?.SetKeyStateFromKey("DOWN", (GetAsyncKeyState(VK_DOWN) And &H8000) <> 0)
-      _game?.SetKeyStateFromKey("LEFT", (GetAsyncKeyState(VK_LEFT) And &H8000) <> 0)
-      _game?.SetKeyStateFromKey("RIGHT", (GetAsyncKeyState(VK_RIGHT) And &H8000) <> 0)
-
-      For i As Integer = 0 To 11
-        Dim vk As Integer = VK_F1 + i
-        Dim isDown = (GetAsyncKeyState(vk) And &H8000) <> 0
-        _game?.SetKeyStateFromKey($"F{i + 1}", isDown)
-      Next
-    Catch
-    End Try
-  End Sub
-End Class
-#End If
-#End Region
